@@ -7,6 +7,20 @@ import clsx from "clsx";
 import Link from "next/link";
 import React from "react";
 
+const ovLinks = [
+    {
+        name: "Github",
+        url: "https://Github.com/Oveln",
+        icon: <GitHubLogoIcon className="size-5" />
+    },
+    {
+        name: "Email",
+        url: "mailto:oveln@outlook.com",
+        icon: <EnvelopeClosedIcon className="size-5" />
+    }
+
+]
+
 export default function Home() {
     const isLoaded = useLoaded();
     return (
@@ -21,18 +35,18 @@ export default function Home() {
                     <h1 className="mt-5 text-lg" data-fade='3'>A Student && Developer</h1>
                     <h1 className="text-lg" data-fade='3'>Love Coding⌨️ and Gameing🎮</h1>
                     <div className="mt-2 grid grid-cols-5" data-fade='4'>
-                        <Button variant="link" className="p-0" asChild>
-                            <Link href="https://Github.com/Oveln">
-                                <GitHubLogoIcon className="size-5" />
-                                <span className="ml-1">Github</span>
-                            </Link>
-                        </Button>
-                        <Button variant="link" className="p-0" asChild>
-                            <Link href="mailto:oveln@outlook.com">
-                                <EnvelopeClosedIcon className="size-5" />
-                                <span className="ml-1">Eamil</span>
-                            </Link>
-                        </Button>
+                        {
+                            ovLinks.map((link) => {
+                                return (
+                                    <Button variant="link" className="p-0 mr-auto" asChild key={link.name}>
+                                        <Link href={link.url}>
+                                            {link.icon}
+                                            <span className="ml-1">{link.name}</span>
+                                        </Link>
+                                    </Button>
+                                );
+                            })
+                        }
                     </div>
                 </div>
                 <div className="flex-1" data-fade='1'>
