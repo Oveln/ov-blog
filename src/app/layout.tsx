@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className="m-0 p-0">
-            <body className={"lg:px-64 w-screen h-screen" + inter.className}>
+            <body className={"mx-auto max-w-[68rem] w-screen h-screen" + inter.className}>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="system"
