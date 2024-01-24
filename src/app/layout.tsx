@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import React from "react";
 import { NavMenu } from "@/components/layout/nav-menu";
+import Footer from "@/components/layout/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className="m-0 p-0">
-            <body className={"lg:px-80 w-screen h-screen" + inter.className}>
+            <body className={"lg:px-64 w-screen h-screen" + inter.className}>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="system"
@@ -29,7 +30,7 @@ export default function RootLayout({
                     <NavMenu></NavMenu>
                     {children}
 
-                    <footer></footer>
+                    <Footer></Footer>
                 </ThemeProvider>
             </body>
         </html>
