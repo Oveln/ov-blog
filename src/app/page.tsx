@@ -7,7 +7,7 @@ import React from "react";
 export default function Home() {
     return (
         <main className="relative h-[calc(100vh-56px)]">
-            <div className="absolute mt-[15%] flex w-full items-center">
+            <div className="absolute mt-[15%] flex w-full items-center md:flex-row flex-col">
                 <div className="flex-1 p-10">
                     <h1 className="text-2xl md:text-4xl 2xl:text-5xl">{"Hi!👋"}</h1>
                     <h1 className="mt-1 text-3xl md:text-5xl 2xl:text-6xl">

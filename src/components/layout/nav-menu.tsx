@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 export function NavMenu() {
     return (
-        <NavigationMenu className="my-2 sticky top-2">
+        <NavigationMenu className="my-2 mx-auto lg:mx-0">
             <NavigationMenuList>
                 <NavigationMenuItem>
                     <Link href="/" className={navigationMenuTriggerStyle()}>
