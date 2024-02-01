@@ -21,7 +21,9 @@ export function NavMenu() {
                     </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                    <NavigationMenuTrigger>Blogs</NavigationMenuTrigger>
+                    <Link href="/blogs">
+                        <NavigationMenuTrigger>Blogs</NavigationMenuTrigger>
+                    </Link>
                     <NavigationMenuContent>
                         {/* <NavigationMenuLink className="p-96">Link</NavigationMenuLink> */}
                     </NavigationMenuContent>
