@@ -5,10 +5,10 @@ import { allPosts, Post } from "contentlayer/generated";
 import React from "react";
 import useLoaded from "@/hooks/useLoaded";
 import clsx from "clsx";
-function PostCard(post: Post) {
+function PostCard({ dataFade, post }: { dataFade: number, post: Post }) {
     return (
         <Link href={post.url}>
-            <div className="mb-8 border-2 shadow-md p-2 group relative">
+            <div className="mb-8 border-2 shadow-md p-2 group relative" data-fade={(dataFade+10)%9}>
                 <h2 className="mb-1 text-xl">{post.title? post.title: post._raw.sourceFileName.replace(".md","")}</h2>
                 <time dateTime={post.create_time} className="mb-2 block text-xs text-gray-600">
                     {format(parseISO(post.create_time), "LLLL d, yyyy")}
@@ -35,7 +35,7 @@ const Blogs: React.FC = () => {
             )}
         >
             {posts.map((post, idx) => (
-                <PostCard key={idx} {...post} />
+                <PostCard key={idx} dataFade={idx} post={post}/>
             ))}
         </div>
     );
