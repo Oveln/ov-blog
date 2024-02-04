@@ -35,7 +35,7 @@ const PostLayout = ({ params }: { params: { slug: string } }) => {
                 <article className="mx-auto max-w-3xl py-8 min-h-[calc(100vh-56px)] flex flex-col">
                     <div className="mb-8 text-center">
                         <h1 className="text-3xl font-bold">
-                            {post.title ? post.title : post._raw.sourceFileName.replace(".md", "")}
+                            {post.computedTitle}
                         </h1>
                         <time dateTime={post.create_time} className="mb-1 text-xs text-gray-600">
                             Created: {format(parseISO(post.create_time), "yyyy-MM-dd")}

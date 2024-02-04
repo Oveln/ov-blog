@@ -53,6 +53,10 @@ const Post = defineDocumentType(() => ({
         url: {
             type: "string",
             resolve: (doc) => `/blogs/${doc.id}`
+        },
+        computedTitle: {
+            type: "string",
+            resolve: (post) => post.title ? post.title : post._raw.sourceFileName.replace(".md", "")
         }
     }
 }));
