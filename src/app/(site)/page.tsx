@@ -1,6 +1,5 @@
 'use client'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import useLoaded from "@/hooks/useLoaded";
 import { EnvelopeClosedIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
 import clsx from "clsx";
 import Link from "next/link";
@@ -21,26 +20,34 @@ const ovLinks = [
 ];
 
 export default function  Home() {
-    // const [isLoaded, setIsLoaded] = useState(false);
-    // setTimeout(() => {
-    //     setIsLoaded(true)
-    // }, 200);
-    const isLoaded = useLoaded();
+    const isLoaded = true;
+    let t = 0;
+    const getT = ()=> {
+        return t++;
+    }
     return (
-        <main className={clsx("relative h-[calc(100vh-56px)]", isLoaded && "fade-in-start")}>
+        <main className={"relative h-[calc(100vh-56px)]"}>
             <div className="absolute mt-[15%] flex w-full items-center md:flex-row flex-col">
                 <div className="flex-1 p-10 md:pl-0">
-                    <h1 className="text-2xl md:text-4xl 2xl:text-5xl" data-fade="1">
+                    <h1 className="text-2xl md:text-4xl 2xl:text-5xl animate-fade-up animate-ease-in-out animate-duration-300" style={{
+                    animationDelay: `${getT() * 100}ms`
+                }}>
                         {"Hi!👋"}
                     </h1>
-                    <h1 className="mt-1 text-3xl md:text-5xl 2xl:text-6xl" data-fade="2">
+                    <h1 className="mt-1 text-3xl md:text-5xl 2xl:text-6xl animate-fade-up animate-ease-in-out animate-duration-300"style={{
+                    animationDelay: `${getT() * 100}ms`
+                }}>
                         {"I'm "}
                         <span className="text-fuchsia-500 text-opacity-85">Oveln🎉</span>
                     </h1>
-                    <h1 className="mt-5 text-lg" data-fade="3">
+                    <h1 className="mt-5 text-lg animate-fade-up animate-ease-in-out animate-duration-300" style={{
+                    animationDelay: `${getT() * 100}ms`
+                }}>
                         A Student && Developer
                     </h1>
-                    <h1 className="text-lg" data-fade="3">
+                    <h1 className="text-lg animate-fade-up animate-ease-in-out animate-duration-300" style={{
+                    animationDelay: `${getT() * 100}ms`
+                }}>
                         Love Coding⌨️ and Gameing🎮
                     </h1>
                     <div className="mt-2" data-fade="4">
