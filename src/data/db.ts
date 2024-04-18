@@ -2,7 +2,23 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const getAllPostCardInfo = async () => {
+export const getAllPostCardInfo = async (onlyPublished: boolean) => {
+    if (onlyPublished)
+        return await prisma.post.findMany(
+            // published
+            // 只需要文章标题和描述
+            {
+                select: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    create_time: true
+                },
+                where: {
+                    published: true
+                }
+            }
+        );
     return await prisma.post.findMany(
         // published
         // 只需要文章标题和描述
@@ -12,9 +28,6 @@ export const getAllPostCardInfo = async () => {
                 title: true,
                 description: true,
                 create_time: true
-            },
-            where: {
-                // published: true
             }
         }
     );

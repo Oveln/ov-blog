@@ -1,20 +1,21 @@
+import { format } from "date-fns";
 import Link from "next/link";
 import React from "react";
-import clsx from "clsx";
-import { format } from "date-fns";
-import { getAllPostCardInfo } from "@/data/db";
-export const revalidate = 10;
-interface PostCardInfo {
+
+export interface PostCardInfo {
+    id: number;
     title: string;
     create_time: Date;
     description: string | null;
 }
-function PostCard({ dataFade, post }: { dataFade: number; post: PostCardInfo }) {
+export default function PostCard({ dataFade, post }: { dataFade: number; post: PostCardInfo }) {
     return (
-        <Link href={"baidu.com"}>
+        <Link href={`/blogs/${post.id}`}>
             <div
-                className="mb-8 border-2 shadow-md p-2 group relative"
-                data-fade={(dataFade + 10) % 9}
+                className="mb-8 border-2 shadow-md p-2 group relative animate-fade-up animate-ease-in-out animate-duration-300"
+                style={{
+                    animationDelay: `${dataFade * 100}ms`
+                }}
             >
                 <h2 className="mb-1 text-xl">{post.title}</h2>
                 <time
@@ -35,22 +36,3 @@ function PostCard({ dataFade, post }: { dataFade: number; post: PostCardInfo }) 
         </Link>
     );
 }
-const Blogs: React.FC = async () => {
-    const posts = await getAllPostCardInfo();
-    console.log(posts);
-    const isLoaded = true;
-    return (
-        <div
-            className={clsx(
-                "mx-auto max-w-3xl py-8 min-h-[calc(100vh-56px)]",
-                isLoaded && "fade-in-start"
-            )}
-        >
-            {posts.map((post, idx) => (
-                <PostCard key={idx} dataFade={idx} post={post} />
-            ))}
-        </div>
-    );
-};
-
-export default Blogs;

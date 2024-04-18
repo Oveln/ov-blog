@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/context/theme-provider";
 import React from "react";
 import { NavMenu } from "@/components/layout/nav-menu";
 import Footer from "@/components/layout/footer";
-import { PreloadProvider } from "@/context/PreloadContext";
 import { MySessionProviders } from "@/context/MySessionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -33,7 +32,7 @@ export default function RootLayout({
                         disableTransitionOnChange
                     >
                         <NavMenu></NavMenu>
-                        <PreloadProvider>{children}</PreloadProvider>
+                        {children}
 
                         <Footer></Footer>
                     </ThemeProvider>
