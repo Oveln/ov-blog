@@ -25,19 +25,19 @@ export default function RootLayout({
             <body
                 className={"mx-auto max-w-[68rem] px-2 lg:px-0 w-screen h-screen" + inter.className}
             >
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                    disableTransitionOnChange
-                >
-                    <MySessionProviders>
+                <MySessionProviders>
+                    <ThemeProvider
+                        attribute="class"
+                        defaultTheme="system"
+                        enableSystem
+                        disableTransitionOnChange
+                    >
                         <NavMenu></NavMenu>
                         <PreloadProvider>{children}</PreloadProvider>
 
                         <Footer></Footer>
-                    </MySessionProviders>
-                </ThemeProvider>
+                    </ThemeProvider>
+                </MySessionProviders>
             </body>
         </html>
     );
