@@ -6,6 +6,7 @@ import React from "react";
 import { NavMenu } from "@/components/layout/nav-menu";
 import Footer from "@/components/layout/footer";
 import { PreloadProvider } from "@/context/PreloadContext";
+import { MySessionProviders } from "@/context/MySessionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,17 +22,21 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className="m-0 p-0">
-            <body className={"mx-auto max-w-[68rem] px-2 lg:px-0 w-screen h-screen" + inter.className}>
+            <body
+                className={"mx-auto max-w-[68rem] px-2 lg:px-0 w-screen h-screen" + inter.className}
+            >
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="system"
                     enableSystem
                     disableTransitionOnChange
                 >
-                    <NavMenu></NavMenu>
-                    <PreloadProvider>{children}</PreloadProvider>
+                    <MySessionProviders>
+                        <NavMenu></NavMenu>
+                        <PreloadProvider>{children}</PreloadProvider>
 
-                    <Footer></Footer>
+                        <Footer></Footer>
+                    </MySessionProviders>
                 </ThemeProvider>
             </body>
         </html>

@@ -1,10 +1,8 @@
 import Link from "next/link";
 import React from "react";
 import clsx from "clsx";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { getAllPostCardInfo } from "@/data/db";
-import { nextAuthOption } from "../api/auth/[...nextauth]";
-import { getServerSession } from "next-auth";
 export const revalidate = 10;
 interface PostCardInfo {
     title: string;
@@ -41,7 +39,6 @@ const Blogs: React.FC = async () => {
     const posts = await getAllPostCardInfo();
     console.log(posts);
     const isLoaded = true;
-    const session = await getServerSession(nextAuthOption);
     return (
         <div
             className={clsx(
@@ -52,8 +49,6 @@ const Blogs: React.FC = async () => {
             {posts.map((post, idx) => (
                 <PostCard key={idx} dataFade={idx} post={post} />
             ))}
-
-            {!session && <p>Not signed in</p>}
         </div>
     );
 };
