@@ -1,10 +1,11 @@
-"use client";
+'use client'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useLoaded from "@/hooks/useLoaded";
 import { EnvelopeClosedIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
 import clsx from "clsx";
 import Link from "next/link";
 import React from "react";
+import { useSession } from "next-auth/react";
 
 const ovLinks = [
     {
@@ -19,8 +20,15 @@ const ovLinks = [
     }
 ];
 
-export default function Home() {
+export default function  Home() {
+    // const [isLoaded, setIsLoaded] = useState(false);
+    // setTimeout(() => {
+    //     setIsLoaded(true)
+    // }, 200);
     const isLoaded = useLoaded();
+    const {data: session, status} = useSession();
+    console.log("status", status);
+    console.log("session", session);
     return (
         <main className={clsx("relative h-[calc(100vh-56px)]", isLoaded && "fade-in-start")}>
             <div className="absolute mt-[15%] flex w-full items-center md:flex-row flex-col">
@@ -58,6 +66,13 @@ export default function Home() {
                         <AvatarImage src="./avatar.jpg" />
                         <AvatarFallback>Oveln</AvatarFallback>
                     </Avatar>
+                </div>
+                <div>
+                    <div className="absolute right-0 bottom-0 text-gray-400 text-xs">
+                        {"© 2021 Oveln" + useSession().data?.user}
+                        {status}
+                        {session?.user?.email}
+                    </div>
                 </div>
             </div>
         </main>
