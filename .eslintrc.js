@@ -7,9 +7,9 @@ module.exports = {
     extends: [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
-        'plugin:@next/next/recommended',
+        "plugin:@next/next/recommended",
         "plugin:react/recommended",
-        "prettier"
+        "prettier",
     ],
     overrides: [
         {
@@ -28,7 +28,9 @@ module.exports = {
         sourceType: "module"
     },
     plugins: ["@typescript-eslint", "react"],
-    rules: {},
+    rules: {
+        "@typescript-eslint/no-unused-vars": "off"
+    },
     settings: {
         react: {
             version: "detect" // 自动检测并使用项目中的 React 版本
