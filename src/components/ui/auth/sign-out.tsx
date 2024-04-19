@@ -1,16 +1,14 @@
+"use client";
+import { signOut } from "next-auth/react";
+import React from "react";
+import { Button } from "../button";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
 
-import { signOut } from "@/lib/auth/auth"
-import React from "react"
- 
-export default function SignOut() {
-  return (
-    <form
-      action={async () => {
-        "use server"
-        await signOut()
-      }}
-    >
-      <button type="submit">Signout with GitHub</button>
-    </form>
-  )
-} 
+export default function SignOutButton() {
+    return (
+        <Button onClick={() => signOut({ redirect: true, callbackUrl: "/" })}>
+            <GitHubLogoIcon></GitHubLogoIcon>
+            Github
+        </Button>
+    );
+}

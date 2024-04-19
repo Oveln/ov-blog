@@ -3,8 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/theme-provider";
 import React from "react";
-import { NavMenu } from "@/components/layout/nav-menu";
-import Footer from "@/components/layout/footer";
 import { MySessionProviders } from "@/context/MySessionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,9 +18,12 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" className="m-0 p-0">
+        <html lang="en" className="m-0 p-0 bg-muted/40">
             <body
-                className={"mx-auto max-w-[68rem] px-2 lg:px-0 w-screen h-screen" + inter.className}
+                className={
+                    "mx-auto max-w-[68rem] px-2 lg:px-0 w-screen h-screen bg-muted/40 " +
+                    inter.className
+                }
             >
                 <MySessionProviders>
                     <ThemeProvider
@@ -31,9 +32,7 @@ export default function RootLayout({
                         enableSystem
                         disableTransitionOnChange
                     >
-                        <NavMenu></NavMenu>
                         {children}
-                        <Footer></Footer>
                     </ThemeProvider>
                 </MySessionProviders>
             </body>
