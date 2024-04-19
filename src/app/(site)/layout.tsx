@@ -22,7 +22,10 @@ export default function RootLayout({
     return (
         <html lang="en" className="m-0 p-0">
             <body
-                className={"mx-auto max-w-[68rem] px-2 lg:px-0 w-screen h-screen" + inter.className}
+                className={
+                    "mx-auto max-w-[68rem] px-2 lg:px-0 w-screen h-screen bg-muted/40 " +
+                    inter.className
+                }
             >
                 <MySessionProviders>
                     <ThemeProvider

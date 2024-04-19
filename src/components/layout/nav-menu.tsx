@@ -2,11 +2,13 @@
 import * as React from "react";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "../ui/navigation-menu";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 const linkClass =
-    "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium pl-0 hover:underline underline-offset-4";
+    "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium pl-0 hover:underline underline-offset-4";
 export function NavMenu() {
+    const { update, data, status } = useSession();
     return (
-        <NavigationMenu className="my-2 mx-auto lg:mx-0">
+        <NavigationMenu className="py-2 mx-auto lg:mx-0">
             <NavigationMenuList>
                 <NavigationMenuItem>
                     <Link href="/" className={linkClass}>
@@ -28,6 +30,19 @@ export function NavMenu() {
                         About
                     </Link>
                 </NavigationMenuItem>
+                {status == "unauthenticated" ? (
+                    <NavigationMenuItem>
+                        <Link href="/login" className={linkClass}>
+                            Login
+                        </Link>
+                    </NavigationMenuItem>
+                ) : (
+                    <NavigationMenuItem>
+                        <Link href="/dashboard" className={linkClass}>
+                            Dashboard
+                        </Link>
+                    </NavigationMenuItem>
+                )}
             </NavigationMenuList>
         </NavigationMenu>
     );
