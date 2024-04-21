@@ -26,6 +26,7 @@ export default function RootLayout({
                     "mx-auto max-w-[68rem] px-2 lg:px-0 w-screen h-screen bg-muted/40 " +
                     inter.className
                 }
+                data-scroll-lock="1"
             >
                 <MySessionProviders>
                     <ThemeProvider

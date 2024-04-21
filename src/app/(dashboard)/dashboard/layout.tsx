@@ -25,7 +25,7 @@ export default async function RootLayout({
         <html lang="en" className="m-0 p-0">
             <body
                 className={
-                    "mx-auto max-w-[calc(100vw-10px)] px-2 lg:px-0 w-screen h-screen bg-muted/40 " +
+                    "mx-auto max-w-[calc(100vw-10px)] lg:px-0 w-screen h-screen bg-muted/40 overflow-hidden " +
                     inter.className
                 }
             >
@@ -39,7 +39,7 @@ export default async function RootLayout({
                         <nav className="mx-auto max-w-[68rem]">
                             <NavMenu />
                         </nav>
-                        <div className="h-[calc(100vh-62px)] w-[calc(100vw-10px)] mx-auto flex border rounded-2xl overflow-hidden my-0">
+                        <div className="h-[calc(100vh-62px)] mx-auto flex border rounded-2xl overflow-hidden my-0">
                             <aside className="inset-y-0 left-0 z-10 w-14 flex-col border-r sm:flex bg-background">
                                 <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
                                     <NavMenuDashboard />

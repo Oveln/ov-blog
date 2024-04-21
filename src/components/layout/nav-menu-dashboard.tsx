@@ -24,7 +24,7 @@ const navItems: NavItem[] = [
     },
     {
         name: "Dashboard",
-        to: "/",
+        to: "/dashboard/post-edit",
         icon: NotebookPenIcon
     }
 ];
