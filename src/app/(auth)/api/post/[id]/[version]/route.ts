@@ -27,6 +27,6 @@ export async function GET(req: Request, context: { params: Params }) {
     if (post.userId != user?.id) {
         return Response.json(null);
     }
-    const post_version = await getPostVersionByPostIdAndVersion(id,version)
+    const post_version = await getPostVersionByPostIdAndVersion(id, version);
     return Response.json(post_version);
 }

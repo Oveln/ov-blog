@@ -9,7 +9,7 @@ module.exports = {
         "plugin:@typescript-eslint/recommended",
         "plugin:@next/next/recommended",
         "plugin:react/recommended",
-        "prettier",
+        "prettier"
     ],
     overrides: [
         {

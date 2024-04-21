@@ -2,13 +2,11 @@ import React from "react";
 import clsx from "clsx";
 import PostList from "./PostList";
 
+export const revalidate = 10;
+
 const Blogs = () => {
     return (
-        <div
-            className={clsx(
-                "mx-auto max-w-3xl py-8 min-h-[calc(100vh-56px)]"
-            )}
-        >
+        <div className={clsx("mx-auto max-w-3xl py-8 min-h-[calc(100vh-56px)]")}>
             <PostList />
         </div>
     );

@@ -78,7 +78,7 @@ const config = {
         require("tailwindcss-animate"),
         require("@tailwindcss/forms"),
         require("@tailwindcss/typography"),
-        require('tailwindcss-animated'),
+        require("tailwindcss-animated")
     ]
 } satisfies Config;
 
