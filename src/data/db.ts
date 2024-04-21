@@ -1,9 +1,16 @@
+import { PostCardInfo } from "@/app/(site)/blogs/PostCard";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export const getAllPostCardInfo = async () => {
-    return prisma.post.findMany({});
+    const posts = await prisma.post.findMany({});
+    const retPostCardsInfo: PostCardInfo[] = await Promise.all(
+        posts.map(async (post) => {
+            return await getPostVersionByPostIdAndVersion(post.id, post.published_version);
+        })
+    )
+    return retPostCardsInfo;
 };
 
 export const getUserById = async (id: number) => {

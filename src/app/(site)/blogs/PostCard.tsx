@@ -2,13 +2,14 @@ import { format } from "date-fns";
 import Link from "next/link";
 import React from "react";
 
-export interface PostCardInfo {
+export type PostCardInfo =  {
     id: number;
     title: string;
     create_time: Date;
     description: string | null;
-}
+} | null;
 export default function PostCard({ dataFade, post }: { dataFade: number; post: PostCardInfo }) {
+    if (!post) return null;
     return (
         <Link href={`/blogs/${post.id}`}>
             <div
