@@ -90,9 +90,9 @@
     .animated-underline-hover {
         background-size: 100% 2px;
     }
-    
+
     .animate-shadow {
-      @apply after:absolute after:inset-0 after:z-[-1] after:opacity-0 after:transition-opacity hover:after:opacity-100;
-      @apply after:shadow-md dark:after:shadow-none;
+        @apply after:absolute after:inset-0 after:z-[-1] after:opacity-0 after:transition-opacity hover:after:opacity-100;
+        @apply after:shadow-md dark:after:shadow-none;
     }
 }

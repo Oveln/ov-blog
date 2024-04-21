@@ -13,6 +13,8 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 
+export const revalidate = 30;
+
 export const generateStaticParams = async () =>
     (await getAllPostCardInfo()).map((post) => {
         // eslint-disable-next-line no-unused-labels

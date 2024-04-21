@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import Link from "next/link";
 import React from "react";
 
-export type PostCardInfo =  {
+export type PostCardInfo = {
     id: number;
     title: string;
     create_time: Date;

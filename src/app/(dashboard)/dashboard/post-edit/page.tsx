@@ -19,9 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { UserPostRetType } from "@/app/(auth)/api/user/route";
-import { max } from "date-fns";
 import { Rocket, History } from "lucide-react";
-import { useRouter } from "next/router";
 import Link from "next/link";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
@@ -85,7 +83,7 @@ enum PageState {
     Done
 }
 
-export default function PostEdit({ slug }: { slug: string }) {
+export default function PostEdit() {
     const [pageState, setPageState] = React.useState(PageState.Loding);
     const [data, setData] = React.useState<UserPostRetType[]>([]);
     const table = useReactTable({

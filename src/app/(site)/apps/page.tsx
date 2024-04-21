@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { appsData } from "@/data/app-data";
 
 const Apps: React.FC = () => {
-    const [col,setCol] = useState(3);
+    const [col, setCol] = useState(3);
     useEffect(() => {
         if (window.innerWidth < 1024) setCol(2);
         else setCol(3);

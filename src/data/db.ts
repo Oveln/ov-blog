@@ -9,7 +9,7 @@ export const getAllPostCardInfo = async () => {
         posts.map(async (post) => {
             return await getPostVersionByPostIdAndVersion(post.id, post.published_version);
         })
-    )
+    );
     return retPostCardsInfo;
 };
 
@@ -36,7 +36,7 @@ export const getPostByUserName = async (userName: string) => {
             }
         }
     });
-}
+};
 
 export const getPostById = async (id: number) => {
     return await prisma.post.findUnique({
@@ -56,7 +56,6 @@ export const getPostByIdAndUser = async (id: number, userName: string) => {
         }
     });
 };
-
 
 export const getPostVersionByPostIdAndVersion = async (post_id: number, version: number) => {
     return await prisma.post_Version.findFirst({
