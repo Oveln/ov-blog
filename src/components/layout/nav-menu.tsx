@@ -6,7 +6,6 @@ import { useSession } from "next-auth/react";
 const linkClass =
     "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium pl-0 hover:underline underline-offset-4";
 export function NavMenu() {
-    const { update, data, status } = useSession();
     return (
         <NavigationMenu className="py-2 mx-auto lg:mx-0">
             <NavigationMenuList>
@@ -30,19 +29,11 @@ export function NavMenu() {
                         About
                     </Link>
                 </NavigationMenuItem>
-                {status == "unauthenticated" ? (
-                    <NavigationMenuItem>
-                        <Link href="/login" className={linkClass}>
-                            Login
-                        </Link>
-                    </NavigationMenuItem>
-                ) : (
-                    <NavigationMenuItem>
-                        <Link href="/dashboard" className={linkClass}>
-                            Dashboard
-                        </Link>
-                    </NavigationMenuItem>
-                )}
+                <NavigationMenuItem>
+                    <Link href="/dashboard" className={linkClass}>
+                        Dashboard
+                    </Link>
+                </NavigationMenuItem>
             </NavigationMenuList>
         </NavigationMenu>
     );

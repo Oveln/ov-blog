@@ -1,6 +1,6 @@
 import { getAllPostCardInfo } from "@/data/db";
-import React, { cache } from "react";
-import PostCard, { PostCardInfo } from "./PostCard";
+import React from "react";
+import PostCard from "./PostCard";
 
 export default async function PostList() {
     const posts = await getAllPostCardInfo();

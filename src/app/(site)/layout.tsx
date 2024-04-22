@@ -28,19 +28,17 @@ export default function RootLayout({
                 }
                 data-scroll-lock="1"
             >
-                <MySessionProviders>
-                    <ThemeProvider
-                        attribute="class"
-                        defaultTheme="system"
-                        enableSystem
-                        disableTransitionOnChange
-                    >
-                        <NavMenu></NavMenu>
-                        {children}
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <NavMenu></NavMenu>
+                    {children}
 
-                        <Footer></Footer>
-                    </ThemeProvider>
-                </MySessionProviders>
+                    <Footer></Footer>
+                </ThemeProvider>
             </body>
         </html>
     );

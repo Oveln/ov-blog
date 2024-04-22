@@ -10,32 +10,26 @@ import {
     TableHeader,
     TableRow
 } from "@/components/ui/table";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { UserPostRetType } from "@/app/(auth)/api/user/route";
-import { Rocket, History } from "lucide-react";
-import Link from "next/link";
+import { PostActionButton } from "./PostActionButton";
+import { Loading } from "@/components/ui/loading";
+import { useRouter } from "next/navigation";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 const columns: ColumnDef<UserPostRetType>[] = [
     {
         header: "Title",
-        accessorKey: "title"
+        accessorFn: (row) => row.postVersions.find((v) => v.published)?.title
     },
     {
         header: "Create Time",
-        accessorKey: "create_time"
+        accessorFn: (row) => row.postVersions.find((v) => v.published)?.create_time.toLocaleString()
     },
     {
         header: "Update Time",
-        accessorKey: "update_time"
+        accessorFn: (row) => row.postVersions.find((v) => v.published)?.update_time.toLocaleString()
     },
     {
         header: "Published Version",
@@ -45,46 +39,13 @@ const columns: ColumnDef<UserPostRetType>[] = [
         id: "actions",
         cell: ({ row }) => {
             const post = row.original;
-            return (
-                <DropdownMenu modal={false}>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline">Edit</Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56 mr-2">
-                        {
-                            // 0..3循环
-                            Array.from({
-                                length: 3 < post.published_version ? 3 : post.published_version
-                            }).map((_, index) => (
-                                <Link
-                                    key={index}
-                                    href={`/dashboard/post-edit/${post.id}/${post.published_version - index}`}
-                                >
-                                    <DropdownMenuItem>
-                                        {index == 0 ? (
-                                            <Rocket className="mr-2 h-4 w-4" />
-                                        ) : (
-                                            <History className="mr-2 h-4 w-4" />
-                                        )}
-                                        <span>Version: {post.published_version - index}</span>
-                                    </DropdownMenuItem>
-                                </Link>
-                            ))
-                        }
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
+            console.log(post);
+            return <PostActionButton post={post}></PostActionButton>;
         }
     }
 ];
 
-enum PageState {
-    Loding,
-    Done
-}
-
 export default function PostEdit() {
-    const [pageState, setPageState] = React.useState(PageState.Loding);
     const [data, setData] = React.useState<UserPostRetType[]>([]);
     const table = useReactTable({
         data,
@@ -92,22 +53,17 @@ export default function PostEdit() {
         getCoreRowModel: getCoreRowModel()
     });
     const { data: session } = useSession();
+    if (!session) {
+        useRouter().push("/login");
+    }
 
     useEffect(() => {
-        if (session) {
-            setPageState(PageState.Done);
-        }
         const getData = async () => {
             const data = await fetch(`/api/user`);
             setData(await data.json());
-            setPageState(PageState.Done);
         };
         getData();
     }, []);
-
-    if (pageState === PageState.Loding) {
-        return <div>Loading...</div>;
-    }
 
     return (
         <div className="h-full w-full p-2">
