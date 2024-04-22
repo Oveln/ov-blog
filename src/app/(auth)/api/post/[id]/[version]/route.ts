@@ -1,4 +1,4 @@
-import { getPostById, getPostVersionByPostIdAndVersion, getUserByName } from "@/data/db";
+import { getPostById, getPostVersionByPostIdAndVersion, getUserByName, prisma } from "@/data/db";
 import { auth } from "@/lib/auth/auth";
 
 type Params = {
@@ -19,14 +19,17 @@ export async function GET(req: Request, context: { params: Params }) {
     if (!id || !version) {
         return Response.json(null);
     }
-    const post = await getPostById(id);
-    if (!post) {
-        return Response.json(null);
-    }
-    const user = await getUserByName(userName);
-    if (post.userId != user?.id) {
-        return Response.json(null);
-    }
-    const post_version = await getPostVersionByPostIdAndVersion(id, version);
+
+    const post_version = await prisma.post_Version.findFirst({
+        where: {
+            version: version,
+            Post: {
+                id: id,
+                User: {
+                    name: userName
+                }
+            }
+        }
+    });
     return Response.json(post_version);
 }

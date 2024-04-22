@@ -1,16 +1,33 @@
 import { PostCardInfo } from "@/app/(site)/blogs/PostCard";
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
 export const getAllPostCardInfo = async () => {
-    const posts = await prisma.post.findMany({});
-    const retPostCardsInfo: PostCardInfo[] = await Promise.all(
-        posts.map(async (post) => {
-            return await getPostVersionByPostIdAndVersion(post.id, post.published_version);
-        })
-    );
-    return retPostCardsInfo;
+    const ret = await prisma.post_Version.findMany({
+        where: {
+            published: true
+        },
+        select: {
+            id: true,
+            title: true,
+            description: true,
+            create_time: true,
+            update_time: true,
+            published: true,
+            Post: {
+                select: {
+                    id: true,
+                    User: {
+                        select: {
+                            name: true
+                        }
+                    }
+                }
+            }
+        }
+    });
+    return ret;
 };
 
 export const getUserById = async (id: number) => {
@@ -42,6 +59,13 @@ export const getPostById = async (id: number) => {
     return await prisma.post.findUnique({
         where: {
             id: id
+        },
+        select: {
+            postVersions: {
+                where: {
+                    published: true
+                }
+            }
         }
     });
 };

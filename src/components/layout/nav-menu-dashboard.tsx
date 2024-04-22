@@ -19,7 +19,7 @@ interface NavItem {
 const navItems: NavItem[] = [
     {
         name: "Home",
-        to: "/",
+        to: "/dashboard",
         icon: HomeIcon
     },
     {
@@ -29,7 +29,6 @@ const navItems: NavItem[] = [
     }
 ];
 export function NavMenuDashboard() {
-    const { update, data, status } = useSession();
     return (
         // 以父组件为基准，继承其宽度
         <TooltipProvider>

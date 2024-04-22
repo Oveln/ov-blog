@@ -1,4 +1,4 @@
-import { getPostByUserName, getPostVersionByPostIdAndVersion } from "@/data/db";
+import { getPostByUserName, getPostVersionByPostIdAndVersion, prisma } from "@/data/db";
 import { auth } from "@/lib/auth/auth";
 
 type Params = {
@@ -7,12 +7,14 @@ type Params = {
 
 export type UserPostRetType = {
     id: number;
-    title: string;
-    create_time: Date;
-    update_time: Date;
-    published_version: number;
+    postVersions: {
+        title: string;
+        version: number;
+        create_time: Date;
+        update_time: Date;
+        published: boolean;
+    }[];
 };
-
 export const GET = async (req: Request, context: { params: Params }) => {
     const session = await auth();
     const userName = session?.user?.name;
@@ -21,30 +23,27 @@ export const GET = async (req: Request, context: { params: Params }) => {
             error: "Unauthorized"
         });
     }
-    const posts = await getPostByUserName(userName);
-    const retPosts: UserPostRetType[] = await Promise.all(
-        posts.map(async (post) => {
-            const newest_version = await getPostVersionByPostIdAndVersion(
-                post.id,
-                post.published_version
-            );
-            if (!newest_version) {
-                return {
-                    id: post.id,
-                    title: "",
-                    create_time: new Date(),
-                    update_time: new Date(),
-                    published_version: post.published_version
-                };
+    const retPosts = await prisma.post.findMany({
+        where: {
+            User: {
+                name: userName
             }
-            return {
-                id: post.id,
-                title: newest_version.title,
-                create_time: newest_version.create_time,
-                update_time: newest_version.update_time,
-                published_version: post.published_version
-            };
-        })
-    );
+        },
+        select: {
+            id: true,
+            postVersions: {
+                select: {
+                    title: true,
+                    create_time: true,
+                    update_time: true,
+                    version: true,
+                    published: true
+                },
+                orderBy: {
+                    update_time: "desc"
+                }
+            }
+        }
+    });
     return Response.json(retPosts);
 };

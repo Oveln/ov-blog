@@ -5,13 +5,20 @@ import React from "react";
 export type PostCardInfo = {
     id: number;
     title: string;
-    create_time: Date;
     description: string | null;
-} | null;
+    create_time: Date;
+    update_time: Date;
+    published: boolean;
+    Post: {
+        id: number;
+        User: {
+            name: string;
+        };
+    };
+};
 export default function PostCard({ dataFade, post }: { dataFade: number; post: PostCardInfo }) {
-    if (!post) return null;
     return (
-        <Link href={`/blogs/${post.id}`}>
+        <Link href={`/blogs/${post.Post.id}`}>
             <div
                 className="mb-8 border-2 shadow-md p-2 group relative animate-fade-up animate-ease-in-out animate-duration-300"
                 style={{

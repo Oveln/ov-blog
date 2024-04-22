@@ -1,8 +1,10 @@
 "use client";
 import MDEditor from "@uiw/react-md-editor";
-import React, { useState, ChangeEvent, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { notFound } from "next/navigation";
+import { Loading } from "@/components/ui/loading";
 
 type ERROR = {
     error: string;
@@ -50,15 +52,14 @@ export default function PostEdit({ params }: { params: { id: string; version: st
     }, []);
     const handleChange = (value: string | undefined) => {
         setContent(value || "");
-        console.log(value);
     };
 
     if (pageState == PageState.LOADING) {
-        return loading();
+        return <Loading />;
     }
 
     if (pageState == PageState.ERROR) {
-        return loading();
+        return notFound();
     }
 
     return (

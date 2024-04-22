@@ -1,12 +1,11 @@
-import { getAllPostCardInfo, getPostById, getPostVersionByPostIdAndVersion } from "@/data/db";
+import { getAllPostCardInfo, getPostById } from "@/data/db";
 import { notFound } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import RehypeKatex from "rehype-katex";
-import RehypePrettyCode from "rehype-pretty-code";
 import "katex/dist/katex.min.css";
 import "./code.css";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
@@ -23,10 +22,7 @@ export const generateStaticParams = async () =>
 
 const Post = async ({ params }: { params: { slug: string } }) => {
     const post = await getPostById(parseInt(params.slug));
-    if (!post) {
-        return notFound();
-    }
-    const postVersion = await getPostVersionByPostIdAndVersion(post.id, post.published_version);
+    const postVersion = post?.postVersions[0];
     if (!postVersion) {
         return notFound();
     }

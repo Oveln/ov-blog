@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 export default function Dashboard() {
     const { update, data, status } = useSession();
     if (status == "unauthenticated") {
-        useRouter().push("/");
+        useRouter().push("/login");
+        return <></>;
     }
     return (
         <>
