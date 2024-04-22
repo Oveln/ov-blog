@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import dynamic from "next/dynamic";
 import {
     Table,
     TableBody,
@@ -13,10 +12,8 @@ import {
 import { useSession } from "next-auth/react";
 import { UserPostRetType } from "@/app/(auth)/api/user/route";
 import { PostActionButton } from "./PostActionButton";
-import { Loading } from "@/components/ui/loading";
 import { useRouter } from "next/navigation";
-
-const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
+import { format } from "date-fns";
 
 const columns: ColumnDef<UserPostRetType>[] = [
     {
@@ -25,15 +22,23 @@ const columns: ColumnDef<UserPostRetType>[] = [
     },
     {
         header: "Create Time",
-        accessorFn: (row) => row.postVersions.find((v) => v.published)?.create_time.toLocaleString()
+        accessorFn: (row) => {
+            const create_time = row.postVersions.find((v) => v.published)?.create_time;
+            if (!create_time) return "???";
+            return format(create_time, "LLLL d, yyyy, p");
+        }
     },
     {
         header: "Update Time",
-        accessorFn: (row) => row.postVersions.find((v) => v.published)?.update_time.toLocaleString()
+        accessorFn: (row) => {
+            const updateTime = row.postVersions.find((v) => v.published)?.update_time;
+            if (!updateTime) return "???";
+            return format(updateTime, "LLLL d, yyyy, p");
+        }
     },
     {
         header: "Published Version",
-        accessorKey: "published_version"
+        accessorFn: (row) => row.postVersions.find((v) => v.published)?.version
     },
     {
         id: "actions",
@@ -52,8 +57,8 @@ export default function PostEdit() {
         columns,
         getCoreRowModel: getCoreRowModel()
     });
-    const { data: session } = useSession();
-    if (!session) {
+    const session = useSession();
+    if (session.status === "unauthenticated") {
         useRouter().push("/login");
     }
 
