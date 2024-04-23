@@ -1,12 +1,12 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, {  } from "react";
 import { useRouter } from "next/navigation";
-import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/route";
 import PostEditor from "@/components/PostEditor";
 import { useSession } from "next-auth/react";
+import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/get";
 
 export default function PostEdit({ params }: { params: { id: string; version: string } }) {
-    const [postVersion, setPostVersion] = useState<GetPostVersionType>({
+    const postVersion: GetPostVersionType = {
         title: "",
         description: "",
         content: "",
@@ -14,9 +14,7 @@ export default function PostEdit({ params }: { params: { id: string; version: st
         published: false,
         update_time: new Date(),
         postId: 0
-    });
-    const router = useRouter();
-    const session = useSession();
+    };
 
     return <PostEditor postVersion={postVersion}></PostEditor>;
 }

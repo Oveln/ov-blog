@@ -17,7 +17,7 @@ export const revalidate = 30;
 export const generateStaticParams = async () =>
     (await getAllPostCardInfo()).map((post) => {
         // eslint-disable-next-line no-unused-labels
-        post?.id;
+        post.Post.id;
     });
 
 const Post = async ({ params }: { params: { slug: string } }) => {
@@ -67,10 +67,7 @@ const Post = async ({ params }: { params: { slug: string } }) => {
                     height={500}
                     className="rounded-xl p-1"
                 />
-                <Calendar
-                    mode="single"
-                    selected={post.create_time}
-                ></Calendar>
+                <Calendar mode="single" selected={post.create_time}></Calendar>
             </ResizablePanel>
         </ResizablePanelGroup>
     );
