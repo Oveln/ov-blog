@@ -27,21 +27,32 @@ model Post {
 }
 
 model Post_Version {
-  id          Int      @id @default(autoincrement())
+  version     Int                @default(1)
   title       String
   description String?
   content     String
-  tags        Tag[]
-  version     Int      @default(1)
-  update_time DateTime @default(now())
-  Post        Post     @relation(fields: [postId], references: [id])
+  update_time DateTime           @default(now())
+  Post        Post               @relation(fields: [postId], references: [id])
   postId      Int
-  published   Boolean  @default(false)
+  published   Boolean            @default(false)
+  tags        TagOnPostVersion[]
+
+  @@id([postId, version])
 }
 
 model Tag {
-  id             Int           @id @default(autoincrement())
-  name           String
-  Post_Version   Post_Version? @relation(fields: [post_VersionId], references: [id])
-  post_VersionId Int?
+  id           Int                @id @default(autoincrement())
+  name         String             @unique
+  postVersions TagOnPostVersion[]
+}
+
+model TagOnPostVersion {
+  postVersion Post_Version @relation(fields: [post_VersionPostId, post_VersionVersion], references: [postId, version])
+  tag         Tag          @relation(fields: [tagId], references: [id])
+
+  post_VersionPostId  Int
+  post_VersionVersion Int
+  tagId               Int
+
+  @@id([tagId, post_VersionPostId, post_VersionVersion])
 }
