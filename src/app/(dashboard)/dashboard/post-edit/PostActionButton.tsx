@@ -11,7 +11,6 @@ import Link from "next/link";
 import React from "react";
 
 export const PostActionButton = ({ post }: { post: UserPostRetType }) => {
-    console.log(post);
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>

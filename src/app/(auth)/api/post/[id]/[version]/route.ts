@@ -12,7 +12,6 @@ export type GetPostVersionType = {
     id: number;
     description: string | null;
     version: number;
-    create_time: Date;
     update_time: Date;
     postId: number;
     published: boolean;
@@ -48,10 +47,14 @@ export async function GET(req: Request, context: { params: Params }) {
             description: true,
             content: true,
             version: true,
-            create_time: true,
             update_time: true,
             postId: true,
-            published: true
+            published: true,
+            Post: {
+                select: {
+                    create_time: true,
+                }
+            }
         }
     });
     return Response.json(post_version);

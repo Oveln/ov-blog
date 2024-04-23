@@ -19,6 +19,7 @@ export default function PostEdit({ params }: { params: { id: string; version: st
     const [description, setDescription] = useState<string>("");
     const [content, setContent] = useState<string>("");
     const [postVersion, setPostVersion] = useState<GetPostVersionType>(null);
+    const router = useRouter();
 
     useEffect(() => {
         const loadData = async () => {
@@ -27,14 +28,14 @@ export default function PostEdit({ params }: { params: { id: string; version: st
                 const data = await res.json();
                 console.log(data);
                 if (!data) {
-                    useRouter().push("404");
+                    router.push("/404");
                 }
                 setPostVersion(data as GetPostVersionType);
                 setTitle(data.title);
                 setDescription(data.description || "");
                 setContent(data.content);
             } catch {
-                useRouter().push("404");
+                router.push("/404");
             }
         };
         loadData();
@@ -72,7 +73,7 @@ export default function PostEdit({ params }: { params: { id: string; version: st
                     action: {
                         label: "查看",
                         onClick: () => {
-                            useRouter().push(`/dashboard/post/${postVersion.postId}`);
+                            router.push(`/blogs/${postVersion.postId}`);
                         }
                     }
                 });
@@ -118,7 +119,7 @@ export default function PostEdit({ params }: { params: { id: string; version: st
                             value={description}
                             onChange={(s) => setDescription(s.target.value)}
                             placeholder=""
-                            className="flex-1 w-"
+                            className="flex-1"
                         ></Input>
                     </div>
                 </div>

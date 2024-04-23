@@ -4,13 +4,13 @@ import { auth } from "@/lib/auth/auth";
 type Params = {
     userName: string;
 };
-
+// 获取当前用户的所有文章和其对应的版本
 export type UserPostRetType = {
     id: number;
+    create_time: Date;
     postVersions: {
         title: string;
         version: number;
-        create_time: Date;
         update_time: Date;
         published: boolean;
     }[];
@@ -31,10 +31,10 @@ export const GET = async (req: Request, context: { params: Params }) => {
         },
         select: {
             id: true,
+            create_time: true,
             postVersions: {
                 select: {
                     title: true,
-                    create_time: true,
                     update_time: true,
                     version: true,
                     published: true
