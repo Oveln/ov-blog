@@ -23,7 +23,7 @@ const columns: ColumnDef<UserPostRetType>[] = [
     {
         header: "Create Time",
         accessorFn: (row) => {
-            const create_time = row.postVersions.find((v) => v.published)?.create_time;
+            const create_time = row.create_time;
             if (!create_time) return "???";
             return format(create_time, "LLLL d, yyyy, p");
         }
@@ -44,7 +44,6 @@ const columns: ColumnDef<UserPostRetType>[] = [
         id: "actions",
         cell: ({ row }) => {
             const post = row.original;
-            console.log(post);
             return <PostActionButton post={post}></PostActionButton>;
         }
     }

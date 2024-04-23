@@ -36,10 +36,10 @@ const Post = async ({ params }: { params: { slug: string } }) => {
                     <div className="mb-8 text-center">
                         <h1 className="text-3xl font-bold">{postVersion?.title}</h1>
                         <time
-                            dateTime={format(postVersion.create_time, "yyyy-MM-dd")}
+                            dateTime={format(post.create_time, "yyyy-MM-dd")}
                             className="mb-1 text-xs text-gray-600"
                         >
-                            Created: {format(postVersion.create_time, "yyyy-MM-dd")}
+                            Created: {format(post.create_time, "yyyy-MM-dd")}
                         </time>
                     </div>
                     <main className="prose lg:prose-xl prose-table:w-11/12 prose-table:border prose-table:m-auto px-2 prose-td:border-x prose-th:border-x">
@@ -69,8 +69,7 @@ const Post = async ({ params }: { params: { slug: string } }) => {
                 />
                 <Calendar
                     mode="single"
-                    selected={postVersion.create_time}
-                    // className="rounded-md border shadow"
+                    selected={post.create_time}
                 ></Calendar>
             </ResizablePanel>
         </ResizablePanelGroup>

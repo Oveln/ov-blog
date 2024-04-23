@@ -7,7 +7,7 @@ export default async function PostList() {
     return (
         <>
             {posts.map((post, idx) => (
-                <PostCard key={idx} dataFade={idx} post={post} />
+                <PostCard key={idx} dataFade={idx} postVersion={post} />
             ))}
         </>
     );
