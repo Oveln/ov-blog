@@ -51,6 +51,7 @@ const columns: ColumnDef<UserPostRetType>[] = [
 
 export default function PostEdit() {
     const [data, setData] = React.useState<UserPostRetType[]>([]);
+    const router = useRouter();
     const table = useReactTable({
         data,
         columns,
@@ -58,7 +59,7 @@ export default function PostEdit() {
     });
     const session = useSession();
     if (session.status === "unauthenticated") {
-        useRouter().push("/login");
+        router.push("/login");
     }
 
     useEffect(() => {
