@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client";
 export const prisma = new PrismaClient();
 
 export type PostCardInfo = {
-    id: number;
     title: string;
     description: string | null;
     update_time: Date;
@@ -22,7 +21,6 @@ export const getAllPostCardInfo = async () => {
             published: true
         },
         select: {
-            id: true,
             title: true,
             description: true,
             update_time: true,

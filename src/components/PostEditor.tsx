@@ -8,6 +8,7 @@ import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import { Loading } from "./ui/loading";
 import { NewPostVersionRetType, NewPostVersionType } from "@/app/(auth)/api/post/[id]/route";
+import { NewPostRetType, NewPostType } from "@/app/(auth)/api/post/route";
 
 export default function PostEditor({ postVersion }: { postVersion: GetPostVersionType }) {
     if (!postVersion) {
@@ -15,7 +16,7 @@ export default function PostEditor({ postVersion }: { postVersion: GetPostVersio
     }
 
     const [title, setTitle] = useState<string>(postVersion.title);
-    const [description, setDescription] = useState<string>(postVersion.description??"");
+    const [description, setDescription] = useState<string>(postVersion.description ?? "");
     const [content, setContent] = useState<string>(postVersion.content);
     const router = useRouter();
 
@@ -24,22 +25,42 @@ export default function PostEditor({ postVersion }: { postVersion: GetPostVersio
             toast("不可以是空标题！");
             return;
         }
-        const postData: NewPostVersionType = {
-            title: title,
-            description: description == "" ? null : description,
-            content: content,
-            postId: postVersion.postId,
-            published: true
-        };
-        const res: NewPostVersionRetType = await (
-            await fetch(`/api/post/${postVersion.postId}`, {
-                method: "POST",
-                body: JSON.stringify(postData),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-        ).json();
+        let res;
+        if (postVersion.postId != 0) {
+            const postData: NewPostVersionType = {
+                title: title,
+                description: description == "" ? null : description,
+                content: content,
+                postId: postVersion.postId,
+                published: true
+            };
+            const r: NewPostVersionRetType = await (
+                await fetch(`/api/post/${postVersion.postId}`, {
+                    method: "POST",
+                    body: JSON.stringify(postData),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+            ).json();
+            res = r;
+        } else {
+            const postData: NewPostType = {
+                title: title,
+                description: description == "" ? null : description,
+                content: content
+            };
+            const r: NewPostRetType = await (
+                await fetch(`/api/post`, {
+                    method: "POST",
+                    body: JSON.stringify(postData),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+            ).json();
+            res = r;
+        }
         switch (res.status) {
             case "ok":
                 toast("提交成功", {
@@ -50,6 +71,16 @@ export default function PostEditor({ postVersion }: { postVersion: GetPostVersio
                             router.push(`/blogs/${postVersion.postId}`);
                         }
                     }
+                });
+                return;
+            case "data_error":
+                toast("提交失败", {
+                    description: "数据错误"
+                });
+                return;
+            case "db_error":
+                toast("提交失败", {
+                    description: "数据库错误"
                 });
                 return;
             case "error":

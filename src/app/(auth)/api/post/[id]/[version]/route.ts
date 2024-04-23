@@ -9,7 +9,6 @@ type Params = {
 export type GetPostVersionType = {
     content: string;
     title: string;
-    id: number;
     description: string | null;
     version: number;
     update_time: Date;
@@ -42,7 +41,6 @@ export async function GET(req: Request, context: { params: Params }) {
             }
         },
         select: {
-            id: true,
             title: true,
             description: true,
             content: true,
