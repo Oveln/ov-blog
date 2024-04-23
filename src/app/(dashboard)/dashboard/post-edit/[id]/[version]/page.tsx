@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/route";
 import PostEditor from "@/components/PostEditor";
+import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/get";
 
 export default function PostEdit({ params }: { params: { id: string; version: string } }) {
     const [postVersion, setPostVersion] = useState<GetPostVersionType>(null);

@@ -1,4 +1,3 @@
-import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/route";
 import MDEditor from "@uiw/react-md-editor";
 import { Send, RotateCcw } from "lucide-react";
 import React, { useState } from "react";
@@ -9,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Loading } from "./ui/loading";
 import { NewPostVersionRetType, NewPostVersionType } from "@/app/(auth)/api/post/[id]/route";
 import { NewPostRetType, NewPostType } from "@/app/(auth)/api/post/route";
+import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/get";
 
 export default function PostEditor({ postVersion }: { postVersion: GetPostVersionType }) {
     if (!postVersion) {

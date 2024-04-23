@@ -11,46 +11,96 @@ import {
 } from "@/components/ui/table";
 import { useSession } from "next-auth/react";
 import { UserPostRetType } from "@/app/(auth)/api/user/route";
-import { PostActionButton } from "./PostActionButton";
+import { PostActionButtons } from "./PostActionButton";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 
-const columns: ColumnDef<UserPostRetType>[] = [
-    {
-        header: "Title",
-        accessorFn: (row) => row.postVersions.find((v) => v.published)?.title
-    },
-    {
-        header: "Create Time",
-        accessorFn: (row) => {
-            const create_time = row.create_time;
-            if (!create_time) return "???";
-            return format(create_time, "LLLL d, yyyy, p");
-        }
-    },
-    {
-        header: "Update Time",
-        accessorFn: (row) => {
-            const updateTime = row.postVersions.find((v) => v.published)?.update_time;
-            if (!updateTime) return "???";
-            return format(updateTime, "LLLL d, yyyy, p");
-        }
-    },
-    {
-        header: "Published Version",
-        accessorFn: (row) => row.postVersions.find((v) => v.published)?.version
-    },
-    {
-        id: "actions",
-        cell: ({ row }) => {
-            const post = row.original;
-            return <PostActionButton post={post}></PostActionButton>;
-        }
-    }
-];
-
 export default function PostEdit() {
     const [data, setData] = React.useState<UserPostRetType[]>([]);
+    const handleChange = (postId: number, version: number, action: "delete" | "check_out") => {
+        console.log(postId, version, action);
+        // 创建data的拷贝
+        const newData = [...data];
+        switch (action) {
+            case "delete":
+                for (let i = 0; i < newData.length; i++) {
+                    if (newData[i].id === postId) {
+                        newData[i].postVersions = newData[i].postVersions.filter(
+                            (v) => v.version !== version
+                        );
+                        if (newData[i].postVersions.length === 0) {
+                            newData.splice(i, 1);
+                        } else if (
+                            !newData[i].postVersions.find((postversion) => {
+                                postversion.published;
+                            })
+                        ) {
+                            // 找到最大的版本，设置为发布
+                            const maxVersion = Math.max(
+                                ...newData[i].postVersions.map((v) => v.version)
+                            );
+                            newData[i].postVersions = newData[i].postVersions.map((v) => {
+                                return {
+                                    ...v,
+                                    published: v.version === maxVersion
+                                };
+                            });
+                        }
+                        break;
+                    }
+                }
+                break;
+            case "check_out":
+                for (let i = 0; i < newData.length; i++) {
+                    if (newData[i].id === postId) {
+                        newData[i].postVersions = newData[i].postVersions.map((v) => {
+                            return {
+                                ...v,
+                                published: v.version === version
+                            };
+                        });
+                        break;
+                    }
+                }
+        }
+        console.log(newData);
+        setData(newData as UserPostRetType[]);
+    };
+    const columns: ColumnDef<UserPostRetType>[] = [
+        {
+            header: "Title",
+            accessorFn: (row) => row.postVersions.find((v) => v.published)?.title
+        },
+        {
+            header: "Create Time",
+            accessorFn: (row) => {
+                const create_time = row.create_time;
+                if (!create_time) return "???";
+                return format(create_time, "LLLL d, yyyy, p");
+            }
+        },
+        {
+            header: "Update Time",
+            accessorFn: (row) => {
+                const updateTime = row.postVersions.find((v) => v.published)?.update_time;
+                if (!updateTime) return "???";
+                return format(updateTime, "LLLL d, yyyy, p");
+            }
+        },
+        {
+            header: "Published Version",
+            accessorFn: (row) => row.postVersions.find((v) => v.published)?.version
+        },
+        {
+            id: "actions",
+            cell: ({ row }) => {
+                const post = row.original;
+                return (
+                    <PostActionButtons post={post} handleChange={handleChange}></PostActionButtons>
+                );
+            }
+        }
+    ];
     const router = useRouter();
     const table = useReactTable({
         data,
@@ -99,9 +149,9 @@ export default function PostEdit() {
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
                                 >
-                                    {row.getVisibleCells().map((cell) => (
+                                    {row.getVisibleCells().map((cell, index) => (
                                         <>
-                                            <TableCell key={cell.id}>
+                                            <TableCell key={index}>
                                                 {flexRender(
                                                     cell.column.columnDef.cell,
                                                     cell.getContext()
