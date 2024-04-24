@@ -55,9 +55,36 @@ export const PostActionButtons = ({
                     {post.postVersions.map((postVersion) => (
                         <DropdownMenuItem
                             key={postVersion.version}
-                            onClick={() => {
+                            onClick={async () => {
                                 console.log("CheckOut", postVersion.version);
-                                handleChange(post.id, postVersion.version, "check_out");
+                                const res = (await (
+                                    await fetch(`/api/post/${post.id}/${postVersion.version}`, {
+                                        method: "POST"
+                                    })
+                                ).json()) as DeletePostVersionRetType;
+                                switch (res.status) {
+                                    case "ok":
+                                        toast("切换成功", {
+                                            description: "CheckOut Success"
+                                        });
+                                        handleChange(post.id, postVersion.version, "check_out");
+                                        break;
+                                    case "unauthorized":
+                                        toast("切换失败", {
+                                            description: "Unauthorized"
+                                        });
+                                        break;
+                                    case "not_found":
+                                        toast("切换失败", {
+                                            description: "Not Found"
+                                        });
+                                        break;
+                                    case "error":
+                                        toast("切换失败", {
+                                            description: "Error"
+                                        });
+                                        break;
+                                }
                             }}
                         >
                             {postVersion.published ? (
