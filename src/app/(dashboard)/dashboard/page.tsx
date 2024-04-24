@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
-    const { update, data, status } = useSession();
+    const { data, status } = useSession();
     if (status == "unauthenticated") {
         useRouter().push("/login");
         return <></>;

@@ -5,7 +5,7 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 
 export const UserCard = () => {
-    const { update, data, status } = useSession();
+    const { data } = useSession();
     return (
         <Card>
             <CardHeader>{data?.user?.name}</CardHeader>
