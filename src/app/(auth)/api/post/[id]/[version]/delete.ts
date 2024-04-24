@@ -1,5 +1,5 @@
 import { prisma } from "@/data/db";
-import { auth } from "@/lib/auth/auth";
+import { getUser } from "@/data/user";
 
 type Params = {
     id: string;
@@ -11,12 +11,9 @@ export type DeletePostVersionRetType = {
 };
 // 对不起，这是答辩山
 export default async function DELETE(req: Request, context: { params: Params }) {
-    const session = await auth();
-    const userName = session?.user?.name;
-    if (!session || !userName) {
-        return Response.json({
-            status: "unauthorized"
-        });
+    const user = await getUser();
+    if (!user) {
+        return Response.json({ status: "unauthorized" });
     }
     const id = parseInt(context.params.id);
     const version = parseInt(context.params.version);
@@ -29,7 +26,7 @@ export default async function DELETE(req: Request, context: { params: Params }) 
             where: {
                 id: id,
                 User: {
-                    name: userName
+                    name: user.name
                 }
             }
         })) == 0
@@ -55,8 +52,6 @@ export default async function DELETE(req: Request, context: { params: Params }) 
                 id: id
             }
         });
-        console.log(`delete post ${id}`);
-        return Response.json({ status: "ok" });
     } else {
         // 如果删除版本正在发布，则删除时将发布权交给最新版本
         if (
@@ -120,7 +115,7 @@ export default async function DELETE(req: Request, context: { params: Params }) 
                         },
                         Post: {
                             User: {
-                                name: userName
+                                name: user.name
                             }
                         }
                     }
@@ -132,6 +127,5 @@ export default async function DELETE(req: Request, context: { params: Params }) 
             }
         }
     }
-    console.log(`delete ${id} ${version}`);
     return Response.json({ status: "ok" });
 }

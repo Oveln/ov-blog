@@ -9,26 +9,26 @@ export type UserPostRetType = {
     id: number;
     create_time: Date;
     postVersions: {
-        version: number;
         title: string;
+        version: number;
         update_time: Date;
         published: boolean;
     }[];
-    User: {
-        name: string;
-        email: string;
-    };
 };
-export const GET = async (req: Request) => {
+export const GET = async (req: Request, context: { params: Params }) => {
     const user = await getUser();
     if (!user) {
         return { status: "unauthorized" };
     }
-    if (user.role != Role.ADMIN) {
+    if (user.name != context.params.userName && user.role != Role.ADMIN) {
         return { status: "unauthorized" };
     }
-    const retPosts: UserPostRetType[] = await prisma.post.findMany({
-        where: {},
+    const retPosts = await prisma.post.findMany({
+        where: {
+            User: {
+                name: user.name
+            }
+        },
         select: {
             id: true,
             create_time: true,
@@ -41,12 +41,6 @@ export const GET = async (req: Request) => {
                 },
                 orderBy: {
                     update_time: "desc"
-                }
-            },
-            User: {
-                select: {
-                    name: true,
-                    email: true
                 }
             }
         }

@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { Role, User, roleStringToEnum } from "./user";
 
 export const prisma = new PrismaClient();
 
@@ -39,21 +40,6 @@ export const getAllPostCardInfo = async () => {
         }
     });
     return ret;
-};
-
-export const getUserById = async (id: number) => {
-    return await prisma.user.findUnique({
-        where: {
-            id: id
-        }
-    });
-};
-export const getUserByName = async (name: string) => {
-    return await prisma.user.findUnique({
-        where: {
-            name: name
-        }
-    });
 };
 
 export const getPostByUserName = async (userName: string) => {
@@ -102,4 +88,21 @@ export const getPostVersionByPostIdAndVersion = async (post_id: number, version:
             }
         }
     });
+};
+
+export const getUserByName = async (name: string): Promise<User | null> => {
+    const dbUser = await prisma.user.findUnique({
+        where: {
+            name: name
+        }
+    });
+    if (dbUser === null) {
+        return null;
+    }
+    const user: User = {
+        name: dbUser.name,
+        email: dbUser.email,
+        role: roleStringToEnum(dbUser.role)
+    };
+    return user;
 };
