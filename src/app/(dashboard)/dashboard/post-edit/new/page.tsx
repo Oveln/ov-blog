@@ -1,8 +1,6 @@
 "use client";
 import React, {  } from "react";
-import { useRouter } from "next/navigation";
 import PostEditor from "@/components/PostEditor";
-import { useSession } from "next-auth/react";
 import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/get";
 
 export default function PostEdit({ params }: { params: { id: string; version: string } }) {

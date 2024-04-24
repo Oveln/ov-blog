@@ -1,5 +1,5 @@
 import { prisma } from "@/data/db";
-import { auth } from "@/lib/auth/auth";
+import { getUser } from "@/data/user";
 
 type Params = {
     id: string;
@@ -17,12 +17,9 @@ export type GetPostVersionType = {
 } | null;
 
 export default async function GET(req: Request, context: { params: Params }) {
-    const session = await auth();
-    const userName = session?.user?.name;
-    if (!session || !userName) {
-        return Response.json({
-            status: "unauthorized"
-        });
+    const user = await getUser();
+    if (!user) {
+        return Response.json(null);
     }
     const id = parseInt(context.params.id);
     const version = parseInt(context.params.version);
@@ -36,7 +33,7 @@ export default async function GET(req: Request, context: { params: Params }) {
             Post: {
                 id: id,
                 User: {
-                    name: userName
+                    name: user.name
                 }
             }
         },

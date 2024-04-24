@@ -1,5 +1,5 @@
 import { prisma } from "@/data/db";
-import { auth } from "@/lib/auth/auth";
+import { getUser } from "@/data/user";
 
 export type NewPostVersionType = {
     title: string;
@@ -99,25 +99,26 @@ const newVersion = async (
 };
 
 export const POST = async (req: Request) => {
-    const session = await auth();
-    const userName = session?.user?.name;
-    if (!userName) return Response.json({ status: "error" });
+    const user = await getUser();
+    if (!user) {
+        return Response.json({ status: "unauthorized" });
+    }
     //对每个用户分开防抖，间隔5秒
     const delay = 5;
-    if (debounceMap.has(userName)) {
-        clearTimeout(debounceMap.get(userName));
+    if (debounceMap.has(user.name)) {
+        clearTimeout(debounceMap.get(user.name));
         debounceMap.set(
-            userName,
+            user.name,
             setTimeout(() => {
-                debounceMap.delete(userName);
+                debounceMap.delete(user.name);
             }, delay)
         );
         return Response.json({ status: "busy" });
     } else {
         debounceMap.set(
-            userName,
+            user.name,
             setTimeout(() => {
-                debounceMap.delete(userName);
+                debounceMap.delete(user.name);
             }, delay)
         );
     }
@@ -127,5 +128,5 @@ export const POST = async (req: Request) => {
     if (!isNewPostVersionType(data)) {
         return Response.json({ status: "data_error" });
     }
-    return Response.json(await newVersion(data, userName));
+    return Response.json(await newVersion(data, user.name));
 };

@@ -1,5 +1,5 @@
 import { prisma } from "@/data/db";
-import { auth } from "@/lib/auth/auth";
+import { getUser } from "@/data/user";
 
 export type NewPostType = {
     title: string;
@@ -16,21 +16,18 @@ const idNewPostType = (data: any): data is NewPostType => {
     );
 };
 
+// 若ok，返回新建的文章的id
 export type NewPostRetType = {
     status: "ok" | "error" | "busy" | "unauthorized" | "db_error" | "data_error";
+    post_id: number | null;
 };
 
 const debounceMap = new Map<string, NodeJS.Timeout>();
 
 const newPost = async (data: NewPostType, userName: string): Promise<NewPostRetType> => {
-    const user = await prisma.user.findUnique({
-        where: {
-            name: userName
-        }
-    });
-    if ((user?.role != "USER" && user?.role != "ADMIN") || !user) return { status: "unauthorized" };
+    let post;
     try {
-        await prisma.post_Version.create({
+        post = await prisma.post_Version.create({
             data: {
                 title: data.title,
                 description: data.description,
@@ -38,38 +35,44 @@ const newPost = async (data: NewPostType, userName: string): Promise<NewPostRetT
                 published: true,
                 Post: {
                     create: {
-                        userId: user.id
+                        User: {
+                            connect: {
+                                name: userName
+                            }
+                        }
                     }
                 }
             }
         });
     } catch {
-        return { status: "db_error" };
+        return { status: "db_error", post_id: null };
     }
     return {
-        status: "ok"
+        status: "ok",
+        post_id: post.postId
     };
 };
 export const POST = async (req: Request) => {
-    const session = await auth();
-    const userName = session?.user?.name;
-    if (!userName) return Response.json({ status: "unauthorized" });
+    const user = await getUser();
+    if (!user) {
+        return Response.json({ status: "unauthorized" });
+    }
     //对每个用户分开防抖，间隔5秒
     const delay = 5;
-    if (debounceMap.has(userName)) {
-        clearTimeout(debounceMap.get(userName));
+    if (debounceMap.has(user.name)) {
+        clearTimeout(debounceMap.get(user.name));
         debounceMap.set(
-            userName,
+            user.name,
             setTimeout(() => {
-                debounceMap.delete(userName);
+                debounceMap.delete(user.name);
             }, delay)
         );
         return Response.json({ status: "busy" });
     } else {
         debounceMap.set(
-            userName,
+            user.name,
             setTimeout(() => {
-                debounceMap.delete(userName);
+                debounceMap.delete(user.name);
             }, delay)
         );
     }
@@ -79,5 +82,5 @@ export const POST = async (req: Request) => {
     if (!idNewPostType(data)) {
         return Response.json({ status: "data_error" });
     }
-    return Response.json(await newPost(data, userName));
+    return Response.json(await newPost(data, user.name));
 };

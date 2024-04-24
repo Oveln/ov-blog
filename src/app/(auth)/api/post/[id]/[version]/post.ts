@@ -1,6 +1,6 @@
 // post一个版本表示切换到这个版本
 import { prisma } from "@/data/db";
-import { auth } from "@/lib/auth/auth";
+import { getUser } from "@/data/user";
 
 type Params = {
     id: string;
@@ -12,12 +12,9 @@ export type CheckOutPostVersionRetType = {
 };
 
 export default async function POST(req: Request, context: { params: Params }) {
-    const session = await auth();
-    const userName = session?.user?.name;
-    if (!session || !userName) {
-        return Response.json({
-            status: "unauthorized"
-        });
+    const user = await getUser();
+    if (!user) {
+        return Response.json({ status: "unauthorized" });
     }
     const id = parseInt(context.params.id);
     const version = parseInt(context.params.version);
@@ -32,7 +29,7 @@ export default async function POST(req: Request, context: { params: Params }) {
             where: {
                 id: id,
                 User: {
-                    name: userName
+                    name: user.name
                 }
             }
         }))

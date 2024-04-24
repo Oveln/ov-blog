@@ -10,10 +10,10 @@ import {
     TableRow
 } from "@/components/ui/table";
 import { useSession } from "next-auth/react";
-import { UserPostRetType } from "@/app/(auth)/api/user/route";
 import { PostActionButtons } from "./PostActionButton";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import { UserPostRetType } from "@/app/(auth)/api/user/[userName]/route";
 
 export default function PostEdit() {
     const [data, setData] = React.useState<UserPostRetType[]>([]);
@@ -113,12 +113,13 @@ export default function PostEdit() {
     }
 
     useEffect(() => {
+        if (session.status !== "authenticated") return;
         const getData = async () => {
-            const data = await fetch(`/api/user`);
+            const data = await fetch(`/api/user/${session.data?.user?.name}`);
             setData(await data.json());
         };
         getData();
-    }, []);
+    }, [session.status]);
 
     return (
         <div className="h-full w-full p-2">
