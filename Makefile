@@ -26,8 +26,18 @@ update:
 	git pull
 	make restart
 
-status:
-	pm2 status ov-blog
+webhook:
+	pm2 start webhook.ts --name ov-blog-webhook
 
-log:
-	pm2 log ov-blog
+stop-webhook:
+	pm2 delete ov-blog-webhook || true
+
+all: start webhook
+
+stop-all: stop stop-webhook
+
+status:
+	pm2 status
+
+monit:
+	pm2 monit
