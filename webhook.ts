@@ -33,3 +33,7 @@ handler.on("push", () => {
         console.error(`stderr: ${stderr}`);
     });
 });
+
+handler.on("ping", ()=> {
+    console.log("ping");
+})
