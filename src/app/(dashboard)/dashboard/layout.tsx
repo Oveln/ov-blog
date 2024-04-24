@@ -6,7 +6,6 @@ import React from "react";
 import { MySessionProviders } from "@/context/MySessionProvider";
 import { NavMenuDashboard } from "@/components/layout/nav-menu-dashboard";
 import { NavMenu } from "@/components/layout/nav-menu";
-import { auth } from "@/lib/auth/auth";
 import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,7 +20,6 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const session = await auth();
     return (
         <html lang="en" className="m-0 p-0">
             <body

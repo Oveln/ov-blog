@@ -4,24 +4,13 @@ import { Role, getUser } from "@/data/user";
 type Params = {
     userName: string;
 };
-// 获取当前用户的所有文章和其对应的版本
-export type UserPostRetType = {
-    id: number;
-    create_time: Date;
-    postVersions: {
-        title: string;
-        version: number;
-        update_time: Date;
-        published: boolean;
-    }[];
-};
-export const GET = async (req: Request, context: { params: Params }) => {
+export const GET = async (_req: Request, context: { params: Params }) => {
     const user = await getUser();
     if (!user) {
-        return { status: "unauthorized" };
+        return Response.json({ status: "unauthorized" });
     }
     if (user.name != context.params.userName && user.role != Role.ADMIN) {
-        return { status: "unauthorized" };
+        return Response.json({ status: "unauthorized" });
     }
     const retPosts = await prisma.post.findMany({
         where: {
@@ -41,6 +30,12 @@ export const GET = async (req: Request, context: { params: Params }) => {
                 },
                 orderBy: {
                     update_time: "desc"
+                }
+            },
+            User: {
+                select: {
+                    name: true,
+                    email: true
                 }
             }
         }

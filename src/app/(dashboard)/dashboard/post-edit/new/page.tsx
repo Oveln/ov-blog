@@ -3,7 +3,7 @@ import React, {  } from "react";
 import PostEditor from "@/components/PostEditor";
 import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/get";
 
-export default function PostEdit({ params }: { params: { id: string; version: string } }) {
+export default function PostEdit() {
     const postVersion: GetPostVersionType = {
         title: "",
         description: "",

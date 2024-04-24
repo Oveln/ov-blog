@@ -13,12 +13,11 @@ import { useSession } from "next-auth/react";
 import { PostActionButtons } from "./PostActionButton";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { UserPostRetType } from "@/app/(auth)/api/user/[userName]/route";
+import { UserPostRetType } from "@/app/(auth)/api/user/route";
 
 export default function PostEdit() {
     const [data, setData] = React.useState<UserPostRetType[]>([]);
     const handleChange = (postId: number, version: number, action: "delete" | "check_out") => {
-        console.log(postId, version, action);
         // 创建data的拷贝
         const newData = [...data];
         switch (action) {
@@ -63,7 +62,6 @@ export default function PostEdit() {
                     }
                 }
         }
-        console.log(newData);
         setData(newData as UserPostRetType[]);
     };
     const columns: ColumnDef<UserPostRetType>[] = [
@@ -126,7 +124,7 @@ export default function PostEdit() {
             <div className="h-full w-full overflow-auto border rounded-md">
                 <Table className="max-h-full bg-white border-b">
                     <TableHeader className="top-0 sticky bg-secondary">
-                        {table.getHeaderGroups().map((headerGroup, index) => (
+                        {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (

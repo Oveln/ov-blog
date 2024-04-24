@@ -1,10 +1,8 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EnvelopeClosedIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
-import clsx from "clsx";
 import Link from "next/link";
 import React from "react";
-import { useSession } from "next-auth/react";
 
 const ovLinks = [
     {
@@ -20,7 +18,6 @@ const ovLinks = [
 ];
 
 export default function Home() {
-    const isLoaded = true;
     let t = 0;
     const getT = () => {
         return t++;

@@ -28,6 +28,7 @@
     "clsx": "^2.1.0",
     "date-fns": "^3.3.1",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-unused-imports": "^3.1.0",
     "katex": "^0.16.9",
     "lucide": "^0.372.0",
     "lucide-react": "^0.314.0",
