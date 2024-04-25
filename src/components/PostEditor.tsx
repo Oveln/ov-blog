@@ -1,6 +1,6 @@
 import MDEditor from "@uiw/react-md-editor";
 import { Send, RotateCcw } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -100,9 +100,26 @@ export default function PostEditor({ postVersion }: { postVersion: GetPostVersio
                 return;
         }
     };
+    // 获取高度
+    const buttonsRef = useRef<HTMLDivElement>(null);
+    const pageRef = useRef<HTMLDivElement>(null);
+    const [height, setHeight] = useState<number>(0);
+    useEffect(() => {
+        // 监听resize
+        const resize = () => {
+            if (!pageRef.current || !buttonsRef.current) {
+                return;
+            }
+            const height = pageRef.current.clientHeight - buttonsRef.current.clientHeight;
+            console.log(height);
+            setHeight(height - 20);
+        };
+        window.addEventListener("resize", resize);
+    }, []);
+
     return (
-        <div className="flex flex-col relative h-full">
-            <div className="flex">
+        <div className="flex flex-col relative h-full" ref={pageRef}>
+            <div className="flex" ref={buttonsRef}>
                 <div className="flex flex-col flex-1 py-2">
                     <div className="flex w-3/5 mb-2 flex-1">
                         <span className="flex items-center justify-center text-xl px-2">标题</span>
@@ -147,7 +164,7 @@ export default function PostEditor({ postVersion }: { postVersion: GetPostVersio
             <div className="flex-1 p-2">
                 <MDEditor
                     className="editor h-full"
-                    height="100%"
+                    height={height}
                     value={content}
                     onChange={(s) => setContent(s || "")}
                 />
