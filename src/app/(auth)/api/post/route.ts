@@ -52,10 +52,11 @@ const newPost = async (data: NewPostType, userName: string): Promise<NewPostRetT
         post_id: post.postId
     };
 };
-export const POST = async (req: Request) => {
+
+async function handler(req: Request): Promise<NewPostRetType> {
     const user = await getUser();
     if (!user) {
-        return Response.json({ status: "unauthorized" });
+        return { status: "unauthorized", post_id: null };
     }
     //对每个用户分开防抖，间隔5秒
     const delay = 5;
@@ -67,7 +68,7 @@ export const POST = async (req: Request) => {
                 debounceMap.delete(user.name);
             }, delay)
         );
-        return Response.json({ status: "busy" });
+        return { status: "busy", post_id: null };
     } else {
         debounceMap.set(
             user.name,
@@ -80,7 +81,10 @@ export const POST = async (req: Request) => {
     const data = await req.json();
     //如果提交的数据不包含 NewPostType 的内容，则返回error
     if (!idNewPostType(data)) {
-        return Response.json({ status: "data_error" });
+        return { status: "data_error", post_id: null };
     }
-    return Response.json(await newPost(data, user.name));
+    return await newPost(data, user.name);
+}
+export const POST = async (req: Request) => {
+    return Response.json(await handler(req));
 };
