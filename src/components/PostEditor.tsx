@@ -110,11 +110,11 @@ export default function PostEditor({ postVersion }: { postVersion: GetPostVersio
             if (!pageRef.current || !buttonsRef.current) {
                 return;
             }
-            const height = pageRef.current.clientHeight - buttonsRef.current.clientHeight;
-            console.log(height);
-            setHeight(height - 20);
+            const height = pageRef.current.clientHeight - buttonsRef.current.clientHeight - 16;
+            setHeight(height);
         };
         window.addEventListener("resize", resize);
+        resize();
     }, []);
 
     return (
@@ -161,7 +161,7 @@ export default function PostEditor({ postVersion }: { postVersion: GetPostVersio
                     </Button>
                 </div>
             </div>
-            <div className="flex-1 p-2">
+            <div className="flex-1 m-2">
                 <MDEditor
                     className="editor h-full"
                     height={height}
