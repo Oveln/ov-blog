@@ -25,7 +25,7 @@ export default function PostEditor({ postVersion }: { postVersion: GetPostVersio
             toast("不可以是空标题！");
             return;
         }
-        let res;
+        let res: NewPostRetType | NewPostVersionRetType;
         if (postVersion.postId != 0) {
             const postData: NewPostVersionType = {
                 title: title,
@@ -63,12 +63,18 @@ export default function PostEditor({ postVersion }: { postVersion: GetPostVersio
         }
         switch (res.status) {
             case "ok":
+                router.refresh();
                 toast("提交成功", {
                     description: "提交成功",
                     action: {
                         label: "查看",
                         onClick: () => {
-                            router.push(`/blogs/${postVersion.postId}`);
+                            // 判断res类型
+                            if ("post_id" in res) {
+                                router.push(`/blogs/${res.post_id}`);
+                            } else {
+                                router.push(`/blogs/${postVersion.postId}`);
+                            }
                         }
                     }
                 });
