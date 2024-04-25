@@ -30,6 +30,9 @@ const Post = async ({ params }: { params: { slug: string } }) => {
         <ResizablePanelGroup
             direction="horizontal"
             className="w-full rounded-lg border min-h-[calc(100vh-56px)]"
+            style={{
+                height: "auto"
+            }}
         >
             <ResizablePanel defaultSize={75}>
                 <article className="mx-auto max-w-3xl py-8 min-h-[calc(100vh-56px)] flex flex-col">
