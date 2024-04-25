@@ -32,12 +32,17 @@ webhook:
 stop-webhook:
 	pm2 delete ov-blog-webhook || true
 
-all: start webhook
+all: webhook start
 
-stop-all: stop stop-webhook
+stop-all: stop-webhook stop
+
+restart-all: stop-all all
 
 status:
 	pm2 status
 
-monit:
-	pm2 monit
+log:
+	pm2 logs ov-blog
+
+log-webhook:
+	pm2 logs ov-blog-webhook
