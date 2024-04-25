@@ -51,12 +51,12 @@ handler.on("push", (event) => {
         }
         console.log(`stdout: ${stdout}`);
         console.error(`stderr: ${stderr}`);
+        console.log(
+            `[${new Date().toLocaleString("zh-CN", {
+                timeZone: "Asia/Shanghai"
+            })}]${event.payload.ref} 更新完成`
+        );
     });
-    console.log(
-        `[${new Date().toLocaleString("zh-CN", {
-            timeZone: "Asia/Shanghai"
-        })}]${event.payload.ref} 更新完成`
-    );
 });
 
 handler.on("ping", () => {
