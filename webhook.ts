@@ -31,7 +31,7 @@ handler.on("push", (event) => {
     console.log(
         `[${new Date().toLocaleString("zh-CN", {
             timeZone: "Asia/Shanghai"
-        })}] Received a push event from ${event.pusher.name} to ${event.payload.ref}`
+        })}] Received a push event from ${event.payload.pusher.name} to ${event.payload.ref}`
     );
     if (!BANCH.includes(event.payload.ref)) {
         console.log("不在处理分支内，不进行操作");
