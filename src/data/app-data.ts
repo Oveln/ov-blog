@@ -12,6 +12,7 @@ export class AppData {
 }
 
 export const appsData = [
+    new AppData("Excalidraw", "一个在线画图工具", "https://excalidraw.oveln.icu"),
     new AppData("Oveln Note", "Oveln的学习笔记，基于Obisidan", "https://note.oveln.icu"),
     new AppData("Oveln Pan", "Oveln自用的网盘", "https://pan.oveln.icu:5080/"),
     new AppData("Oveln Music", "Oveln自用的音乐播放器", "https://music.oveln.icu:5080/"),
