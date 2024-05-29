@@ -22,7 +22,7 @@ export default function RootLayout({
         <html lang="en" className="m-0 p-0">
             <body
                 className={
-                    "mx-auto max-w-[68rem] px-2 lg:px-0 w-screen h-screen bg-muted/40 " +
+                    "mx-auto max-w-[75rem] px-2 lg:px-0 w-screen h-screen bg-muted/40 " +
                     inter.className
                 }
                 data-scroll-lock="1"
