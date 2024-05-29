@@ -14,6 +14,7 @@ async function addUser() {
     const useremail = argv[4];
     const role = argv[5];
     if (role !== "ADMIN" && role !== "USER") {
+        console.error(usage);
         console.error("Invalid role type (ADMIN|USER)");
         process.exit(1);
     }
