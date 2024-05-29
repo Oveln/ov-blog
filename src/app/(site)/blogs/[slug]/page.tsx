@@ -35,7 +35,7 @@ const Post = async ({ params }: { params: { slug: string } }) => {
             }}
         >
             <ResizablePanel defaultSize={75}>
-                <article className="mx-auto max-w-3xl py-8 min-h-[calc(100vh-56px)] flex flex-col">
+                <article className="py-8 min-h-[calc(100vh-56px)] flex flex-col">
                     <div className="mb-8 text-center">
                         <h1 className="text-3xl font-bold">{postVersion?.title}</h1>
                         <time
@@ -45,8 +45,9 @@ const Post = async ({ params }: { params: { slug: string } }) => {
                             Created: {format(post.create_time, "yyyy-MM-dd")}
                         </time>
                     </div>
-                    <main className="prose lg:prose-xl prose-table:w-11/12 prose-table:border prose-table:m-auto px-2 prose-td:border-x prose-th:border-x">
+                    <main className="mx-auto">
                         <Markdown
+                            className="prose prose-zinc max-w-full mx-8 lg:prose-lg prose-table:w-11/12 prose-table:border prose-table:m-auto px-2 prose-td:border-x prose-th:border-x prose-p:my-0 prose-li:my-0"
                             remarkPlugins={[remarkMath, remarkGfm]}
                             rehypePlugins={[RehypeKatex]}
                         >
@@ -62,7 +63,7 @@ const Post = async ({ params }: { params: { slug: string } }) => {
                 </article>
             </ResizablePanel>
             <ResizableHandle />
-            <ResizablePanel defaultSize={25}>
+            <ResizablePanel defaultSize={23}>
                 <Image
                     src="/avatar.jpg"
                     alt={postVersion.title ? postVersion.title : "Oveln"}
