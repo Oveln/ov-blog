@@ -1,7 +1,7 @@
 data.db: prisma/schema.prisma
 	bunx prisma migrate dev --name migrate-$(shell date +'%Y-%m-%d-%H-%M-%S')
 
-db: data.db
+db: prisma/data.db
 
 .env.local:
 	@echo "请先创建.env.local文件"
