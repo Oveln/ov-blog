@@ -39,19 +39,43 @@ export default async function POST(req: Request, context: { params: Params }) {
         });
     }
 
+    const nowVersions = await prisma.post_Version.findMany({
+        where: {
+            postId: id,
+            published: true
+        }
+    });
+    if (nowVersions.length > 1) {
+        return Response.json({ status: "db_error" });
+    }
+
     try {
-        await prisma.$transaction([
-            prisma.post_Version.updateMany({
-                where: {
-                    Post: {
-                        id: id
+        if (nowVersions.length == 0 || nowVersions[0].version != version) {
+            await prisma.$transaction([
+                prisma.post_Version.updateMany({
+                    where: {
+                        Post: {
+                            id: id
+                        }
+                    },
+                    data: {
+                        published: false
                     }
-                },
-                data: {
-                    published: false
-                }
-            }),
-            prisma.post_Version.update({
+                }),
+                prisma.post_Version.update({
+                    where: {
+                        postId_version: {
+                            postId: id,
+                            version: version
+                        }
+                    },
+                    data: {
+                        published: true
+                    }
+                })
+            ]);
+        } else {
+            await prisma.post_Version.update({
                 where: {
                     postId_version: {
                         postId: id,
@@ -59,10 +83,10 @@ export default async function POST(req: Request, context: { params: Params }) {
                     }
                 },
                 data: {
-                    published: true
+                    published: false
                 }
-            })
-        ]);
+            });
+        }
     } catch (e) {
         return Response.json({
             status: "db_error"

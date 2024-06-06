@@ -55,7 +55,7 @@ export default function PostEdit() {
                         newData[i].postVersions = newData[i].postVersions.map((v) => {
                             return {
                                 ...v,
-                                published: v.version === version
+                                published: v.published ? (false) : (v.version === version)
                             };
                         });
                         break;
@@ -67,7 +67,11 @@ export default function PostEdit() {
     const columns: ColumnDef<UserPostRetType>[] = [
         {
             header: "Title",
-            accessorFn: (row) => row.postVersions.find((v) => v.published)?.title
+            accessorFn: (row) => {
+                const title =  row.postVersions.find((v) => v.published)?.title;
+                if (!title) return row.postVersions[0].title;
+                return title;
+            }
         },
         {
             header: "Create Time",
@@ -81,7 +85,7 @@ export default function PostEdit() {
             header: "Update Time",
             accessorFn: (row) => {
                 const updateTime = row.postVersions.find((v) => v.published)?.update_time;
-                if (!updateTime) return "???";
+                if (!updateTime) return "-";
                 return format(updateTime, "LLLL d, yyyy, p");
             }
         },
