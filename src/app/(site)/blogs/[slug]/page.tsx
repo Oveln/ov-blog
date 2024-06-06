@@ -47,7 +47,13 @@ const Post = async ({ params }: { params: { slug: string } }) => {
                     </div>
                     <main className="mx-auto">
                         <Markdown
-                            className="prose prose-zinc max-w-full mx-8 lg:prose-lg prose-table:w-11/12 prose-table:border prose-table:m-auto px-2 prose-td:border-x prose-th:border-x prose-p:my-0 prose-li:my-0"
+                            className={
+                                `prose prose-zinc max-w-full mx-8 lg:prose-lg prose-table:w-11/12 prose-table:border prose-table:m-auto px-2 prose-td:border-x prose-th:border-x prose-li:my-0 `+
+                                `prose-h1:mb-0 prose-h1:mt-4 prose-h1:pb-4 prose-h1:border-b `+
+                                `prose-h2:mb-0 prose-h2:mt-4 prose-h2:pb-4 `+
+                                `prose-h3:mb-0 prose-h3:mt-4 prose-h3:pb-4 `+
+                                `prose-h4:mb-0 prose-h4:mt-4 prose-h4:pb-4 `
+                            }
                             remarkPlugins={[remarkMath, remarkGfm]}
                             rehypePlugins={[RehypeKatex]}
                         >
@@ -56,7 +62,7 @@ const Post = async ({ params }: { params: { slug: string } }) => {
                     </main>
                     <time
                         dateTime={format(postVersion.update_time, "yyyy-MM-dd")}
-                        className="mb-1 text-xs text-gray-600"
+                        className="ml-2 mt-4 mb-1 text-xs text-gray-600"
                     >
                         Updated: {format(postVersion.update_time, "yyyy-MM-dd")}
                     </time>
