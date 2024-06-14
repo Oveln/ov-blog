@@ -2,15 +2,20 @@ import { getAllPostCardInfo, getPostById } from "@/data/db";
 import { notFound } from "next/navigation";
 import React from "react";
 import Image from "next/image";
-import Markdown from "react-markdown";
+import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import RehypeKatex from "rehype-katex";
+import rehypeKatex from "rehype-katex";
+import rehypePrettyCode from 'rehype-pretty-code';
+import remarkRehype from "remark-rehype";
+import rehypeStringify from "rehype-stringify";
+import remarkGithubAlerts from "remark-github-alerts";
 import "katex/dist/katex.min.css";
 import "./code.css";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
+import { unified } from "unified";
 
 export const revalidate = 30;
 
@@ -26,6 +31,16 @@ const Post = async ({ params }: { params: { slug: string } }) => {
     if (!postVersion) {
         return notFound();
     }
+    const content = await unified()
+        .use(remarkGithubAlerts)
+        .use(remarkParse)
+        .use(remarkGfm)
+        .use(remarkMath)
+        .use(remarkRehype)
+        .use(rehypePrettyCode)
+        .use(rehypeKatex)
+        .use(rehypeStringify)
+        .process(postVersion.content);
     return (
         <ResizablePanelGroup
             direction="horizontal"
@@ -46,19 +61,16 @@ const Post = async ({ params }: { params: { slug: string } }) => {
                         </time>
                     </div>
                     <main className="mx-auto">
-                        <Markdown
+                        <article
                             className={
-                                `prose prose-zinc max-w-full mx-8 lg:prose-lg prose-table:w-11/12 prose-table:border prose-table:m-auto px-2 prose-td:border-x prose-th:border-x prose-li:my-0 `+
-                                `prose-h1:mb-0 prose-h1:mt-4 prose-h1:pb-4 prose-h1:border-b `+
-                                `prose-h2:mb-0 prose-h2:mt-4 prose-h2:pb-4 `+
-                                `prose-h3:mb-0 prose-h3:mt-4 prose-h3:pb-4 `+
+                                `prose prose-zinc max-w-full mx-8 lg:prose-lg prose-table:w-11/12 prose-table:border prose-table:m-auto px-2 prose-td:border-x prose-th:border-x prose-li:my-0 ` +
+                                `prose-h1:mb-0 prose-h1:mt-4 prose-h1:pb-4 prose-h1:border-b ` +
+                                `prose-h2:mb-0 prose-h2:mt-4 prose-h2:pb-4 ` +
+                                `prose-h3:mb-0 prose-h3:mt-4 prose-h3:pb-4 ` +
                                 `prose-h4:mb-0 prose-h4:mt-4 prose-h4:pb-4 `
                             }
-                            remarkPlugins={[remarkMath, remarkGfm]}
-                            rehypePlugins={[RehypeKatex]}
-                        >
-                            {postVersion.content}
-                        </Markdown>
+                            dangerouslySetInnerHTML={{ __html: String(content) }}
+                        />
                     </main>
                     <time
                         dateTime={format(postVersion.update_time, "yyyy-MM-dd")}
