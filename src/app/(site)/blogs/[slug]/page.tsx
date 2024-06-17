@@ -69,7 +69,8 @@ const Post = async ({ params }: { params: { slug: string } }) => {
                                     `prose-h1:mb-0 prose-h1:mt-4 prose-h1:pb-4 prose-h1:border-b ` +
                                     `prose-h2:mb-0 prose-h2:mt-4 prose-h2:pb-4 ` +
                                     `prose-h3:mb-0 prose-h3:mt-4 prose-h3:pb-4 ` +
-                                    `prose-h4:mb-0 prose-h4:mt-4 prose-h4:pb-4 `
+                                    `prose-h4:mb-0 prose-h4:mt-4 prose-h4:pb-4 ` +
+                                    `prose-p:my-2`
                                 }
                                 dangerouslySetInnerHTML={{ __html: String(content) }}
                             />
