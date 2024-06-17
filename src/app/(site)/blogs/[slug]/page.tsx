@@ -6,7 +6,7 @@ import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
-import rehypePrettyCode from 'rehype-pretty-code';
+import rehypePrettyCode from "rehype-pretty-code";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import remarkGithubAlerts from "remark-github-alerts";
@@ -16,6 +16,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { unified } from "unified";
+import CommentsArea from "@/components/ui/giscus";
 
 export const revalidate = 30;
 
@@ -42,56 +43,61 @@ const Post = async ({ params }: { params: { slug: string } }) => {
         .use(rehypeStringify)
         .process(postVersion.content);
     return (
-        <ResizablePanelGroup
-            direction="horizontal"
-            className="w-full rounded-lg border min-h-[calc(100vh-56px)]"
-            style={{
-                height: "auto"
-            }}
-        >
-            <ResizablePanel defaultSize={75}>
-                <article className="py-8 min-h-[calc(100vh-56px)] flex flex-col">
-                    <div className="mb-8 text-center">
-                        <h1 className="text-3xl font-bold">{postVersion?.title}</h1>
+        <div>
+            <ResizablePanelGroup
+                direction="horizontal"
+                className="w-full rounded-lg border min-h-[calc(100vh-56px)]"
+                style={{
+                    height: "auto"
+                }}
+            >
+                <ResizablePanel defaultSize={75}>
+                    <article className="py-8 min-h-[calc(100vh-56px)] flex flex-col">
+                        <div className="mb-8 text-center">
+                            <h1 className="text-3xl font-bold">{postVersion?.title}</h1>
+                            <time
+                                dateTime={format(post.create_time, "yyyy-MM-dd")}
+                                className="mb-1 text-xs text-gray-600"
+                            >
+                                Created: {format(post.create_time, "yyyy-MM-dd")}
+                            </time>
+                        </div>
+                        <main className="mx-auto">
+                            <article
+                                className={
+                                    `prose prose-zinc max-w-full mx-8 lg:prose-lg prose-table:w-11/12 prose-table:border prose-table:m-auto px-2 prose-td:border-x prose-th:border-x prose-li:my-0 ` +
+                                    `prose-h1:mb-0 prose-h1:mt-4 prose-h1:pb-4 prose-h1:border-b ` +
+                                    `prose-h2:mb-0 prose-h2:mt-4 prose-h2:pb-4 ` +
+                                    `prose-h3:mb-0 prose-h3:mt-4 prose-h3:pb-4 ` +
+                                    `prose-h4:mb-0 prose-h4:mt-4 prose-h4:pb-4 `
+                                }
+                                dangerouslySetInnerHTML={{ __html: String(content) }}
+                            />
+                        </main>
                         <time
-                            dateTime={format(post.create_time, "yyyy-MM-dd")}
-                            className="mb-1 text-xs text-gray-600"
+                            dateTime={format(postVersion.update_time, "yyyy-MM-dd")}
+                            className="ml-2 mt-4 mb-1 text-xs text-gray-600"
                         >
-                            Created: {format(post.create_time, "yyyy-MM-dd")}
+                            Updated: {format(postVersion.update_time, "yyyy-MM-dd")}
                         </time>
-                    </div>
-                    <main className="mx-auto">
-                        <article
-                            className={
-                                `prose prose-zinc max-w-full mx-8 lg:prose-lg prose-table:w-11/12 prose-table:border prose-table:m-auto px-2 prose-td:border-x prose-th:border-x prose-li:my-0 ` +
-                                `prose-h1:mb-0 prose-h1:mt-4 prose-h1:pb-4 prose-h1:border-b ` +
-                                `prose-h2:mb-0 prose-h2:mt-4 prose-h2:pb-4 ` +
-                                `prose-h3:mb-0 prose-h3:mt-4 prose-h3:pb-4 ` +
-                                `prose-h4:mb-0 prose-h4:mt-4 prose-h4:pb-4 `
-                            }
-                            dangerouslySetInnerHTML={{ __html: String(content) }}
-                        />
-                    </main>
-                    <time
-                        dateTime={format(postVersion.update_time, "yyyy-MM-dd")}
-                        className="ml-2 mt-4 mb-1 text-xs text-gray-600"
-                    >
-                        Updated: {format(postVersion.update_time, "yyyy-MM-dd")}
-                    </time>
-                </article>
-            </ResizablePanel>
-            <ResizableHandle />
-            <ResizablePanel defaultSize={23}>
-                <Image
-                    src="/avatar.jpg"
-                    alt={postVersion.title ? postVersion.title : "Oveln"}
-                    width={500}
-                    height={500}
-                    className="rounded-xl p-1"
-                />
-                <Calendar mode="single" selected={post.create_time}></Calendar>
-            </ResizablePanel>
-        </ResizablePanelGroup>
+                    </article>
+                </ResizablePanel>
+                <ResizableHandle />
+                <ResizablePanel defaultSize={23}>
+                    <Image
+                        src="/avatar.jpg"
+                        alt={postVersion.title ? postVersion.title : "Oveln"}
+                        width={500}
+                        height={500}
+                        className="rounded-xl p-1"
+                    />
+                    <Calendar mode="single" selected={post.create_time}></Calendar>
+                </ResizablePanel>
+            </ResizablePanelGroup>
+            <div className="mt-4">
+                <CommentsArea />
+            </div>
+        </div>
     );
 };
 
