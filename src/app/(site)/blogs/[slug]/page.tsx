@@ -83,8 +83,8 @@ const Post = async ({ params }: { params: { slug: string } }) => {
                         </time>
                     </article>
                 </ResizablePanel>
-                <ResizableHandle />
-                <ResizablePanel defaultSize={23}>
+                <ResizableHandle className="hidden lg:block" />
+                <ResizablePanel defaultSize={23} className="hidden lg:block">
                     <Image
                         src="/avatar.jpg"
                         alt={postVersion.title ? postVersion.title : "Oveln"}
