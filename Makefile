@@ -23,6 +23,7 @@ stop:
 restart: stop start
 
 update:
+	git reset --hard
 	git pull
 	make restart
 
