@@ -21,7 +21,7 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" className="m-0 p-0">
+        <html lang="en" className="m-0 p-0" suppressHydrationWarning>
             <body
                 className={
                     "mx-auto max-w-[calc(100vw-10px)] lg:px-0 w-screen h-screen bg-muted/40 overflow-hidden " +
