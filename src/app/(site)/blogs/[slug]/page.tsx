@@ -20,11 +20,8 @@ import CommentsArea from "@/components/ui/giscus";
 
 export const revalidate = 30;
 
-export const generateStaticParams = async () =>
-    (await getAllPostCardInfo()).map((post) => {
-        // eslint-disable-next-line no-unused-labels
-        post.Post.id;
-    });
+export const generateStaticParams = async () => 
+    (await getAllPostCardInfo()).map(post => ({slug: post.Post.id.toString(10)}));
 
 const Post = async ({ params }: { params: { slug: string } }) => {
     const post = await getPostById(parseInt(params.slug));
