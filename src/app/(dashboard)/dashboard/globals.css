@@ -92,7 +92,8 @@
     }
 
     .animate-shadow {
-        @apply after:absolute after:inset-0 after:z-[-1] after:opacity-0 after:transition-opacity hover:after:opacity-100;
+        @apply after:absolute after:inset-0 after:z-[-1] after:opacity-0
+			after:transition-opacity hover:after:opacity-100;
         @apply after:shadow-md dark:after:shadow-none;
     }
 
@@ -127,6 +128,7 @@
         transition-delay: 900ms;
     }
     [data-fade] {
-        @apply translate-y-10 opacity-0 transition duration-300 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100;
+        @apply translate-y-10 opacity-0 transition duration-300 ease-out
+			motion-reduce:translate-y-0 motion-reduce:opacity-100;
     }
 }

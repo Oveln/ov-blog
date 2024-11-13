@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { User, roleStringToEnum } from "./user";
+import { roleStringToEnum, User } from "./user";
 
 export const prisma = new PrismaClient();
 

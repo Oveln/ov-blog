@@ -1,15 +1,16 @@
 import { prisma } from "@/data/db";
-import { Role, getUser } from "@/data/user";
+import { getUser, Role } from "@/data/user";
 
 type Params = {
     userName: string;
 };
-export const GET = async (_req: Request, context: { params: Params }) => {
+export const GET = async (_req: Request, context: { params: Promise<Params> }) => {
+    const params = await context.params;
     const user = await getUser();
     if (!user) {
         return Response.json({ status: "unauthorized" });
     }
-    if (user.name != context.params.userName && user.role != Role.ADMIN) {
+    if (user.name != params.userName && user.role != Role.ADMIN) {
         return Response.json({ status: "unauthorized" });
     }
     const retPosts = await prisma.post.findMany({

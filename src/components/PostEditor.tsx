@@ -1,5 +1,5 @@
 import MDEditor from "@uiw/react-md-editor";
-import { Send, RotateCcw } from "lucide-react";
+import { RotateCcw, Send } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Input } from "./ui/input";

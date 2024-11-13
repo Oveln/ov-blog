@@ -2,10 +2,10 @@ import { getAllPostCardInfo, getPostById } from "@/data/db";
 import { notFound } from "next/navigation";
 import React from "react";
 import Image from "next/image";
-import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import remarkParse from "remark-parse";
 import rehypePrettyCode from "rehype-pretty-code";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
@@ -14,30 +14,34 @@ import "katex/dist/katex.min.css";
 import "./code.css";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
+// import { Calendar } from "@/components/ui/calendar";
 import { unified } from "unified";
 import CommentsArea from "@/components/ui/giscus";
 
 export const revalidate = 30;
 
-export const generateStaticParams = async () => 
-    (await getAllPostCardInfo()).map(post => ({slug: post.Post.id.toString(10)}));
+export const generateStaticParams = async () =>
+    (await getAllPostCardInfo()).map((post) => ({
+        slug: post.Post.id.toString(10)
+    }));
 
-const Post = async ({ params }: { params: { slug: string } }) => {
-    const post = await getPostById(parseInt(params.slug));
+const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
+    const post = await getPostById(parseInt((await params).slug));
     const postVersion = post?.postVersions[0];
     if (!postVersion) {
         return notFound();
     }
     const content = await unified()
         .use(remarkGithubAlerts)
-        .use(remarkParse)
         .use(remarkGfm)
         .use(remarkMath)
         .use(remarkRehype)
         .use(rehypePrettyCode)
         .use(rehypeKatex)
         .use(rehypeStringify)
+        // 类型不兼容
+        .use(remarkParse as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+
         .process(postVersion.content);
     return (
         <div>
@@ -59,19 +63,21 @@ const Post = async ({ params }: { params: { slug: string } }) => {
                                 Created: {format(post.create_time, "yyyy-MM-dd")}
                             </time>
                         </div>
-                            <main
-                                className={
-                                    `prose prose-zinc max-w-full mx-8 lg:prose-lg prose-table:w-11/12 prose-table:border prose-table:m-auto px-2 prose-td:border-x prose-th:border-x prose-li:my-0 ` +
-                                    `prose-h1:mb-0 prose-h1:mt-4 prose-h1:pb-4 prose-h1:border-b ` +
-                                    `prose-h2:mb-0 prose-h2:mt-4 prose-h2:pb-4 ` +
-                                    `prose-h3:mb-0 prose-h3:mt-4 prose-h3:pb-4 ` +
-                                    `prose-h4:mb-0 prose-h4:mt-4 prose-h4:pb-4 ` +
-                                    `prose-p:my-2` +
-                                    // 横向可滚动
-                                    `prose-figure:overflow-x-auto`
-                                }
-                                dangerouslySetInnerHTML={{ __html: String(content) }}
-                            />
+                        <main
+                            className={
+                                `prose prose-zinc max-w-full mx-8 lg:prose-lg prose-table:w-11/12 prose-table:border prose-table:m-auto px-2 prose-td:border-x prose-th:border-x prose-li:my-0 ` +
+                                `prose-h1:mb-0 prose-h1:mt-4 prose-h1:pb-4 prose-h1:border-b ` +
+                                `prose-h2:mb-0 prose-h2:mt-4 prose-h2:pb-4 ` +
+                                `prose-h3:mb-0 prose-h3:mt-4 prose-h3:pb-4 ` +
+                                `prose-h4:mb-0 prose-h4:mt-4 prose-h4:pb-4 ` +
+                                `prose-p:my-2` +
+                                // 横向可滚动
+                                `prose-figure:overflow-x-auto`
+                            }
+                            dangerouslySetInnerHTML={{
+                                __html: String(content)
+                            }}
+                        />
                         <time
                             dateTime={format(postVersion.update_time, "yyyy-MM-dd")}
                             className="ml-2 mt-4 mb-1 text-xs text-gray-600"
@@ -89,7 +95,8 @@ const Post = async ({ params }: { params: { slug: string } }) => {
                         height={500}
                         className="rounded-xl p-1"
                     />
-                    <Calendar mode="single" selected={post.create_time}></Calendar>
+                    {/* <Calendar mode="single" selected={post.create_time}>
+					</Calendar> */}
                 </ResizablePanel>
             </ResizablePanelGroup>
             <div className="mt-4">

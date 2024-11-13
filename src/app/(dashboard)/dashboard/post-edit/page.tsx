@@ -55,7 +55,7 @@ export default function PostEdit() {
                         newData[i].postVersions = newData[i].postVersions.map((v) => {
                             return {
                                 ...v,
-                                published: v.published ? (false) : (v.version === version)
+                                published: v.published ? false : v.version === version
                             };
                         });
                         break;
@@ -68,7 +68,7 @@ export default function PostEdit() {
         {
             header: "Title",
             accessorFn: (row) => {
-                const title =  row.postVersions.find((v) => v.published)?.title;
+                const title = row.postVersions.find((v) => v.published)?.title;
                 if (!title) return row.postVersions[0].title;
                 return title;
             }

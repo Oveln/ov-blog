@@ -1,5 +1,5 @@
 "use client";
-import React, {  } from "react";
+import React from "react";
 import PostEditor from "@/components/PostEditor";
 import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/get";
 
