@@ -1,5 +1,5 @@
 import { prisma } from "@/data/db";
-import { Role, getUser } from "@/data/user";
+import { getUser, Role } from "@/data/user";
 
 // 获取当前用户的所有文章和其对应的版本
 export type UserPostRetType = {

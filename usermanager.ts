@@ -31,7 +31,7 @@ async function addUser() {
             }
         });
     } catch (e) {
-        console.error(`User ${username} already exists`)
+        console.error(`User ${username} already exists`);
         process.exit(1);
     }
     console.log("User added");
@@ -51,7 +51,7 @@ async function delUser() {
             }
         });
     } catch (e) {
-        console.error(`User ${username} not found`)
+        console.error(`User ${username} not found`);
         process.exit(1);
     }
     console.log("User deleted");
@@ -80,7 +80,7 @@ async function changeUser() {
                 }
             });
         } catch (e) {
-            console.error(`User ${username} not found`)
+            console.error(`User ${username} not found`);
             process.exit(1);
         }
     } else {
@@ -94,7 +94,7 @@ switch (action) {
     case "add":
         await addUser();
         break;
-    case "del" || "delete":
+    case "del":
         await delUser();
         break;
     case "change":

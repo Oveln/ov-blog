@@ -12,11 +12,7 @@ export const metadata: Metadata = {
     description: "Oveln的小站，记录一些有趣的事"
 };
 
-export default function RootLayout({
-    children
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en" className="m-0 p-0 bg-muted/40" suppressHydrationWarning>
             <body

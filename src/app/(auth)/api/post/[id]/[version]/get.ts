@@ -16,13 +16,14 @@ export type GetPostVersionType = {
     published: boolean;
 } | null;
 
-export default async function GET(req: Request, context: { params: Params }) {
+export default async function GET(req: Request, context: { params: Promise<Params> }) {
+    const params = await context.params;
     const user = await getUser();
     if (!user) {
         return Response.json(null);
     }
-    const id = parseInt(context.params.id);
-    const version = parseInt(context.params.version);
+    const id = parseInt(params.id);
+    const version = parseInt(params.version);
     if (!id || !version) {
         return Response.json(null);
     }

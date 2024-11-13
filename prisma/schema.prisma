@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -21,9 +18,9 @@ model User {
 model Post {
   id           Int            @id @default(autoincrement())
   create_time  DateTime       @default(now())
-  postVersions Post_Version[]
-  User         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       Int
+  User         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postVersions Post_Version[]
 }
 
 model Post_Version {
@@ -32,9 +29,9 @@ model Post_Version {
   description String?
   content     String
   update_time DateTime           @default(now())
-  Post        Post               @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId      Int
   published   Boolean            @default(false)
+  Post        Post               @relation(fields: [postId], references: [id], onDelete: Cascade)
   tags        TagOnPostVersion[]
 
   @@id([postId, version])
@@ -47,12 +44,11 @@ model Tag {
 }
 
 model TagOnPostVersion {
-  postVersion Post_Version @relation(fields: [post_VersionPostId, post_VersionVersion], references: [postId, version], onDelete: Cascade)
-  tag         Tag          @relation(fields: [tagId], references: [id], onDelete: Cascade)
-
   post_VersionPostId  Int
   post_VersionVersion Int
   tagId               Int
+  tag                 Tag          @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  postVersion         Post_Version @relation(fields: [post_VersionPostId, post_VersionVersion], references: [postId, version], onDelete: Cascade)
 
   @@id([tagId, post_VersionPostId, post_VersionVersion])
 }

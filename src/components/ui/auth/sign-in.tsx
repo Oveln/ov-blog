@@ -14,7 +14,12 @@ export default function SignInCard() {
             <CardContent className="flex justify-center items-center">
                 <Button
                     className="w-full"
-                    onClick={() => signIn("github", { redirect: true, callbackUrl: "/dashboard" })}
+                    onClick={() =>
+                        signIn("github", {
+                            redirect: true,
+                            callbackUrl: "/dashboard"
+                        })
+                    }
                 >
                     <GitHubLogoIcon></GitHubLogoIcon>
                     Github

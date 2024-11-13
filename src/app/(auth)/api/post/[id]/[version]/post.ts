@@ -11,13 +11,14 @@ export type CheckOutPostVersionRetType = {
     status: "ok" | "unauthorized" | "not_found" | "error" | "db_error";
 };
 
-export default async function POST(req: Request, context: { params: Params }) {
+export default async function POST(req: Request, context: { params: Promise<Params> }) {
+    const params = await context.params;
     const user = await getUser();
     if (!user) {
         return Response.json({ status: "unauthorized" });
     }
-    const id = parseInt(context.params.id);
-    const version = parseInt(context.params.version);
+    const id = parseInt(params.id);
+    const version = parseInt(params.version);
     if (!id || !version) {
         return Response.json({
             status: "error"
