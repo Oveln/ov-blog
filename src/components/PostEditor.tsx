@@ -187,8 +187,8 @@ export function PostEditor({ postVersion }: { postVersion: GetPostVersionType })
                     </Button>
                 </div>
             </div>
-            <div className="flex-1 m-2">
-                <div id="markdown-container"></div>
+            <div className="flex-1 m-2 overflow-auto">
+                <div className="editor h-full" id="markdown-container"></div>
             </div>
         </div>
     );
