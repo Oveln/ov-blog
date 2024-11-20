@@ -1,7 +1,7 @@
 import "cherry-markdown/dist/cherry-markdown.css";
-// import Cherry from "cherry-markdown/dist/cherry-markdown.core";
+import Cherry from "cherry-markdown/dist/cherry-markdown.core";
 import dynamic from "next/dynamic";
-import { Edit, RotateCcw, Send } from "lucide-react";
+import { RotateCcw, Send } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Input } from "./ui/input";
@@ -125,7 +125,7 @@ export function PostEditor({ postVersion }: { postVersion: GetPostVersionType })
     //     window.addEventListener("resize", resize);
     //     resize();
     // }, []);
-    const editorRef = useRef<any>(null);
+    const editorRef = useRef<Cherry | null>(null);
     useEffect(() => {
         import("cherry-markdown/dist/cherry-markdown.core").then((Cherry) => {
             const cherryInstance = new Cherry.default({

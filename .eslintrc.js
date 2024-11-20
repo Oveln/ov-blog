@@ -30,8 +30,7 @@ module.exports = {
     plugins: ["@typescript-eslint", "react", "unused-imports"],
     rules: {
         "@typescript-eslint/no-unused-vars": "error",
-        "unused-imports/no-unused-imports": "error",
-        "@next/next/no-duplicate-head": "off"
+        "unused-imports/no-unused-imports": "error"
     },
     settings: {
         react: {

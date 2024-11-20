@@ -88,7 +88,7 @@ export default async function POST(req: Request, context: { params: Promise<Para
                 }
             });
         }
-    } catch (e) {
+    } catch {
         return Response.json({
             status: "db_error"
         });

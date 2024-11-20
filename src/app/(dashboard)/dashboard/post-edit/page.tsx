@@ -31,7 +31,7 @@ export default function PostEdit() {
                             newData.splice(i, 1);
                         } else if (
                             !newData[i].postVersions.find((postversion) => {
-                                postversion.published;
+                                return postversion.published;
                             })
                         ) {
                             // 找到最大的版本，设置为发布

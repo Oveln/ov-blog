@@ -103,7 +103,7 @@ export default async function DELETE(req: Request, context: { params: Promise<Pa
                         }
                     })
                 ]);
-            } catch (_) {
+            } catch {
                 return Response.json({ status: "db_error" });
             }
         } else {
@@ -121,7 +121,7 @@ export default async function DELETE(req: Request, context: { params: Promise<Pa
                         }
                     }
                 });
-            } catch (_) {
+            } catch {
                 return Response.json({
                     status: "not_found"
                 });
