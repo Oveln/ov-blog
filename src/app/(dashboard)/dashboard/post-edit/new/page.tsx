@@ -13,6 +13,5 @@ export default function PostEdit() {
         update_time: new Date(),
         postId: 0
     };
-
     return <PostEditor postVersion={postVersion}></PostEditor>;
 }

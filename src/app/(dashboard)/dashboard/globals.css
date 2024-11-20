@@ -2,7 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-::-webkit-scrollbar:not(.editor) {
+.editor::-webkit-scrollbar {
+    display: block; /* Keep scrollbar visible for `.editor` */
+}
+::-webkit-scrollbar {
     display: none;
 }
 
