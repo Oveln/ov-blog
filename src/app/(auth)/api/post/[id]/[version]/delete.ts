@@ -1,4 +1,4 @@
-import { prisma } from "@/data/db";
+import { checkPermissionsForPost, prisma } from "@/lib/db";
 import { getUser } from "@/data/user";
 
 type Params = {
@@ -22,16 +22,7 @@ export default async function DELETE(req: Request, context: { params: Promise<Pa
         return Response.json(null);
     }
     // 检测是否是本用户的Post
-    if (
-        (await prisma.post.count({
-            where: {
-                id: id,
-                User: {
-                    name: user.name
-                }
-            }
-        })) == 0
-    ) {
+    if (await checkPermissionsForPost(user.id, id) === false) {
         return Response.json({
             status: "unauthorized"
         });

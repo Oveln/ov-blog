@@ -1,4 +1,4 @@
-import { prisma } from "@/data/db";
+import { prisma } from "@/lib/db";
 import { getUser } from "@/data/user";
 
 export type NewPostVersionType = {
@@ -105,20 +105,20 @@ export const POST = async (req: Request) => {
     }
     //对每个用户分开防抖，间隔5秒
     const delay = 5;
-    if (debounceMap.has(user.name)) {
-        clearTimeout(debounceMap.get(user.name));
+    if (debounceMap.has(user.id)) {
+        clearTimeout(debounceMap.get(user.id));
         debounceMap.set(
-            user.name,
+            user.id,
             setTimeout(() => {
-                debounceMap.delete(user.name);
+                debounceMap.delete(user.id);
             }, delay)
         );
         return Response.json({ status: "busy" });
     } else {
         debounceMap.set(
-            user.name,
+            user.id,
             setTimeout(() => {
-                debounceMap.delete(user.name);
+                debounceMap.delete(user.id);
             }, delay)
         );
     }
@@ -128,5 +128,5 @@ export const POST = async (req: Request) => {
     if (!isNewPostVersionType(data)) {
         return Response.json({ status: "data_error" });
     }
-    return Response.json(await newVersion(data, user.name));
+    return Response.json(await newVersion(data, user.id));
 };

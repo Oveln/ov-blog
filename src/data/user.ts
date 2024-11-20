@@ -1,9 +1,10 @@
 import { auth } from "@/lib/auth/auth";
-import { getUserByName } from "./db";
+import { getUserById } from "../lib/db";
 
 export type User = {
-    name: string;
-    email: string;
+    id: string,
+    name: string | null;
+    email: string | null;
     role: Role;
 };
 export enum Role {
@@ -47,9 +48,9 @@ export function roleEnumToString(role: Role): string {
 
 export async function getUser(): Promise<User | null> {
     const session = await auth();
-    const userName = session?.user?.name;
+    const userName = session?.user?.id;
     if (!userName) {
         return null;
     }
-    return getUserByName(userName);
+    return getUserById(userName);
 }

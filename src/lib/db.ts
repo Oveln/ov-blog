@@ -1,7 +1,12 @@
 import { PrismaClient } from "@prisma/client";
-import { roleStringToEnum, User } from "./user";
+import { Role, roleStringToEnum, User } from "../data/user";
 
-export const prisma = new PrismaClient();
+
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
+
+export const prisma = globalForPrisma.prisma || new PrismaClient()
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
 
 export type PostCardInfo = {
     title: string;
@@ -12,7 +17,7 @@ export type PostCardInfo = {
         id: number;
         create_time: Date;
         User: {
-            name: string;
+            name: string | null;
         };
     };
 };
@@ -95,19 +100,59 @@ export const getPostVersionByPostIdAndVersion = async (post_id: number, version:
     });
 };
 
-export const getUserByName = async (name: string): Promise<User | null> => {
+export const getUserById = async (id: string): Promise<User | null> => {
     const dbUser = await prisma.user.findUnique({
         where: {
-            name: name
+            id: id
         }
     });
     if (dbUser === null) {
         return null;
     }
     const user: User = {
+        id: dbUser.id,
         name: dbUser.name,
         email: dbUser.email,
         role: roleStringToEnum(dbUser.role)
     };
     return user;
 };
+
+export const setUserRole = async (id: string, role: string) => {
+    await prisma.user.update({
+        where: {
+            id: id
+        },
+        data: {
+            role: role
+        }
+    });
+}
+
+export const getUserCount = async () => {
+    return await prisma.user.count();
+}
+
+// 检测用户对Post的权限
+export const checkPermissionsForPost = async (userId: string, postId: number) => {
+    // 如果是ADMIN
+    const user = await getUserById(userId);
+    if (!user) {
+        return false;
+    }
+    if (user.role === Role.ADMIN) {
+        return true;
+    }
+
+    // 如果是Post的作者
+    const post = await prisma.post.findUnique({
+        where: {
+            id: postId
+        }
+    });
+    if (!post) {
+        return false;
+    } else {
+        return post.userId === userId;
+    }
+}

@@ -109,15 +109,14 @@ export default function PostEdit() {
         columns,
         getCoreRowModel: getCoreRowModel()
     });
-    const session = useSession();
-    if (session.status === "unauthenticated") {
-        router.push("/login");
-    }
+    const session = useSession({
+        required: true
+    });
 
     useEffect(() => {
         if (session.status !== "authenticated") return;
         const getData = async () => {
-            const data = await fetch(`/api/user/${session.data?.user?.name}`);
+            const data = await fetch(`/api/user/${session.data?.user?.id}`);
             setData(await data.json());
         };
         getData();
@@ -152,15 +151,13 @@ export default function PostEdit() {
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
                                 >
-                                    {row.getVisibleCells().map((cell, index) => (
-                                        <>
-                                            <TableCell key={index}>
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )}
-                                            </TableCell>
-                                        </>
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </TableCell>
                                     ))}
                                 </TableRow>
                             ))

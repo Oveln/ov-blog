@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
-    const { data, status } = useSession();
-    if (status == "unauthenticated") {
-        useRouter().push("/login");
-        return <></>;
-    }
+    const router = useRouter();
+    const { data } = useSession({
+        required: true,
+        onUnauthenticated() {
+            router.push("/login");
+        }
+    });
     return (
         <>
             <header>

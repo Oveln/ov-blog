@@ -15,13 +15,29 @@ import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/get";
 export default dynamic(() => Promise.resolve(PostEditor), { ssr: false });
 export function PostEditor({ postVersion }: { postVersion: GetPostVersionType }) {
     if (!postVersion) {
-        return <Loading />;
+        useRouter().push("/404");
+        return;
     }
 
     const [title, setTitle] = useState<string>(postVersion.title);
     const [description, setDescription] = useState<string>(postVersion.description ?? "");
-    const [content, setContent] = useState<string>(postVersion.content);
     const router = useRouter();
+    const cherryInstance = useRef<Cherry | null>(null);
+
+    useEffect(() => {
+        // 其他组件加载完毕后再加载编辑器
+        const timer = setTimeout(() => {
+            import("cherry-markdown/dist/cherry-markdown.core").then((Cherry) => {
+                const cherry = new Cherry.default({
+                    id: "markdown-container",
+                    value: postVersion.content
+                });
+                cherryInstance.current = cherry;
+            });
+        }, 0);
+
+        return () => clearTimeout(timer);
+    }, []);
 
     const submit = async () => {
         if (!title) {
@@ -33,7 +49,7 @@ export function PostEditor({ postVersion }: { postVersion: GetPostVersionType })
             const postData: NewPostVersionType = {
                 title: title,
                 description: description == "" ? null : description,
-                content: content,
+                content: cherryInstance.current?.getValue() ?? "",
                 postId: postVersion.postId,
                 published: true
             };
@@ -51,7 +67,7 @@ export function PostEditor({ postVersion }: { postVersion: GetPostVersionType })
             const postData: NewPostType = {
                 title: title,
                 description: description == "" ? null : description,
-                content: content
+                content: cherryInstance.current?.getValue() ?? ""
             };
             const r: NewPostRetType = await (
                 await fetch(`/api/post`, {
@@ -125,16 +141,7 @@ export function PostEditor({ postVersion }: { postVersion: GetPostVersionType })
     //     window.addEventListener("resize", resize);
     //     resize();
     // }, []);
-    const editorRef = useRef<Cherry | null>(null);
-    useEffect(() => {
-        import("cherry-markdown/dist/cherry-markdown.core").then((Cherry) => {
-            const cherryInstance = new Cherry.default({
-                id: "markdown-container",
-                value: "# welcome to cherry editor!"
-            });
-            editorRef.current = cherryInstance;
-        });
-    }, []);
+    // const editorRef = useRef<Cherry | null>(null);
 
     return (
         <div className="flex flex-col relative h-full">
@@ -172,7 +179,7 @@ export function PostEditor({ postVersion }: { postVersion: GetPostVersionType })
                             toast("重置!", {
                                 description: "重置成功"
                             });
-                            setContent(postVersion.content);
+                            cherryInstance.current?.setValue(postVersion.content);
                         }}
                     >
                         <RotateCcw className="h-5 w-5 mr-2 " />

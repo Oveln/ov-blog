@@ -1,4 +1,4 @@
-import { getAllPostCardInfo, getPostById } from "@/data/db";
+import { getAllPostCardInfo, getPostById } from "@/lib/db";
 import { notFound } from "next/navigation";
 import React from "react";
 import Image from "next/image";
