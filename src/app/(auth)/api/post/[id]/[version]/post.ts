@@ -1,5 +1,5 @@
 // post一个版本表示切换到这个版本
-import { prisma } from "@/data/db";
+import { checkPermissionsForPost, prisma } from "@/lib/db";
 import { getUser } from "@/data/user";
 
 type Params = {
@@ -25,16 +25,7 @@ export default async function POST(req: Request, context: { params: Promise<Para
         });
     }
     // 如果这个文章不是该用户的
-    if (
-        !(await prisma.post.findUnique({
-            where: {
-                id: id,
-                User: {
-                    name: user.name
-                }
-            }
-        }))
-    ) {
+    if (await checkPermissionsForPost(user.id, id) === false) {
         return Response.json({
             status: "unauthorized"
         });
@@ -97,3 +88,4 @@ export default async function POST(req: Request, context: { params: Promise<Para
         status: "ok"
     });
 }
+

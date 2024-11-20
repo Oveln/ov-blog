@@ -12,8 +12,7 @@ RUN pwd
 
 
 FROM install AS copy
-ENV ADMIN Oveln
-ENV EMAIL $ADMIN@oveln.icu
+ENV NODE_ENV=production
 WORKDIR /home/app/bun/ov-blog
 COPY . .
 
@@ -21,9 +20,7 @@ RUN bun --version
 RUN ls -la
 RUN bun run prisma migrate deploy
 RUN bun run prisma db push
-RUN bun usermanager.ts add $ADMIN $EMAIL ADMIN
-# ENV NODE_ENV=production
 FROM copy AS prebuild
-RUN bun next build --debug --no-lint
+RUN bun next build --debug
 
 CMD ["bun", "start"]

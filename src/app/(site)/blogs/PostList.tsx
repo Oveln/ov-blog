@@ -1,4 +1,4 @@
-import { getAllPostCardInfo } from "@/data/db";
+import { getAllPostCardInfo } from "@/lib/db";
 import React from "react";
 import PostCard from "./PostCard";
 

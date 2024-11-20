@@ -1,5 +1,6 @@
-import { prisma } from "@/data/db";
+import { prisma } from "@/lib/db";
 import { getUser, Role } from "@/data/user";
+import { User } from "next-auth";
 
 // 获取当前用户的所有文章和其对应的版本
 export type UserPostRetType = {
@@ -11,10 +12,7 @@ export type UserPostRetType = {
         update_time: Date;
         published: boolean;
     }[];
-    User: {
-        name: string;
-        email: string;
-    };
+    User: User;
 };
 export const GET = async () => {
     const user = await getUser();

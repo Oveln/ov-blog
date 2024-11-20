@@ -1,4 +1,4 @@
-import { PostCardInfo } from "@/data/db";
+import { PostCardInfo } from "@/lib/db";
 import { format } from "date-fns";
 import Link from "next/link";
 import React from "react";

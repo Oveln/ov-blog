@@ -1,4 +1,4 @@
-import { prisma } from "@/data/db";
+import { prisma } from "@/lib/db";
 import { getUser } from "@/data/user";
 
 type Params = {
@@ -34,7 +34,7 @@ export default async function GET(req: Request, context: { params: Promise<Param
             Post: {
                 id: id,
                 User: {
-                    name: user.name
+                    id: user.id
                 }
             }
         },

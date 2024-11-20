@@ -1,4 +1,4 @@
-import { prisma } from "@/data/db";
+import { prisma } from "@/lib/db";
 import { getUser } from "@/data/user";
 
 export type NewPostType = {
@@ -24,7 +24,7 @@ export type NewPostRetType = {
 
 const debounceMap = new Map<string, NodeJS.Timeout>();
 
-const newPost = async (data: NewPostType, userName: string): Promise<NewPostRetType> => {
+const newPost = async (data: NewPostType, userId: string): Promise<NewPostRetType> => {
     let post;
     try {
         post = await prisma.post_Version.create({
@@ -37,7 +37,7 @@ const newPost = async (data: NewPostType, userName: string): Promise<NewPostRetT
                     create: {
                         User: {
                             connect: {
-                                name: userName
+                                id: userId
                             }
                         }
                     }
@@ -60,20 +60,20 @@ async function handler(req: Request): Promise<NewPostRetType> {
     }
     //对每个用户分开防抖，间隔5秒
     const delay = 5;
-    if (debounceMap.has(user.name)) {
-        clearTimeout(debounceMap.get(user.name));
+    if (debounceMap.has(user.id)) {
+        clearTimeout(debounceMap.get(user.id));
         debounceMap.set(
-            user.name,
+            user.id,
             setTimeout(() => {
-                debounceMap.delete(user.name);
+                debounceMap.delete(user.id);
             }, delay)
         );
         return { status: "busy", post_id: null };
     } else {
         debounceMap.set(
-            user.name,
+            user.id,
             setTimeout(() => {
-                debounceMap.delete(user.name);
+                debounceMap.delete(user.id);
             }, delay)
         );
     }
@@ -83,7 +83,7 @@ async function handler(req: Request): Promise<NewPostRetType> {
     if (!idNewPostType(data)) {
         return { status: "data_error", post_id: null };
     }
-    return await newPost(data, user.name);
+    return await newPost(data, user.id);
 }
 export const POST = async (req: Request) => {
     return Response.json(await handler(req));
