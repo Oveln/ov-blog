@@ -104,7 +104,7 @@ export function PostEditor({ postVersion }: { postVersion: GetPostVersionType })
                 return;
             case "unauthorized":
                 toast("提交失败", {
-                    description: "请先登录"
+                    description: "无提交权限"
                 });
                 return;
         }
