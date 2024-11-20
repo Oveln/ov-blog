@@ -1,5 +1,7 @@
-import MDEditor from "@uiw/react-md-editor";
-import { RotateCcw, Send } from "lucide-react";
+import "cherry-markdown/dist/cherry-markdown.css";
+// import Cherry from "cherry-markdown/dist/cherry-markdown.core";
+import dynamic from "next/dynamic";
+import { Edit, RotateCcw, Send } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Input } from "./ui/input";
@@ -10,7 +12,8 @@ import { NewPostVersionRetType, NewPostVersionType } from "@/app/(auth)/api/post
 import { NewPostRetType, NewPostType } from "@/app/(auth)/api/post/route";
 import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/get";
 
-export default function PostEditor({ postVersion }: { postVersion: GetPostVersionType }) {
+export default dynamic(() => Promise.resolve(PostEditor), { ssr: false });
+export function PostEditor({ postVersion }: { postVersion: GetPostVersionType }) {
     if (!postVersion) {
         return <Loading />;
     }
@@ -107,25 +110,35 @@ export default function PostEditor({ postVersion }: { postVersion: GetPostVersio
         }
     };
     // 获取高度
-    const buttonsRef = useRef<HTMLDivElement>(null);
-    const pageRef = useRef<HTMLDivElement>(null);
-    const [height, setHeight] = useState<number>(0);
+    // const buttonsRef = useRef<HTMLDivElement>(null);
+    // const pageRef = useRef<HTMLDivElement>(null);
+    // const [height, setHeight] = useState<number>(0);
+    // useEffect(() => {
+    //     // 监听resize
+    //     const resize = () => {
+    //         if (!pageRef.current || !buttonsRef.current) {
+    //             return;
+    //         }
+    //         const height = pageRef.current.clientHeight - buttonsRef.current.clientHeight - 16;
+    //         setHeight(height);
+    //     };
+    //     window.addEventListener("resize", resize);
+    //     resize();
+    // }, []);
+    const editorRef = useRef<any>(null);
     useEffect(() => {
-        // 监听resize
-        const resize = () => {
-            if (!pageRef.current || !buttonsRef.current) {
-                return;
-            }
-            const height = pageRef.current.clientHeight - buttonsRef.current.clientHeight - 16;
-            setHeight(height);
-        };
-        window.addEventListener("resize", resize);
-        resize();
+        import("cherry-markdown/dist/cherry-markdown.core").then((Cherry) => {
+            const cherryInstance = new Cherry.default({
+                id: "markdown-container",
+                value: "# welcome to cherry editor!"
+            });
+            editorRef.current = cherryInstance;
+        });
     }, []);
 
     return (
-        <div className="flex flex-col relative h-full" ref={pageRef}>
-            <div className="flex" ref={buttonsRef}>
+        <div className="flex flex-col relative h-full">
+            <div className="flex">
                 <div className="flex flex-col flex-1 py-2">
                     <div className="flex w-3/5 mb-2 flex-1">
                         <span className="flex items-center justify-center text-xl px-2">标题</span>
@@ -168,12 +181,7 @@ export default function PostEditor({ postVersion }: { postVersion: GetPostVersio
                 </div>
             </div>
             <div className="flex-1 m-2">
-                <MDEditor
-                    className="editor h-full"
-                    height={height}
-                    value={content}
-                    onChange={(s) => setContent(s || "")}
-                />
+                <div id="markdown-container"></div>
             </div>
         </div>
     );
