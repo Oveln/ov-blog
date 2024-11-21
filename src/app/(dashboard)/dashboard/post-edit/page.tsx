@@ -172,3 +172,4 @@ export default function PostEdit() {
         </div>
     );
 }
+PostEdit.auth = true;

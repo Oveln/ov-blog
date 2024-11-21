@@ -35,3 +35,4 @@ export default function PostEdit({ params }: { params: Promise<{ id: string; ver
         return <PostEditor postVersion={postVersion}></PostEditor>;
     }
 }
+PostEdit.auth = true;
