@@ -11,16 +11,16 @@ RUN bun i --frozen-lockfile --verbose
 RUN pwd
 
 
-FROM install AS copy
+FROM install AS build
 ENV NODE_ENV=production
 WORKDIR /home/app/bun/ov-blog
 COPY . .
 
 RUN bun --version
 RUN ls -la
-RUN bun run prisma migrate deploy
 RUN bun run prisma db push
-FROM copy AS prebuild
+RUN bun run prisma generate
 RUN bun next build --debug
-
-CMD ["bun", "start"]
+FROM build AS release
+# 如果没有数据库文件就创建
+CMD ["sh", "-c", "if [ ! -f /home/app/bun/ov-blog/prisma/data.db ]; then bun run prisma db push; fi && bun start"]
