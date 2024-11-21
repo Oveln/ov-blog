@@ -1,5 +1,7 @@
 // 获取命令行参数，增加或删除用户
 
+// 本脚本弃用！！！！
+
 import { PrismaClient } from "@prisma/client";
 import { argv } from "process";
 
@@ -45,7 +47,7 @@ async function delUser() {
         process.exit(1);
     }
     try {
-        await prisma.user.delete({
+        await prisma.user.deleteMany({
             where: {
                 name: username
             }
@@ -71,7 +73,7 @@ async function changeUser() {
     }
     if (role === "ADMIN" || role === "USER") {
         try {
-            await prisma.user.update({
+            await prisma.user.updateMany({
                 where: {
                     name: username
                 },

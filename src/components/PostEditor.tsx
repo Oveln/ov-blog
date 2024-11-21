@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
-import { Loading } from "./ui/loading";
 import { NewPostVersionRetType, NewPostVersionType } from "@/app/(auth)/api/post/[id]/route";
 import { NewPostRetType, NewPostType } from "@/app/(auth)/api/post/route";
 import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/get";

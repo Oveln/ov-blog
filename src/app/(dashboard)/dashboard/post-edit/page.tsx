@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/table";
 import { useSession } from "next-auth/react";
 import { PostActionButtons } from "./PostActionButton";
-import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { UserPostRetType } from "@/app/(auth)/api/user/route";
 
@@ -103,7 +102,6 @@ export default function PostEdit() {
             }
         }
     ];
-    const router = useRouter();
     const table = useReactTable({
         data,
         columns,
