@@ -21,7 +21,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     events: {
         createUser: async (message: { user: User }) => {
             // 如果是第一个用户，将其设置为管理员
-            if (await getUserCount() && message.user.id) {
+            if (await getUserCount() == 1 && message.user.id) {
                 setUserRole(message.user.id, "ADMIN");
             }
         }
