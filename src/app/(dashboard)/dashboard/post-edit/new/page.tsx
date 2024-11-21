@@ -15,3 +15,4 @@ export default function PostEdit() {
     };
     return <PostEditor postVersion={postVersion}></PostEditor>;
 }
+PostEdit.auth = true;
