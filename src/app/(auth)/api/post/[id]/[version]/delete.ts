@@ -107,7 +107,7 @@ export default async function DELETE(req: Request, context: { params: Promise<Pa
                         },
                         Post: {
                             User: {
-                                name: user.name
+                                id: user.id
                             }
                         }
                     }
