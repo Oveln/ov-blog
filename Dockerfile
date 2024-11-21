@@ -18,7 +18,6 @@ COPY . .
 
 RUN bun --version
 RUN ls -la
-RUN bun run prisma db push
 RUN bun run prisma generate
 RUN bun next build
 FROM build AS release

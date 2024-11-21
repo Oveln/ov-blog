@@ -29,7 +29,7 @@ const newPost = async (data: NewPostType, userId: string): Promise<NewPostRetTyp
     let post_id: number;
     try {
         post_id = (await prisma.$transaction(async (tx) => {
-            let post_version = await tx.post_Version.create({
+            const post_version = await tx.post_Version.create({
                 data: {
                     title: data.title,
                     description: data.description,
