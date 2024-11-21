@@ -32,7 +32,7 @@ export default function PostEdit({ params }: { params: Promise<{ id: string; ver
     if (!postVersion) {
         return <Loading />;
     } else {
-        return <PostEditor postVersion={postVersion}></PostEditor>;
+        return <PostEditor postVersion={postVersion} publish={true}></PostEditor>;
     }
 }
 PostEdit.auth = true;

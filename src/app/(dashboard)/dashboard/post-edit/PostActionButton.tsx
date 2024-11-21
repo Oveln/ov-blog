@@ -34,7 +34,7 @@ export const PostActionButtons = ({
                             href={`/dashboard/post-edit/${post.id}/${postVersion.version}`}
                         >
                             <DropdownMenuItem>
-                                {postVersion.published ? (
+                                {postVersion.version == post.current_version ? (
                                     <BadgeCheck className="mr-2 h-5 w-5" />
                                 ) : (
                                     <BadgeMinus className="mr-2 h-5 w-5" />
@@ -87,7 +87,7 @@ export const PostActionButtons = ({
                                 }
                             }}
                         >
-                            {postVersion.published ? (
+                            {postVersion.version == post.current_version ? (
                                 <BadgeCheck className="mr-2 h-5 w-5" />
                             ) : (
                                 <BadgeMinus className="mr-2 h-5 w-5" />
@@ -139,7 +139,7 @@ export const PostActionButtons = ({
                                 }
                             }}
                         >
-                            {postVersion.published ? (
+                            {postVersion.version == post.current_version ? (
                                 <BadgeCheck className="mr-2 h-5 w-5" />
                             ) : (
                                 <BadgeMinus className="mr-2 h-5 w-5" />

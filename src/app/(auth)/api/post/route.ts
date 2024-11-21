@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
-import { getUser, Role } from "@/data/user";
+import { getUser } from "@/data/user";
+import { Role } from "@prisma/client";
 
 export type NewPostType = {
     title: string;
@@ -25,31 +26,41 @@ export type NewPostRetType = {
 const debounceMap = new Map<string, NodeJS.Timeout>();
 
 const newPost = async (data: NewPostType, userId: string): Promise<NewPostRetType> => {
-    let post;
+    let post_id: number;
     try {
-        post = await prisma.post_Version.create({
-            data: {
-                title: data.title,
-                description: data.description,
-                content: data.content,
-                published: true,
-                Post: {
-                    create: {
-                        User: {
-                            connect: {
-                                id: userId
+        post_id = (await prisma.$transaction(async (tx) => {
+            let post_version = await tx.post_Version.create({
+                data: {
+                    title: data.title,
+                    description: data.description,
+                    content: data.content,
+                    Post: {
+                        create: {
+                            User: {
+                                connect: {
+                                    id: userId
+                                }
                             }
                         }
                     }
                 }
-            }
-        });
+            })
+            await tx.post.update({
+                where: {
+                    id: post_version.postId
+                },
+                data: {
+                    current_version: post_version.version
+                }
+            })
+            return post_version.postId
+        }))
     } catch {
         return { status: "db_error", post_id: null };
     }
     return {
         status: "ok",
-        post_id: post.postId
+        post_id: post_id
     };
 };
 

@@ -3,14 +3,20 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgres"
   url      = env("DATABASE_URL")
+}
+
+enum Role {
+  GUEST
+  USER
+  ADMIN
 }
 
 model User {
   id            String          @id @default(cuid())
   name          String?
-  email         String?         @unique
+  email         String          @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
@@ -18,15 +24,14 @@ model User {
   // Optional for WebAuthn support
   Authenticator Authenticator[]
 
-  role String @default("GUEST")
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Post      Post[]
+
+  role Role @default(GUEST)
 }
 
 model Account {
-  id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
@@ -44,11 +49,10 @@ model Account {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+  @@id([provider, providerAccountId])
 }
 
 model Session {
-  id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -63,9 +67,10 @@ model VerificationToken {
   token      String
   expires    DateTime
 
-  @@unique([identifier, token])
+  @@id([identifier, token])
 }
 
+// Optional for WebAuthn support
 model Authenticator {
   credentialID         String  @unique
   userId               String
@@ -82,11 +87,15 @@ model Authenticator {
 }
 
 model Post {
-  id           Int            @id @default(autoincrement())
-  create_time  DateTime       @default(now())
-  userId       String
-  User         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  postVersions Post_Version[]
+  id              Int            @id @default(autoincrement())
+  create_time     DateTime       @default(now())
+  userId          String
+  User            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postVersions    Post_Version[]
+  current_version Int?
+  currentVersion  Post_Version?  @relation("PostToCurrentVersion", fields: [id, current_version], references: [postId, version])
+
+  @@unique([id, current_version])
 }
 
 model Post_Version {
@@ -96,25 +105,24 @@ model Post_Version {
   content     String
   update_time DateTime           @default(now())
   postId      Int
-  published   Boolean            @default(false)
-  Post        Post               @relation(fields: [postId], references: [id], onDelete: Cascade)
   tags        TagOnPostVersion[]
+  Post        Post               @relation(fields: [postId], references: [id])
+  isCurrent   Post?              @relation("PostToCurrentVersion")
 
   @@id([postId, version])
 }
 
 model Tag {
-  id           Int                @id @default(autoincrement())
-  name         String             @unique
+  name         String             @id
   postVersions TagOnPostVersion[]
 }
 
 model TagOnPostVersion {
   post_VersionPostId  Int
   post_VersionVersion Int
-  tagId               Int
-  tag                 Tag          @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagName             String
+  tag                 Tag          @relation(fields: [tagName], references: [name], onDelete: Cascade)
   postVersion         Post_Version @relation(fields: [post_VersionPostId, post_VersionVersion], references: [postId, version], onDelete: Cascade)
 
-  @@id([tagId, post_VersionPostId, post_VersionVersion])
+  @@id([tagName, post_VersionPostId, post_VersionVersion])
 }

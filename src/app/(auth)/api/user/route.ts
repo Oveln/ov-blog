@@ -1,16 +1,22 @@
 import { prisma } from "@/lib/db";
-import { getUser, Role } from "@/data/user";
+import { getUser } from "@/data/user";
 import { User } from "next-auth";
+import { Role } from "@prisma/client";
 
 // 获取当前用户的所有文章和其对应的版本
 export type UserPostRetType = {
     id: number;
     create_time: Date;
+    current_version: number | null;
+    currentVersion: {
+        version: number;
+        title: string;
+        update_time: Date;
+    } | null;
     postVersions: {
         version: number;
         title: string;
         update_time: Date;
-        published: boolean;
     }[];
     User: User;
 };
@@ -27,12 +33,19 @@ export const GET = async () => {
         select: {
             id: true,
             create_time: true,
+            current_version: true,
+            currentVersion: {
+                select: {
+                    title: true,
+                    update_time: true,
+                    version: true,
+                }
+            },
             postVersions: {
                 select: {
                     title: true,
                     update_time: true,
                     version: true,
-                    published: true
                 },
                 orderBy: {
                     update_time: "desc"

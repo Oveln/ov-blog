@@ -9,10 +9,9 @@ export default function PostEdit() {
         description: "",
         content: "",
         version: 0,
-        published: false,
         update_time: new Date(),
         postId: 0
     };
-    return <PostEditor postVersion={postVersion}></PostEditor>;
+    return <PostEditor postVersion={postVersion} publish={true}></PostEditor>;
 }
 PostEdit.auth = true;

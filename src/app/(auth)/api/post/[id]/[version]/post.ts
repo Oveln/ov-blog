@@ -31,54 +31,15 @@ export default async function POST(req: Request, context: { params: Promise<Para
         });
     }
 
-    const nowVersions = await prisma.post_Version.findMany({
-        where: {
-            postId: id,
-            published: true
-        }
-    });
-    if (nowVersions.length > 1) {
-        return Response.json({ status: "db_error" });
-    }
-
     try {
-        if (nowVersions.length == 0 || nowVersions[0].version != version) {
-            await prisma.$transaction([
-                prisma.post_Version.updateMany({
-                    where: {
-                        Post: {
-                            id: id
-                        }
-                    },
-                    data: {
-                        published: false
-                    }
-                }),
-                prisma.post_Version.update({
-                    where: {
-                        postId_version: {
-                            postId: id,
-                            version: version
-                        }
-                    },
-                    data: {
-                        published: true
-                    }
-                })
-            ]);
-        } else {
-            await prisma.post_Version.update({
-                where: {
-                    postId_version: {
-                        postId: id,
-                        version: version
-                    }
-                },
-                data: {
-                    published: false
-                }
-            });
-        }
+        await prisma.post.update({
+            where: {
+                id: id
+            },
+            data: {
+                current_version: version
+            }
+        })
     } catch {
         return Response.json({
             status: "db_error"

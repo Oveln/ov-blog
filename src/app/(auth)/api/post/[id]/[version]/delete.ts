@@ -46,15 +46,8 @@ export default async function DELETE(req: Request, context: { params: Promise<Pa
         });
     } else {
         // 如果删除版本正在发布，则删除时将发布权交给最新版本
-        if (
-            (await prisma.post_Version.count({
-                where: {
-                    postId: id,
-                    version: version,
-                    published: true
-                }
-            })) == 1
-        ) {
+        if ((await prisma.post.findUnique({ where: { id: id } }))?.current_version === version) {
+
             // 找到最新版本
             const latest_version = (
                 await prisma.post_Version.findFirst({
@@ -82,15 +75,12 @@ export default async function DELETE(req: Request, context: { params: Promise<Pa
                             }
                         }
                     }),
-                    prisma.post_Version.update({
+                    prisma.post.update({
                         where: {
-                            postId_version: {
-                                postId: id,
-                                version: latest_version
-                            }
+                            id: id
                         },
                         data: {
-                            published: true
+                            current_version: latest_version
                         }
                     })
                 ]);
