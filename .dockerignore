@@ -1,4 +1,4 @@
 node_modules
 .next
-prisma/data.db
+prisma/database
 .env.local

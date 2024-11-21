@@ -23,4 +23,4 @@ RUN bun run prisma generate
 RUN bun next build
 FROM build AS release
 # 如果没有数据库文件就创建
-CMD ["sh", "-c", "if [ ! -f /home/app/bun/ov-blog/prisma/data.db ]; then bun run prisma db push; fi && bun start"]
+CMD ["sh", "-c", "if [ ! -f /home/app/bun/ov-blog/prisma/data.db ]; then bun run prisma db push; fi && bun --bun start"]
