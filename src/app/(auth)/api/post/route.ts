@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { getUser } from "@/data/user";
+import { getUser, Role } from "@/data/user";
 
 export type NewPostType = {
     title: string;
@@ -56,6 +56,9 @@ const newPost = async (data: NewPostType, userId: string): Promise<NewPostRetTyp
 async function handler(req: Request): Promise<NewPostRetType> {
     const user = await getUser();
     if (!user) {
+        return { status: "unauthorized", post_id: null };
+    }
+    if (user.role == Role.GUEST) {
         return { status: "unauthorized", post_id: null };
     }
     //对每个用户分开防抖，间隔5秒

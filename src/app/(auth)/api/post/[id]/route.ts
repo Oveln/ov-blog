@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db";
+import { checkPermissionsForPost, prisma } from "@/lib/db";
 import { getUser } from "@/data/user";
 
 export type NewPostVersionType = {
@@ -28,18 +28,10 @@ const isNewPostVersionType = (data: any): data is NewPostVersionType => {
 
 const newVersion = async (
     data: NewPostVersionType,
-    userName: string
+    userId: string
 ): Promise<NewPostVersionRetType> => {
     //检查用户是否有权限
-    if (
-        !(await prisma.post.findUnique({
-            where: {
-                id: data.postId,
-                User: {
-                    name: userName
-                }
-            }
-        }))
+    if (await checkPermissionsForPost(userId, data.postId) == false
     ) {
         return { status: "unauthorized" };
     }
