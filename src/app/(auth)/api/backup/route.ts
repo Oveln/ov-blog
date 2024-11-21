@@ -1,6 +1,7 @@
-import { getUser, Role } from "@/data/user";
+import { getUser } from "@/data/user";
 import { NextResponse } from "next/server";
 import fs from "fs";
+import { Role } from "@prisma/client";
 
 export const GET = async () => {
     const user = await getUser();

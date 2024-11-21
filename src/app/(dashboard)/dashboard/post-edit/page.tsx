@@ -28,21 +28,13 @@ export default function PostEdit() {
                         );
                         if (newData[i].postVersions.length === 0) {
                             newData.splice(i, 1);
-                        } else if (
-                            !newData[i].postVersions.find((postversion) => {
-                                return postversion.published;
-                            })
-                        ) {
+                            i--;
+                        } else if (newData[i].current_version == version) {
                             // 找到最大的版本，设置为发布
                             const maxVersion = Math.max(
                                 ...newData[i].postVersions.map((v) => v.version)
                             );
-                            newData[i].postVersions = newData[i].postVersions.map((v) => {
-                                return {
-                                    ...v,
-                                    published: v.version === maxVersion
-                                };
-                            });
+                            newData[i].current_version = maxVersion;
                         }
                         break;
                     }
@@ -51,12 +43,7 @@ export default function PostEdit() {
             case "check_out":
                 for (let i = 0; i < newData.length; i++) {
                     if (newData[i].id === postId) {
-                        newData[i].postVersions = newData[i].postVersions.map((v) => {
-                            return {
-                                ...v,
-                                published: v.published ? false : v.version === version
-                            };
-                        });
+                        newData[i].current_version = version;
                         break;
                     }
                 }
@@ -66,31 +53,22 @@ export default function PostEdit() {
     const columns: ColumnDef<UserPostRetType>[] = [
         {
             header: "Title",
-            accessorFn: (row) => {
-                const title = row.postVersions.find((v) => v.published)?.title;
-                if (!title) return row.postVersions[0].title;
-                return title;
-            }
+            accessorFn: (row) => row.currentVersion?.title ?? row.postVersions[0].title
         },
         {
             header: "Create Time",
-            accessorFn: (row) => {
-                const create_time = row.create_time;
-                if (!create_time) return "???";
-                return format(create_time, "LLLL d, yyyy, p");
-            }
+            accessorFn: (row) => format(row.create_time, "LLLL d, yyyy, p")
         },
         {
             header: "Update Time",
-            accessorFn: (row) => {
-                const updateTime = row.postVersions.find((v) => v.published)?.update_time;
-                if (!updateTime) return "-";
-                return format(updateTime, "LLLL d, yyyy, p");
-            }
+            accessorFn: (row) =>
+                row.currentVersion
+                    ? format(row.currentVersion.update_time, "LLLL d, yyyy, p")
+                    : "no version"
         },
         {
             header: "Published Version",
-            accessorFn: (row) => row.postVersions.find((v) => v.published)?.version
+            accessorFn: (row) => row.currentVersion?.version ?? "no version"
         },
         {
             id: "actions",
@@ -114,7 +92,7 @@ export default function PostEdit() {
     useEffect(() => {
         if (session.status !== "authenticated") return;
         const getData = async () => {
-            const data = await fetch(`/api/user/${session.data?.user?.id}`);
+            const data = await fetch(`/api/user/${session.data.user?.name}`);
             setData(await data.json());
         };
         getData();

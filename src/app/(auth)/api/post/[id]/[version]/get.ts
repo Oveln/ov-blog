@@ -13,7 +13,6 @@ export type GetPostVersionType = {
     version: number;
     update_time: Date;
     postId: number;
-    published: boolean;
 } | null;
 
 export default async function GET(req: Request, context: { params: Promise<Params> }) {
@@ -45,7 +44,6 @@ export default async function GET(req: Request, context: { params: Promise<Param
             version: true,
             update_time: true,
             postId: true,
-            published: true,
             Post: {
                 select: {
                     create_time: true

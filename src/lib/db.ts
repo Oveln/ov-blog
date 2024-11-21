@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { Role, roleStringToEnum, User } from "../data/user";
+import { PrismaClient, Role } from "@prisma/client";
+import { User } from "../data/user";
 
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
@@ -9,47 +9,42 @@ export const prisma = globalForPrisma.prisma || new PrismaClient()
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
 
 export type PostCardInfo = {
-    title: string;
-    description: string | null;
-    update_time: Date;
-    published: boolean;
-    Post: {
-        id: number;
-        create_time: Date;
-        User: {
-            name: string | null;
-        };
+    User: {
+        name: string | null;
     };
+    id: number;
+    create_time: Date;
+    currentVersion: {
+        title: string;
+        description: string | null;
+        update_time: Date;
+    } | null;
 };
 export const getAllPostCardInfo = async () => {
-    const ret: PostCardInfo[] = await prisma.post_Version.findMany({
+    return await prisma.post.findMany({
         where: {
-            published: true
-        },
-        select: {
-            title: true,
-            description: true,
-            update_time: true,
-            published: true,
-            Post: {
-                select: {
-                    id: true,
-                    create_time: true,
-                    User: {
-                        select: {
-                            name: true
-                        }
-                    }
-                }
+            // current_version不为null
+            current_version: {
+                not: null
             }
         },
-        orderBy: {
-            Post: {
-                create_time: "desc"
+        select: {
+            id: true,
+            create_time: true,
+            User: {
+                select: {
+                    name: true
+                }
+            },
+            currentVersion: {
+                select: {
+                    title: true,
+                    description: true,
+                    update_time: true,
+                }
             }
         }
     });
-    return ret;
 };
 
 export const getPostByUserName = async (userName: string) => {
@@ -69,11 +64,7 @@ export const getPostById = async (id: number) => {
         },
         select: {
             create_time: true,
-            postVersions: {
-                where: {
-                    published: true
-                }
-            }
+            currentVersion: true
         }
     });
 };
@@ -101,24 +92,15 @@ export const getPostVersionByPostIdAndVersion = async (post_id: number, version:
 };
 
 export const getUserById = async (id: string): Promise<User | null> => {
-    const dbUser = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
         where: {
             id: id
         }
     });
-    if (dbUser === null) {
-        return null;
-    }
-    const user: User = {
-        id: dbUser.id,
-        name: dbUser.name,
-        email: dbUser.email,
-        role: roleStringToEnum(dbUser.role)
-    };
     return user;
 };
 
-export const setUserRole = async (id: string, role: string) => {
+export const setUserRole = async (id: string, role: Role) => {
     await prisma.user.update({
         where: {
             id: id

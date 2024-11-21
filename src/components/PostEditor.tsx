@@ -12,7 +12,13 @@ import { NewPostRetType, NewPostType } from "@/app/(auth)/api/post/route";
 import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/get";
 
 export default dynamic(() => Promise.resolve(PostEditor), { ssr: false });
-export function PostEditor({ postVersion }: { postVersion: GetPostVersionType }) {
+export function PostEditor({
+    postVersion,
+    publish
+}: {
+    postVersion: GetPostVersionType;
+    publish: boolean;
+}) {
     if (!postVersion) {
         useRouter().push("/404");
         return;
@@ -50,7 +56,7 @@ export function PostEditor({ postVersion }: { postVersion: GetPostVersionType })
                 description: description == "" ? null : description,
                 content: cherryInstance.current?.getValue() ?? "",
                 postId: postVersion.postId,
-                published: true
+                publish: publish
             };
             const r: NewPostVersionRetType = await (
                 await fetch(`/api/post/${postVersion.postId}`, {

@@ -1,8 +1,9 @@
 import { prisma } from "@/lib/db";
-import { getUser, Role } from "@/data/user";
+import { getUser } from "@/data/user";
+import { Role } from "@prisma/client";
 
 type Params = {
-    userId: string;
+    user_name: string;
 };
 export const GET = async (_req: Request, context: { params: Promise<Params> }) => {
     const params = await context.params;
@@ -10,7 +11,7 @@ export const GET = async (_req: Request, context: { params: Promise<Params> }) =
     if (!user) {
         return Response.json({ status: "unauthorized" });
     }
-    if (user.id != params.userId && user.role != Role.ADMIN) {
+    if (user.name != params.user_name && user.role != Role.ADMIN) {
         return Response.json({ status: "unauthorized" });
     }
     const retPosts = await prisma.post.findMany({
@@ -27,16 +28,17 @@ export const GET = async (_req: Request, context: { params: Promise<Params> }) =
                     title: true,
                     update_time: true,
                     version: true,
-                    published: true
                 },
                 orderBy: {
                     update_time: "desc"
                 }
             },
-            User: {
+            current_version: true,
+            currentVersion: {
                 select: {
-                    name: true,
-                    email: true
+                    title: true,
+                    update_time: true,
+                    version: true,
                 }
             }
         }

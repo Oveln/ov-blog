@@ -21,13 +21,13 @@ import CommentsArea from "@/components/ui/giscus";
 export const revalidate = 30;
 
 export const generateStaticParams = async () =>
-    (await getAllPostCardInfo()).map((post) => ({
-        slug: post.Post.id.toString(10)
+    (await getAllPostCardInfo()).map((info) => ({
+        slug: info.id.toString(10)
     }));
 
 const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
     const post = await getPostById(parseInt((await params).slug));
-    const postVersion = post?.postVersions[0];
+    const postVersion = post?.currentVersion;
     if (!postVersion) {
         return notFound();
     }

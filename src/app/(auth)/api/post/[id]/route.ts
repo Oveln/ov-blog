@@ -6,7 +6,7 @@ export type NewPostVersionType = {
     description: string | null;
     content: string;
     postId: number;
-    published: boolean;
+    publish: boolean;
 };
 
 export type NewPostVersionRetType = {
@@ -22,7 +22,7 @@ const isNewPostVersionType = (data: any): data is NewPostVersionType => {
         (typeof data.description === "string" || data.description === null) &&
         typeof data.content === "string" &&
         typeof data.postId === "number" &&
-        typeof data.published === "boolean"
+        typeof data.publish === "boolean"
     );
 };
 
@@ -35,7 +35,6 @@ const newVersion = async (
     ) {
         return { status: "unauthorized" };
     }
-
     const newestVersion = await prisma.post_Version.findFirst({
         where: {
             postId: data.postId
@@ -53,36 +52,23 @@ const newVersion = async (
         content: data.content,
         version: newestVersion.version + 1,
         postId: data.postId,
-        published: data.published
     };
+    const new_version = await prisma.post_Version.create({
+        data: insertVersion
+    });
     try {
-        if (insertVersion.published) {
-            await prisma.$transaction([
-                prisma.post.update({
-                    where: {
-                        id: data.postId
-                    },
-                    data: {
-                        postVersions: {
-                            updateMany: {
-                                where: {},
-                                data: {
-                                    published: false
-                                }
-                            }
-                        }
-                    }
-                }),
-                prisma.post_Version.create({
-                    data: insertVersion
-                })
-            ]);
-        } else {
-            await prisma.post_Version.create({
-                data: insertVersion
+        if (data.publish) {
+            await prisma.post.update({
+                where: {
+                    id: data.postId
+                },
+                data: {
+                    current_version: new_version.version
+                }
             });
         }
-    } catch {
+    } catch (e) {
+        console.log(e);
         return { status: "db_error" };
     }
     return {
