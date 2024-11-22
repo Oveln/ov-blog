@@ -13,6 +13,7 @@ RUN pwd
 
 FROM install AS build
 ENV NODE_ENV=production
+ENV BUILDTIME=true
 WORKDIR /home/app/bun/ov-blog
 COPY . .
 
