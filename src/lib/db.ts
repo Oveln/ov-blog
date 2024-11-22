@@ -4,7 +4,13 @@ import { User } from "../data/user";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 
-export const prisma = globalForPrisma.prisma || new PrismaClient()
+export const prisma = globalForPrisma.prisma || new PrismaClient({
+    datasources: {
+        db: {
+            url: process.env.DATABASE_URL
+        }
+    }
+})
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
 
@@ -21,6 +27,7 @@ export type PostCardInfo = {
     } | null;
 };
 export const getAllPostCardInfo = async () => {
+    if (process.env.BUILDTIME == "true") { return [] }
     return await prisma.post.findMany({
         where: {
             // current_version不为null
