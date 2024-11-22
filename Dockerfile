@@ -13,14 +13,13 @@ RUN pwd
 
 FROM install AS build
 ENV NODE_ENV=production
-ENV BUILDTIME=true
 WORKDIR /home/app/bun/ov-blog
 COPY . .
 
 RUN bun --version
 RUN ls -la
 RUN bun run prisma generate
-RUN bun next build
+RUN BUILDTIME=true bun next build
 FROM build AS release
 
 CMD ["sh", "-c", "bun run prisma migrate deploy && bun start"]
