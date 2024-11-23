@@ -14,18 +14,6 @@ export const prisma = globalForPrisma.prisma || new PrismaClient({
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
 
-export type PostCardInfo = {
-    User: {
-        name: string | null;
-    };
-    id: number;
-    create_time: Date;
-    currentVersion: {
-        title: string;
-        description: string | null;
-        update_time: Date;
-    } | null;
-};
 export const getAllPostCardInfo = async () => {
     if (process.env.BUILDTIME == "true") { return [] }
     return await prisma.post.findMany({
