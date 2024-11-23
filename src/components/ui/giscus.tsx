@@ -3,7 +3,7 @@ import * as React from "react";
 import Giscus from "@giscus/react";
 
 export default function CommentsArea() {
-    const repo = process.env.NEXT_PUBLIC_REPO;
+    const repo = process.env.NEXT_PUBLIC_REPO_NAME;
     const repoId = process.env.NEXT_PUBLIC_REPOID;
     const category = process.env.NEXT_PUBLIC_CATEGORY;
     const categoryId = process.env.NEXT_PUBLIC_CATEGORYID;
