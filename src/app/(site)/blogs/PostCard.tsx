@@ -1,8 +1,19 @@
-import { PostCardInfo } from "@/lib/db";
 import { format } from "date-fns";
 import Link from "next/link";
 import React from "react";
 
+export type PostCardInfo = {
+    User: {
+        name: string | null;
+    };
+    id: number;
+    create_time: Date;
+    currentVersion: {
+        title: string;
+        description: string | null;
+        update_time: Date;
+    } | null;
+};
 export default function PostCard({ dataFade, info }: { dataFade: number; info: PostCardInfo }) {
     return (
         <Link href={`/blogs/${info.id}`}>
