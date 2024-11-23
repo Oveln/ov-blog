@@ -56,7 +56,7 @@ export default function Home() {
                             animationDelay: `${getT() * 100}ms`
                         }}
                     >
-                        Love Coding⌨️ and Gameing🎮
+                        Love Coding⌨️ and Gaming🎮
                     </h1>
                     <div
                         className="mt-2 animate-fade-up animate-ease-in-out animate-duration-300"
