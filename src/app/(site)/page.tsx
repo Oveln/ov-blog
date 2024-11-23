@@ -1,4 +1,3 @@
-"use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EnvelopeClosedIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
