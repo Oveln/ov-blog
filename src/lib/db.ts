@@ -38,6 +38,9 @@ export const getAllPostCardInfo = async () => {
                     update_time: true,
                 }
             }
+        },
+        orderBy: {
+            create_time: 'desc'
         }
     });
 };
