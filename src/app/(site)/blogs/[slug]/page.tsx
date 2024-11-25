@@ -18,7 +18,7 @@ import { format } from "date-fns";
 import { unified } from "unified";
 import CommentsArea from "@/components/ui/giscus";
 
-export const revalidate = 30;
+export const revalidate = 10;
 
 export const generateStaticParams = async () =>
     (await getAllPostCardInfo()).map((info) => ({
@@ -100,7 +100,12 @@ const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
                 </ResizablePanel>
             </ResizablePanelGroup>
             <div className="mt-4">
-                <CommentsArea />
+                <CommentsArea
+                    repo={process.env.NEXT_PUBLIC_REPO_NAME}
+                    repoId={process.env.NEXT_PUBLIC_REPOID}
+                    category={process.env.NEXT_PUBLIC_CATEGORY}
+                    categoryId={process.env.NEXT_PUBLIC_CATEGORY}
+                />
             </div>
         </div>
     );
