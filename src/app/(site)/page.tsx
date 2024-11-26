@@ -23,77 +23,88 @@ export default function Home() {
         return t++;
     };
     return (
-        <main className={"relative h-[calc(100vh-56px)]  font-mono"}>
-            <div className="absolute mt-[15%] flex w-full items-center md:flex-row flex-col">
-                <div className="flex-1 md:pl-0">
-                    <p
-                        className=" text-3xl md:text-5xl 2xl:text-6xl animate-fade-up animate-ease-in-out animate-duration-300"
-                        style={{
-                            animationDelay: `${getT() * 100}ms`
-                        }}
-                    >
-                        {"Hi!👋"}
-                    </p>
-                    <p
-                        className="mt-1 text-3xl md:text-5xl 2xl:text-6xl animate-fade-up animate-ease-in-out animate-duration-300"
-                        style={{
-                            animationDelay: `${getT() * 100}ms`
-                        }}
-                    >
-                        {"I'm "}
-                        <span className="text-fuchsia-500 text-opacity-85">Oveln🎉</span>
-                    </p>
-                    <p
-                        className="mt-4 text-lg animate-fade-up animate-ease-in-out animate-duration-300"
-                        style={{
-                            animationDelay: `${getT() * 100}ms`
-                        }}
-                    >
-                        Language:&nbsp;
-                        <span className="text-amber-700 font-bold">Rust</span>/
-                        <span className="text-blue-500 font-bold">Typescript</span>/
-                        <span className="text-green-500 font-bold">Python</span>
-                    </p>
-                    <p
-                        className="text-lg animate-fade-up animate-ease-in-out animate-duration-300"
-                        style={{
-                            animationDelay: `${getT() * 100}ms`
-                        }}
-                    >
-                        Programing⌨️ and Gaming🎮
-                    </p>
-                    <div
-                        className="animate-fade-up animate-ease-in-out animate-duration-300"
-                        style={{
-                            animationDelay: `${getT() * 100}ms`
-                        }}
-                    >
-                        {ovLinks.map((link) => {
-                            return (
-                                <Link
-                                    key={link.name}
-                                    href={link.url}
-                                    className="p-0 mr-3 inline-flex w-fit text-lg items-center animated-underline hover:animated-underline-hover"
-                                >
-                                    <span className="">{link.name}</span>
-                                    {link.icon}
-                                </Link>
-                            );
-                        })}
+        <main className="relative min-h-[calc(100vh-56px)] font-mono bg-gradient-to-b from-transparent to-gray-50/30">
+            <div className="absolute w-full top-1/3 -translate-y-1/2 px-6 md:px-12">
+                <div className="max-w-7xl mx-auto flex items-center gap-8 md:flex-row flex-col">
+                    {/* Left content section */}
+                    <div className="flex-1 space-y-6">
+                        <p
+                            className="text-4xl md:text-6xl 2xl:text-7xl font-bold animate-fade-up"
+                            style={{
+                                animationDelay: `${getT() * 100}ms`
+                            }}
+                        >
+                            {"Hi!👋"}
+                        </p>
+                        <p
+                            className="text-4xl md:text-6xl 2xl:text-7xl font-bold animate-fade-up"
+                            style={{
+                                animationDelay: `${getT() * 100}ms`
+                            }}
+                        >
+                            {"I'm "}
+                            <span className="text-fuchsia-500 text-opacity-85">Oveln🎉</span>
+                        </p>
+
+                        {/* Language and interests section */}
+                        <div className="space-y-2">
+                            <p
+                                className="text-lg md:text-xl animate-fade-up"
+                                style={{
+                                    animationDelay: `${getT() * 100}ms`
+                                }}
+                            >
+                                Language:&nbsp;
+                                <span className="text-amber-700 font-bold hover:opacity-80 transition-opacity cursor-default">Rust</span>
+                                <span className="mx-2">/</span>
+                                <span className="text-blue-500 font-bold hover:opacity-80 transition-opacity cursor-default">Typescript</span>
+                                <span className="mx-2">/</span>
+                                <span className="text-green-500 font-bold hover:opacity-80 transition-opacity cursor-default">Python</span>
+                            </p>
+                            <p
+                                className="text-lg md:text-xl animate-fade-up"
+                                style={{
+                                    animationDelay: `${getT() * 100}ms`
+                                }}
+                            >
+                                Programing⌨️ and Gaming🎮
+                            </p>
+                        </div>
+                        {/* Social links */}
+                        <div
+                            className="flex gap-4 animate-fade-up"
+                            style={{
+                                animationDelay: `${getT() * 100}ms`
+                            }}
+                        >
+                            {ovLinks.map((link) => {
+                                return (
+                                    <Link
+                                        key={link.name}
+                                        href={link.url}
+                                        className="p-0 mr-3 inline-flex w-fit text-lg items-center animated-underline hover:animated-underline-hover"
+                                    >
+                                        <span className="">{link.name}</span>
+                                        {link.icon}
+                                    </Link>
+                                );
+                            })}
+                        </div>
                     </div>
-                </div>
-                <div className="flex-1 flex items-center justify-center md:flex-row flex-col">
-                    <div className="flex-1 flex justify-center">
-                        <Typing
-                            className="text-2xl text-left w-full"
-                            text={`print!("Hello World!")`}
-                            speed={100}
-                        />
+                    {/* Right content section */}
+                    <div className="flex-1 flex flex-col items-center gap-8">
+                        <Avatar className="size-64 md:size-72 ring-4 ring-fuchsia-500/20 hover:ring-fuchsia-500/40 transition-all duration-300">
+                            <AvatarImage src="./avatar.jpg" className="object-cover" />
+                            <AvatarFallback>Oveln</AvatarFallback>
+                        </Avatar>
+                        <div className="w-full max-w-md">
+                            <Typing
+                                className="text-2xl md:text-3xl text-center w-full"
+                                text={`print!("Hello World!")`}
+                                speed={100}
+                            />
+                        </div>
                     </div>
-                    <Avatar className="size-72 mx-auto">
-                        <AvatarImage src="./avatar.jpg" />
-                        <AvatarFallback>Oveln</AvatarFallback>
-                    </Avatar>
                 </div>
             </div>
         </main>
