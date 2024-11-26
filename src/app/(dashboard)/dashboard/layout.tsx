@@ -22,12 +22,7 @@ export default async function RootLayout({
 }>) {
     return (
         <html lang="en" className="m-0 p-0" suppressHydrationWarning>
-            <body
-                className={
-                    "mx-auto max-w-[calc(100vw-10px)] lg:px-0 w-screen h-screen bg-muted/40 overflow-hidden " +
-                    inter.className
-                }
-            >
+            <body            >
                 <MySessionProviders>
                     <ThemeProvider
                         attribute="class"
@@ -35,16 +30,22 @@ export default async function RootLayout({
                         enableSystem
                         disableTransitionOnChange
                     >
-                        <nav className="mx-auto max-w-[68rem]">
-                            <NavMenu />
-                        </nav>
-                        <div className="h-[calc(100vh-62px)] mx-auto flex border rounded-2xl overflow-hidden my-0">
-                            <aside className="inset-y-0 left-0 z-10 w-14 flex-col border-r sm:flex bg-background">
-                                <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
-                                    <NavMenuDashboard />
-                                </nav>
-                            </aside>
-                            <main className="flex-1">{children}</main>
+                        <div className={
+                            "mx-auto max-w-[calc(100vw-10px)] lg:px-0 w-screen h-screen overflow-hidden " +
+                            inter.className
+                        }>
+
+                            <nav className="mx-auto max-w-[68rem]">
+                                <NavMenu />
+                            </nav>
+                            <div className="h-[calc(100vh-62px)] mx-auto flex border rounded-2xl overflow-hidden my-0">
+                                <aside className="inset-y-0 left-0 z-10 w-14 flex-col border-r sm:flex bg-background">
+                                    <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+                                        <NavMenuDashboard />
+                                    </nav>
+                                </aside>
+                                <main className="flex-1">{children}</main>
+                            </div>
                         </div>
                     </ThemeProvider>
                 </MySessionProviders>

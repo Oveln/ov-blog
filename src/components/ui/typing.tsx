@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { useEffect, useState } from "react";
 
 const TypingEffect = ({
@@ -36,7 +37,7 @@ const TypingEffect = ({
             >
                 _
             </span>
-            <style jsx>{`
+            <style>{`
                 @keyframes blink {
                     from,
                     to {
