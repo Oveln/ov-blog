@@ -1,5 +1,5 @@
+import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db";
-import { getUser } from "@/data/user";
 
 type Params = {
     id: string;
@@ -17,8 +17,8 @@ export type GetPostVersionType = {
 
 export default async function GET(req: Request, context: { params: Promise<Params> }) {
     const params = await context.params;
-    const user = await getUser();
-    if (!user) {
+    const user = (await auth())?.user;
+    if (!user?.id) {
         return Response.json(null);
     }
     const id = parseInt(params.id);

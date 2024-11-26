@@ -1,5 +1,5 @@
+import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db";
-import { getUser } from "@/data/user";
 import { Role } from "@prisma/client";
 
 export type NewPostType = {
@@ -28,7 +28,7 @@ const debounceMap = new Map<string, NodeJS.Timeout>();
 const newPost = async (data: NewPostType, userId: string): Promise<NewPostRetType> => {
     let post_id: number;
     try {
-        post_id = (await prisma.$transaction(async (tx) => {
+        post_id = await prisma.$transaction(async (tx) => {
             const post_version = await tx.post_Version.create({
                 data: {
                     title: data.title,
@@ -44,7 +44,7 @@ const newPost = async (data: NewPostType, userId: string): Promise<NewPostRetTyp
                         }
                     }
                 }
-            })
+            });
             await tx.post.update({
                 where: {
                     id: post_version.postId
@@ -52,9 +52,9 @@ const newPost = async (data: NewPostType, userId: string): Promise<NewPostRetTyp
                 data: {
                     current_version: post_version.version
                 }
-            })
-            return post_version.postId
-        }))
+            });
+            return post_version.postId;
+        });
     } catch {
         return { status: "db_error", post_id: null };
     }
@@ -65,8 +65,8 @@ const newPost = async (data: NewPostType, userId: string): Promise<NewPostRetTyp
 };
 
 async function handler(req: Request): Promise<NewPostRetType> {
-    const user = await getUser();
-    if (!user) {
+    const user = (await auth())?.user;
+    if (!user?.id) {
         return { status: "unauthorized", post_id: null };
     }
     if (user.role == Role.GUEST) {
@@ -79,7 +79,7 @@ async function handler(req: Request): Promise<NewPostRetType> {
         debounceMap.set(
             user.id,
             setTimeout(() => {
-                debounceMap.delete(user.id);
+                debounceMap.delete(user.id!);
             }, delay)
         );
         return { status: "busy", post_id: null };
@@ -87,7 +87,7 @@ async function handler(req: Request): Promise<NewPostRetType> {
         debounceMap.set(
             user.id,
             setTimeout(() => {
-                debounceMap.delete(user.id);
+                debounceMap.delete(user.id!);
             }, delay)
         );
     }

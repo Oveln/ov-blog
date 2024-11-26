@@ -1,5 +1,5 @@
+import { auth } from "@/lib/auth/auth";
 import { checkPermissionsForPost, prisma } from "@/lib/db";
-import { getUser } from "@/data/user";
 
 type Params = {
     id: string;
@@ -12,8 +12,8 @@ export type DeletePostVersionRetType = {
 // 对不起，这是答辩山
 export default async function DELETE(req: Request, context: { params: Promise<Params> }) {
     const params = await context.params;
-    const user = await getUser();
-    if (!user) {
+    const user = (await auth())?.user;
+    if (!user?.id) {
         return Response.json({ status: "unauthorized" });
     }
     const id = parseInt(params.id);
@@ -22,7 +22,7 @@ export default async function DELETE(req: Request, context: { params: Promise<Pa
         return Response.json(null);
     }
     // 检测是否是本用户的Post
-    if (await checkPermissionsForPost(user.id, id) === false) {
+    if ((await checkPermissionsForPost(user.id, id)) === false) {
         return Response.json({
             status: "unauthorized"
         });
@@ -47,7 +47,6 @@ export default async function DELETE(req: Request, context: { params: Promise<Pa
     } else {
         // 如果删除版本正在发布，则删除时将发布权交给最新版本
         if ((await prisma.post.findUnique({ where: { id: id } }))?.current_version === version) {
-
             // 找到最新版本
             const latest_version = (
                 await prisma.post_Version.findFirst({

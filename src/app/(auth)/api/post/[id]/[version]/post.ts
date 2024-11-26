@@ -1,6 +1,6 @@
 // post一个版本表示切换到这个版本
+import { auth } from "@/lib/auth/auth";
 import { checkPermissionsForPost, prisma } from "@/lib/db";
-import { getUser } from "@/data/user";
 
 type Params = {
     id: string;
@@ -13,8 +13,8 @@ export type CheckOutPostVersionRetType = {
 
 export default async function POST(req: Request, context: { params: Promise<Params> }) {
     const params = await context.params;
-    const user = await getUser();
-    if (!user) {
+    const user = (await auth())?.user;
+    if (!user?.id) {
         return Response.json({ status: "unauthorized" });
     }
     const id = parseInt(params.id);
@@ -25,7 +25,7 @@ export default async function POST(req: Request, context: { params: Promise<Para
         });
     }
     // 如果这个文章不是该用户的
-    if (await checkPermissionsForPost(user.id, id) === false) {
+    if ((await checkPermissionsForPost(user.id, id)) === false) {
         return Response.json({
             status: "unauthorized"
         });
@@ -39,7 +39,7 @@ export default async function POST(req: Request, context: { params: Promise<Para
             data: {
                 current_version: version
             }
-        })
+        });
     } catch {
         return Response.json({
             status: "db_error"
@@ -49,4 +49,3 @@ export default async function POST(req: Request, context: { params: Promise<Para
         status: "ok"
     });
 }
-

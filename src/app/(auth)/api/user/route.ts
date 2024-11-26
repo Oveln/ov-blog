@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
-import { getUser } from "@/data/user";
 import { User } from "next-auth";
 import { Role } from "@prisma/client";
+import { auth } from "@/lib/auth/auth";
 
 // 获取当前用户的所有文章和其对应的版本
 export type UserPostRetType = {
@@ -21,8 +21,8 @@ export type UserPostRetType = {
     User: User;
 };
 export const GET = async () => {
-    const user = await getUser();
-    if (!user) {
+    const user = (await auth())?.user;
+    if (!user?.id) {
         return Response.json({ status: "unauthorized" });
     }
     if (user.role != Role.ADMIN) {
@@ -38,14 +38,14 @@ export const GET = async () => {
                 select: {
                     title: true,
                     update_time: true,
-                    version: true,
+                    version: true
                 }
             },
             postVersions: {
                 select: {
                     title: true,
                     update_time: true,
-                    version: true,
+                    version: true
                 },
                 orderBy: {
                     update_time: "desc"

@@ -1,5 +1,5 @@
+import { auth } from "@/lib/auth/auth";
 import { checkPermissionsForPost, prisma } from "@/lib/db";
-import { getUser } from "@/data/user";
 
 export type NewPostVersionType = {
     title: string;
@@ -31,8 +31,7 @@ const newVersion = async (
     userId: string
 ): Promise<NewPostVersionRetType> => {
     //检查用户是否有权限
-    if (await checkPermissionsForPost(userId, data.postId) == false
-    ) {
+    if ((await checkPermissionsForPost(userId, data.postId)) == false) {
         return { status: "unauthorized" };
     }
     const newestVersion = await prisma.post_Version.findFirst({
@@ -51,7 +50,7 @@ const newVersion = async (
         description: data.description,
         content: data.content,
         version: newestVersion.version + 1,
-        postId: data.postId,
+        postId: data.postId
     };
     const new_version = await prisma.post_Version.create({
         data: insertVersion
@@ -77,8 +76,9 @@ const newVersion = async (
 };
 
 export const POST = async (req: Request) => {
-    const user = await getUser();
-    if (!user) {
+    const user = (await auth())?.user;
+
+    if (!user?.id) {
         return Response.json({ status: "unauthorized" });
     }
     //对每个用户分开防抖，间隔5秒
@@ -88,7 +88,7 @@ export const POST = async (req: Request) => {
         debounceMap.set(
             user.id,
             setTimeout(() => {
-                debounceMap.delete(user.id);
+                debounceMap.delete(user.id!);
             }, delay)
         );
         return Response.json({ status: "busy" });
@@ -96,7 +96,7 @@ export const POST = async (req: Request) => {
         debounceMap.set(
             user.id,
             setTimeout(() => {
-                debounceMap.delete(user.id);
+                debounceMap.delete(user.id!);
             }, delay)
         );
     }
