@@ -1,5 +1,5 @@
+import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/db";
-import { getUser } from "@/data/user";
 import { Role } from "@prisma/client";
 
 type Params = {
@@ -7,7 +7,7 @@ type Params = {
 };
 export const GET = async (_req: Request, context: { params: Promise<Params> }) => {
     const params = await context.params;
-    const user = await getUser();
+    const user = (await auth())?.user;
     if (!user) {
         return Response.json({ status: "unauthorized" });
     }
@@ -27,7 +27,7 @@ export const GET = async (_req: Request, context: { params: Promise<Params> }) =
                 select: {
                     title: true,
                     update_time: true,
-                    version: true,
+                    version: true
                 },
                 orderBy: {
                     update_time: "desc"
@@ -38,7 +38,7 @@ export const GET = async (_req: Request, context: { params: Promise<Params> }) =
                 select: {
                     title: true,
                     update_time: true,
-                    version: true,
+                    version: true
                 }
             }
         }

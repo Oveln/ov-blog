@@ -1,21 +1,24 @@
 import { PrismaClient, Role } from "@prisma/client";
-import { User } from "../data/user";
+import { User } from "next-auth";
 
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
-
-export const prisma = globalForPrisma.prisma || new PrismaClient({
-    datasources: {
-        db: {
-            url: process.env.DATABASE_URL
+export const prisma =
+    globalForPrisma.prisma ||
+    new PrismaClient({
+        datasources: {
+            db: {
+                url: process.env.DATABASE_URL
+            }
         }
-    }
-})
+    });
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export const getAllPostCardInfo = async () => {
-    if (process.env.BUILDTIME == "true") { return [] }
+    if (process.env.BUILDTIME == "true") {
+        return [];
+    }
     return await prisma.post.findMany({
         where: {
             // current_version不为null
@@ -35,12 +38,12 @@ export const getAllPostCardInfo = async () => {
                 select: {
                     title: true,
                     description: true,
-                    update_time: true,
+                    update_time: true
                 }
             }
         },
         orderBy: {
-            create_time: 'desc'
+            create_time: "desc"
         }
     });
 };
@@ -107,11 +110,11 @@ export const setUserRole = async (id: string, role: Role) => {
             role: role
         }
     });
-}
+};
 
 export const getUserCount = async () => {
     return await prisma.user.count();
-}
+};
 
 // 检测用户对Post的权限
 export const checkPermissionsForPost = async (userId: string, postId: number) => {
@@ -135,4 +138,4 @@ export const checkPermissionsForPost = async (userId: string, postId: number) =>
     } else {
         return post.userId === userId;
     }
-}
+};
