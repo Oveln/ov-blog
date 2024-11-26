@@ -41,11 +41,11 @@ const adminItems: NavItem[] = [
 export function NavMenuDashboard() {
     const { data: session } = useSession();
     const isAdmin = session?.user?.role === "ADMIN";
-    
+
     const displayItems = isAdmin ? [...navItems, ...adminItems] : navItems;
 
     return (
-        <TooltipProvider>
+        <TooltipProvider delayDuration={50} skipDelayDuration={0}>
             <ul>
                 {displayItems.map((item, index) => (
                     <li key={index} className="group w-full h-12 group-hover:scale-110 ">
