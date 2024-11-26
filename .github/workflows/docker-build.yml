@@ -10,7 +10,7 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2 # git pull      - name: Log in to Docker Hub
+            - uses: actions/checkout@v2 # git pull
             - name: Docker meta
               id: meta
               uses: docker/metadata-action@v4
@@ -26,6 +26,17 @@ jobs:
                   username: ${{ secrets.DOCKER_USERNAME }}
                   password: ${{ secrets.DOCKER_PASSWORD }}
 
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v2
+
+            - name: Cache Docker layers
+              uses: actions/cache@v3
+              with:
+                  path: /tmp/.buildx-cache
+                  key: ${{ runner.os }}-buildx-${{ github.sha }}
+                  restore-keys: |
+                      ${{ runner.os }}-buildx-
+
             - name: Build Image
               uses: docker/build-push-action@v5
               with:
@@ -33,3 +44,5 @@ jobs:
                   push: ${{ github.event_name != 'pull_request' }}
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
+                  cache-from: type=local,src=/tmp/.buildx-cache
+                  cache-to: type=local,dest=/tmp/.buildx-cache,new
