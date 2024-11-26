@@ -1,21 +1,22 @@
 "use client";
-import React, { useEffect } from "react";
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow
-} from "@/components/ui/table";
-import { useSession } from "next-auth/react";
-import { PostActionButtons } from "./PostActionButton";
+import React, { useEffect, useState, useRef } from "react";
 import { format } from "date-fns";
+import { useSession } from "next-auth/react";
 import { UserPostRetType } from "@/app/(auth)/api/user/route";
+import { cn } from "@/lib/utils";
+import { PostActionButtons } from "./PostActionButton";
+import { Loader2 } from "lucide-react";
+import 'cherry-markdown/dist/cherry-markdown.css';
+import Cherry from "cherry-markdown";
+
 
 export default function PostEdit() {
     const [data, setData] = React.useState<UserPostRetType[]>([]);
+    const [selectedPost, setSelectedPost] = useState<UserPostRetType | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const loadingTimerRef = useRef<NodeJS.Timeout>();
+    const cherryRef = useRef<Cherry | null>(null);
+
     const handleChange = (postId: number, version: number, action: "delete" | "check_out") => {
         // 创建data的拷贝
         const newData = [...data];
@@ -50,41 +51,7 @@ export default function PostEdit() {
         }
         setData(newData as UserPostRetType[]);
     };
-    const columns: ColumnDef<UserPostRetType>[] = [
-        {
-            header: "Title",
-            accessorFn: (row) => row.currentVersion?.title ?? row.postVersions[0].title
-        },
-        {
-            header: "Create Time",
-            accessorFn: (row) => format(row.create_time, "LLLL d, yyyy, p")
-        },
-        {
-            header: "Update Time",
-            accessorFn: (row) =>
-                row.currentVersion
-                    ? format(row.currentVersion.update_time, "LLLL d, yyyy, p")
-                    : "no version"
-        },
-        {
-            header: "Published Version",
-            accessorFn: (row) => row.currentVersion?.version ?? "no version"
-        },
-        {
-            id: "actions",
-            cell: ({ row }) => {
-                const post = row.original;
-                return (
-                    <PostActionButtons post={post} handleChange={handleChange}></PostActionButtons>
-                );
-            }
-        }
-    ];
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel()
-    });
+
     const session = useSession({
         required: true
     });
@@ -98,56 +65,156 @@ export default function PostEdit() {
         getData();
     }, [session.status]);
 
+    useEffect(() => {
+        const initCherry = async () => {
+            const { default: CherryMarkdown } = await import('cherry-markdown');
+            if (!selectedPost) return;
+            // 如果已存在实例，先销毁
+            if (cherryRef.current) {
+                cherryRef.current.destroy();
+                cherryRef.current = null;
+            }
+
+            // 创建新实例
+            cherryRef.current = new CherryMarkdown({
+                id: 'cherry-markdown',
+                value: '',
+                editor: {
+                    defaultModel: 'previewOnly'
+                }
+            });
+
+            // 如果有选中的文章，立即加载内容
+            if (selectedPost) {
+                try {
+                    const response = await fetch(`/api/post/${selectedPost.id}/${selectedPost.current_version}`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch post content');
+                    }
+                    const data = await response.json();
+                    cherryRef.current.setValue(data.content);
+                } catch (error) {
+                    console.error('Error fetching post content:', error);
+                }
+            }
+        };
+
+        // 等待元素渲染完成
+        initCherry();
+
+        return () => {
+            if (cherryRef.current) {
+                cherryRef.current.destroy();
+                cherryRef.current = null;
+            }
+        };
+    }, [selectedPost]);
+
+    const handlePostSelect = async (post: UserPostRetType) => {
+        if (loadingTimerRef.current) {
+            clearTimeout(loadingTimerRef.current);
+        }
+
+        setSelectedPost(post);
+
+        const loadingTimer = setTimeout(() => {
+            setIsLoading(true);
+        }, 150);
+        loadingTimerRef.current = loadingTimer;
+
+        try {
+            if (loadingTimerRef.current) {
+                clearTimeout(loadingTimerRef.current);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
-        <div className="h-full w-full p-2">
-            <div className="h-full w-full overflow-auto border rounded-md">
-                <Table className="max-h-full bg-white border-b">
-                    <TableHeader className="top-0 sticky bg-secondary">
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => {
-                                    return (
-                                        <TableHead key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                      header.column.columnDef.header,
-                                                      header.getContext()
-                                                  )}
-                                        </TableHead>
-                                    );
-                                })}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={row.getIsSelected() && "selected"}
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))
+        <div className="h-full flex">
+            {/* Left Sidebar */}
+            <div className="w-[400px] border-r h-full flex flex-col">
+                <div className="p-4 border-b">
+                    <h1 className="text-xl font-semibold">文章管理</h1>
+                </div>
+                <div className="overflow-auto flex-1">
+                    {data.map((post) => (
+                        <div
+                            key={post.id}
+                            onClick={() => handlePostSelect(post)}
+                            className={cn(
+                                "p-4 border-b cursor-pointer hover:bg-muted/50 transition-colors",
+                                selectedPost?.id === post.id && "bg-muted"
+                            )}
+                        >
+                            <div className="flex flex-col gap-1">
+                                <h3 className="font-medium truncate">
+                                    {post.currentVersion?.title ?? post.postVersions[0].title}
+                                </h3>
+                                <p className="text-sm text-muted-foreground truncate">
+                                </p>
+                                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                    <span>Version: {post.current_version}</span>
+                                    <span>{format(post.create_time, "MMM d, yyyy")}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                    {data.length === 0 && (
+                        <div className="p-4 text-center text-muted-foreground">
+                            No posts found.
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Right Content */}
+            <div className="flex-1 h-full overflow-auto">
+                {selectedPost ? (
+                    <div className="">
+                        <div className="flex items-center justify-between mb-6 px-6 py-6">
+                            <h2 className="text-2xl font-semibold">
+                                {selectedPost.currentVersion?.title ?? selectedPost.postVersions[0].title}
+                            </h2>
+                            <PostActionButtons
+                                post={selectedPost}
+                                handleChange={handleChange}
+                            />
+                        </div>
+                        {isLoading ? (
+                            <div className="flex items-center justify-center py-8">
+                                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                            </div>
                         ) : (
-                            <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
-                                </TableCell>
-                            </TableRow>
+                            <div id="cherry-markdown" className="h-[calc(100vh-200px)]">
+                                <style>
+                                    {`
+                                        .cherry-markdown {
+                                            border: none !important;
+                                            box-shadow: none !important;
+                                            padding: 0 !important;
+                                        }
+                                        .cherry {
+                                            box-shadow: none !important;
+                                        }
+                                        .cherry-editor,
+                                        .cherry-previewer {
+                                            box-shadow: none !important;
+                                        }
+                                    `}
+                                </style>
+                            </div>
                         )}
-                    </TableBody>
-                </Table>
+                    </div>
+                ) : (
+                    <div className="h-full flex items-center justify-center text-muted-foreground">
+                        Select a post to view details
+                    </div>
+                )}
             </div>
         </div>
     );
 }
+
 PostEdit.auth = true;
