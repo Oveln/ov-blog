@@ -18,24 +18,26 @@ export default function PostCard({ dataFade, info }: { dataFade: number; info: P
     return (
         <Link href={`/blogs/${info.id}`}>
             <div
-                className="mb-8 border-2 shadow-md p-2 group relative animate-fade-up animate-ease-in-out animate-duration-300"
+                className="mb-8 rounded-lg border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md p-4 group relative animate-fade-up animate-ease-in-out animate-duration-300 transition-all"
                 style={{
                     animationDelay: `${dataFade * 100}ms`
                 }}
             >
-                <h2 className="mb-1 text-xl">{info.currentVersion?.title}</h2>
-                <time
-                    dateTime={format(info.create_time, "LLLL d, yyyy")}
-                    className="mb-2 block text-xs text-gray-600"
-                >
-                    {format(info.create_time, "LLLL d, yyyy")}
-                </time>
+                <h2 className="mb-2 text-xl font-semibold text-gray-800 group-hover:text-gray-900">
+                    {info.currentVersion?.title}
+                </h2>
                 {info.currentVersion?.description != "" && (
-                    <div className="text-sm [&>*]:mb-3 [&>*:last-child]:mb-0">
+                    <div className="text-sm text-gray-600 [&>*]:mb-3 [&>*:last-child]:mb-0">
                         {info.currentVersion?.description}
                     </div>
                 )}
-                <span className="absolute right-2 bottom-2 animated-underline group-hover:animated-underline-hover">
+                <time
+                    dateTime={format(info.create_time, "LLLL d, yyyy")}
+                    className="mt-3 block text-xs text-gray-500"
+                >
+                    {format(info.create_time, "LLLL d, yyyy")}
+                </time>
+                <span className="absolute right-4 bottom-4 text-sm text-gray-600 group-hover:text-gray-800 font-medium animated-underline group-hover:animated-underline-hover">
                     Go to →
                 </span>
             </div>
