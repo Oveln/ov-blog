@@ -159,7 +159,7 @@ export function PostEditor({
             {/* 右侧侧边栏 */}
             <div className="w-96 flex flex-col gap-6 rounded-lg border bg-card p-6 m-4">
                 <div>
-                    <h2 className="text-xl font-semibold mb-6">文章设置</h2>
+                    <h2 className="text-xl font-semibold mb-6">文章信息</h2>
 
                     <div className="space-y-4">
                         <div className="space-y-2">
