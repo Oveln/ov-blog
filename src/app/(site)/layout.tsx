@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "@/app/globals.css";
 import { ThemeProvider } from "@/context/theme-provider";
 import React from "react";
 import { NavMenu } from "@/components/layout/nav-menu";
@@ -16,23 +16,24 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en" className="m-0 p-0" suppressHydrationWarning>
-            <body
-                className={
-                    "mx-auto max-w-[75rem] px-2 lg:px-0 w-screen h-screen bg-muted/40 " +
-                    inter.className
-                }
-                data-scroll-lock="1"
-            >
+            <body>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="system"
                     enableSystem
                     disableTransitionOnChange
                 >
-                    <NavMenu></NavMenu>
-                    {children}
+                    <div
+                        className={
+                            "mx-auto max-w-[75rem] px-2 lg:px-0 w-screen h-screen " +
+                            inter.className
+                        }
+                        data-scroll-lock="1">
+                        <NavMenu></NavMenu>
+                        {children}
 
-                    <Footer></Footer>
+                        <Footer></Footer>
+                    </div>
                 </ThemeProvider>
             </body>
         </html>
