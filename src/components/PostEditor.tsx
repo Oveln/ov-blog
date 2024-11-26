@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { NewPostVersionRetType, NewPostVersionType } from "@/app/(auth)/api/post/[id]/route";
 import { NewPostRetType, NewPostType } from "@/app/(auth)/api/post/route";
 import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/get";
+import { Textarea } from "./ui/textarea";
 
 export default dynamic(() => Promise.resolve(PostEditor), { ssr: false });
 export function PostEditor({
@@ -149,51 +150,67 @@ export function PostEditor({
     // const editorRef = useRef<Cherry | null>(null);
 
     return (
-        <div className="flex flex-col relative h-full">
-            <div className="flex">
-                <div className="flex flex-col flex-1 py-2">
-                    <div className="flex w-3/5 mb-2 flex-1">
-                        <span className="flex items-center justify-center text-xl px-2">标题</span>
-                        <Input
-                            value={title}
-                            onChange={(s) => setTitle(s.target.value)}
-                            placeholder="请输入标题"
-                            className="flex-1"
-                        ></Input>
-                    </div>
-                    <div className="flex w-3/5 flex-1">
-                        <span className="flex items-center justify-center text-xl px-2">简介</span>
-                        <Input
-                            value={description}
-                            onChange={(s) => setDescription(s.target.value)}
-                            placeholder=""
-                            className="flex-1"
-                        ></Input>
+        <div className="flex h-full gap-6 bg-background">
+            {/* 左侧编辑器区域 - 移除边框和背景 */}
+            <div className="flex-1 overflow-hidden border-r">
+                <div className="editor h-full" id="markdown-container"></div>
+            </div>
+
+            {/* 右侧侧边栏 */}
+            <div className="w-96 flex flex-col gap-6 rounded-lg border bg-card p-6 m-4">
+                <div>
+                    <h2 className="text-xl font-semibold mb-6">文章设置</h2>
+
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-muted-foreground">
+                                文章标题
+                            </label>
+                            <Input
+                                value={title}
+                                onChange={(s) => setTitle(s.target.value)}
+                                placeholder="请输入标题"
+                                className="h-10"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-muted-foreground">
+                                文章简介
+                            </label>
+                            <Textarea
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                placeholder="请输入简介"
+                                className="min-h-[100px] resize-none"
+                            />
+                        </div>
                     </div>
                 </div>
-                <div className="flex flex-col flex-1 py-2">
-                    <Button className="ml-auto mr-2 mb-2 flex-1" variant="outline" onClick={submit}>
-                        <Send className="h-5 w-5 mr-2 " />
-                        <span>提交</span>
+
+                <div className="flex flex-col gap-3 mt-auto">
+                    <Button
+                        className="h-11 text-base"
+                        onClick={submit}
+                    >
+                        <Send className="h-5 w-5 mr-2" />
+                        <span>发布文章</span>
                     </Button>
 
                     <Button
-                        className="ml-auto mr-2 flex-1 mb-2"
                         variant="outline"
+                        className="h-11 text-base"
                         onClick={() => {
-                            toast("重置!", {
-                                description: "重置成功"
+                            toast("重置成功", {
+                                description: "内容已恢复到上次保存状态"
                             });
                             cherryInstance.current?.setValue(postVersion.content);
                         }}
                     >
-                        <RotateCcw className="h-5 w-5 mr-2 " />
-                        <span>重置</span>
+                        <RotateCcw className="h-5 w-5 mr-2" />
+                        <span>重置内容</span>
                     </Button>
                 </div>
-            </div>
-            <div className="flex-1 m-2 overflow-auto">
-                <div className="editor h-full" id="markdown-container"></div>
             </div>
         </div>
     );
