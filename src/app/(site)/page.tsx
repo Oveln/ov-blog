@@ -1,12 +1,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Typing from "@/components/ui/typing";
 import { EnvelopeClosedIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import React from "react";
 
 const ovLinks = [
     {
-        name: "Github",
-        url: "https://Github.com/Oveln",
+        name: "github",
+        url: "https://github.com/Oveln",
         icon: <GitHubLogoIcon className="size-5" />
     },
     {
@@ -22,18 +23,18 @@ export default function Home() {
         return t++;
     };
     return (
-        <main className={"relative h-[calc(100vh-56px)]"}>
+        <main className={"relative h-[calc(100vh-56px)]  font-mono"}>
             <div className="absolute mt-[15%] flex w-full items-center md:flex-row flex-col">
-                <div className="flex-1 p-10 md:pl-0">
-                    <h1
-                        className="text-2xl md:text-4xl 2xl:text-5xl animate-fade-up animate-ease-in-out animate-duration-300"
+                <div className="flex-1 md:pl-0">
+                    <p
+                        className=" text-3xl md:text-5xl 2xl:text-6xl animate-fade-up animate-ease-in-out animate-duration-300"
                         style={{
                             animationDelay: `${getT() * 100}ms`
                         }}
                     >
                         {"Hi!👋"}
-                    </h1>
-                    <h1
+                    </p>
+                    <p
                         className="mt-1 text-3xl md:text-5xl 2xl:text-6xl animate-fade-up animate-ease-in-out animate-duration-300"
                         style={{
                             animationDelay: `${getT() * 100}ms`
@@ -41,25 +42,28 @@ export default function Home() {
                     >
                         {"I'm "}
                         <span className="text-fuchsia-500 text-opacity-85">Oveln🎉</span>
-                    </h1>
-                    <h1
-                        className="mt-5 text-lg animate-fade-up animate-ease-in-out animate-duration-300"
+                    </p>
+                    <p
+                        className="mt-4 text-lg animate-fade-up animate-ease-in-out animate-duration-300"
                         style={{
                             animationDelay: `${getT() * 100}ms`
                         }}
                     >
-                        A Student && Developer
-                    </h1>
-                    <h1
+                        Language:&nbsp;
+                        <span className="text-amber-700 font-bold">Rust</span>/
+                        <span className="text-blue-500 font-bold">Typescript</span>/
+                        <span className="text-green-500 font-bold">Python</span>
+                    </p>
+                    <p
                         className="text-lg animate-fade-up animate-ease-in-out animate-duration-300"
                         style={{
                             animationDelay: `${getT() * 100}ms`
                         }}
                     >
-                        Love Coding⌨️ and Gaming🎮
-                    </h1>
+                        Programing⌨️ and Gaming🎮
+                    </p>
                     <div
-                        className="mt-2 animate-fade-up animate-ease-in-out animate-duration-300"
+                        className="animate-fade-up animate-ease-in-out animate-duration-300"
                         style={{
                             animationDelay: `${getT() * 100}ms`
                         }}
@@ -69,16 +73,23 @@ export default function Home() {
                                 <Link
                                     key={link.name}
                                     href={link.url}
-                                    className="p-0 mr-1 inline-flex w-fit animated-underline hover:animated-underline-hover"
+                                    className="p-0 mr-3 inline-flex w-fit text-lg items-center animated-underline hover:animated-underline-hover"
                                 >
+                                    <span className="">{link.name}</span>
                                     {link.icon}
-                                    <span className="ml-1">{link.name}</span>
                                 </Link>
                             );
                         })}
                     </div>
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 flex items-center justify-center md:flex-row flex-col">
+                    <div className="flex-1 flex justify-center">
+                        <Typing
+                            className="text-2xl text-left w-full"
+                            text={`print!("Hello World!")`}
+                            speed={100}
+                        />
+                    </div>
                     <Avatar className="size-72 mx-auto">
                         <AvatarImage src="./avatar.jpg" />
                         <AvatarFallback>Oveln</AvatarFallback>
