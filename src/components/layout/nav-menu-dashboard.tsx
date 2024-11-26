@@ -1,14 +1,17 @@
 "use client";
 import * as React from "react";
 import Link from "next/link";
-import { HomeIcon, LucideIcon, NotebookPenIcon, PencilLine } from "lucide-react";
+import { HomeIcon, LucideIcon, NotebookPenIcon, PencilLine, Settings } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { Tooltip, TooltipContent, TooltipProvider } from "../ui/tooltip";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
+
 interface NavItem {
     name: string;
     to: string;
     icon: LucideIcon;
 }
+
 const navItems: NavItem[] = [
     {
         name: "仪表盘",
@@ -26,12 +29,25 @@ const navItems: NavItem[] = [
         icon: NotebookPenIcon
     }
 ];
+
+const adminItems: NavItem[] = [
+    {
+        name: "应用管理",
+        to: "/dashboard/apps",
+        icon: Settings
+    }
+];
+
 export function NavMenuDashboard() {
+    const { data: session } = useSession();
+    const isAdmin = session?.user?.role === "ADMIN";
+    
+    const displayItems = isAdmin ? [...navItems, ...adminItems] : navItems;
+
     return (
-        // 以父组件为基准，继承其宽度
         <TooltipProvider>
             <ul>
-                {navItems.map((item, index) => (
+                {displayItems.map((item, index) => (
                     <li key={index} className="group w-full h-12 group-hover:scale-110 ">
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -48,6 +64,5 @@ export function NavMenuDashboard() {
                 ))}
             </ul>
         </TooltipProvider>
-        // <div className="bg-red-400 h-5"></div>
     );
 }
