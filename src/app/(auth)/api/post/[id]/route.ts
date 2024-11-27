@@ -68,15 +68,24 @@ const newVersion = async (
 
             // 如果提供了tags，更新post的tags
             if (data.tags) {
+                // 对每个标签进行处理
+                for (const tagName of data.tags) {
+                    // 检查标签是否存在，如果不存在则创建
+                    const tag = await tx.tag.upsert({
+                        where: { name: tagName },
+                        update: {},
+                        create: { name: tagName }
+                    });
 
-                // 创建新的tags关联
-                await tx.tagOnPostVersion.createMany({
-                    data: data.tags.map(tag => ({
-                        post_VersionPostId: data.postId,
-                        post_VersionVersion: new_version.version,
-                        tagName: tag
-                    }))
-                });
+                    // 创建新的tags关联
+                    await tx.tagOnPostVersion.create({
+                        data: {
+                            post_VersionPostId: data.postId,
+                            post_VersionVersion: new_version.version,
+                            tagName: tag.name
+                        }
+                    });
+                }
             }
 
             // 如果需要发布，更新当前版本

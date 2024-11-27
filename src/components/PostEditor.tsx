@@ -11,6 +11,8 @@ import { NewPostVersionRetType, NewPostVersionType } from "@/app/(auth)/api/post
 import { NewPostRetType, NewPostType } from "@/app/(auth)/api/post/route";
 import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/get";
 import { Textarea } from "./ui/textarea";
+import { Badge } from "./ui/badge";
+import { X, Plus } from "lucide-react";
 
 export default dynamic(() => Promise.resolve(PostEditor), { ssr: false });
 export function PostEditor({
@@ -57,7 +59,8 @@ export function PostEditor({
                 description: description == "" ? null : description,
                 content: cherryInstance.current?.getValue() ?? "",
                 postId: postVersion.postId,
-                publish: publish
+                publish: publish,
+                tags: tags
             };
             const r: NewPostVersionRetType = await (
                 await fetch(`/api/post/${postVersion.postId}`, {
@@ -150,6 +153,43 @@ export function PostEditor({
     // }, []);
     // const editorRef = useRef<Cherry | null>(null);
 
+    const [tags, setTags] = useState<string[]>(postVersion.tags ?? []);
+    const [availableTags, setAvailableTags] = useState<{ name: string }[]>([]);
+    const [newTag, setNewTag] = useState<string>('');
+
+    useEffect(() => {
+        const fetchTags = async () => {
+            try {
+                const response = await fetch('/api/tags');
+                const data = await response.json();
+                if (data.status === 'ok' && Array.isArray(data.tags)) {
+                    setAvailableTags(data.tags);
+                } else {
+                    setAvailableTags([]);
+                    console.warn('获取标签失败：返回数据格式不正确');
+                }
+            } catch (error) {
+                setAvailableTags([]);
+                toast("获取标签失败", {
+                    description: "请检查网络连接"
+                });
+            }
+        };
+
+        fetchTags();
+    }, []);
+
+    const addTag = () => {
+        if (newTag && !tags.includes(newTag)) {
+            setTags([...tags, newTag]);
+            setNewTag('');
+        }
+    };
+
+    const removeTag = (tagToRemove: string) => {
+        setTags(tags.filter(tag => tag !== tagToRemove));
+    };
+
     return (
         <div className="flex h-full gap-6 bg-background">
             {/* 左侧编辑器区域 - 移除边框和背景 */}
@@ -186,6 +226,54 @@ export function PostEditor({
                                 className="min-h-[100px] resize-none"
                             />
                         </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-muted-foreground">
+                                文章标签
+                            </label>
+                            <div className="flex gap-2">
+                                <Input
+                                    value={newTag}
+                                    onChange={(e) => setNewTag(e.target.value)}
+                                    placeholder="输入新标签"
+                                    className="flex-grow"
+                                />
+                                <Button onClick={addTag} variant="outline">
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    添加
+                                </Button>
+                            </div>
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {tags.map((tag, index) => (
+                                    <Badge key={`${tag}-${index}`} variant="secondary" className="px-2 py-1">
+                                        {tag}
+                                        <X
+                                            className="ml-1 h-3 w-3 cursor-pointer"
+                                            onClick={() => removeTag(tag)}
+                                        />
+                                    </Badge>
+                                ))}
+                            </div>
+                            <div className="mt-2">
+                                <p className="text-sm text-muted-foreground mb-1">可用标签：</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {availableTags.map((tag, index) => (
+                                        <Badge
+                                            key={`${tag.name}-${index}`}
+                                            variant="outline"
+                                            className="cursor-pointer"
+                                            onClick={() => {
+                                                if (!tags.includes(tag.name)) {
+                                                    setTags([...tags, tag.name]);
+                                                }
+                                            }}
+                                        >
+                                            {tag.name}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -202,6 +290,7 @@ export function PostEditor({
                         variant="outline"
                         className="h-11 text-base"
                         onClick={() => {
+                            console.log(availableTags)
                             toast("重置成功", {
                                 description: "内容已恢复到上次保存状态"
                             });
