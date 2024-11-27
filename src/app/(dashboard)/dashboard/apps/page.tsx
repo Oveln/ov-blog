@@ -15,6 +15,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface App {
     id: string;
@@ -27,6 +37,7 @@ export default function AppsPage() {
     const [apps, setApps] = useState<App[]>([]);
     const [newApp, setNewApp] = useState({ name: "", url: "", description: "" });
     const [isOpen, setIsOpen] = useState(false);
+    const [appToDelete, setAppToDelete] = useState<string | null>(null);
 
     useEffect(() => {
         fetchApps();
@@ -71,6 +82,7 @@ export default function AppsPage() {
 
             if (response.ok) {
                 fetchApps();
+                setAppToDelete(null);
             } else {
                 throw new Error("Failed to delete app");
             }
@@ -148,12 +160,11 @@ export default function AppsPage() {
                         key={app.id}
                         className="relative group rounded-lg border p-4 hover:shadow-lg transition-shadow"
                     >
-                        {/* 删除按钮 */}
                         <Button
                             variant="ghost"
                             size="icon"
                             className="absolute top-2 right-2 transition-opacity"
-                            onClick={() => handleDeleteApp(app.id)}
+                            onClick={() => setAppToDelete(app.id)}
                         >
                             <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
@@ -171,6 +182,26 @@ export default function AppsPage() {
                     </div>
                 ))}
             </div>
+
+            <AlertDialog open={!!appToDelete} onOpenChange={(open: boolean) => !open && setAppToDelete(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>确认删除</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            您确定要删除这个应用吗？此操作无法撤销。
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>取消</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={() => appToDelete && handleDeleteApp(appToDelete)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                            删除
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }
