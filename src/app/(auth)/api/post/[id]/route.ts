@@ -7,6 +7,7 @@ export type NewPostVersionType = {
     content: string;
     postId: number;
     publish: boolean;
+    tags?: string[];
 };
 
 export type NewPostVersionRetType = {
@@ -17,13 +18,17 @@ const debounceMap = new Map<string, NodeJS.Timeout>();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isNewPostVersionType = (data: any): data is NewPostVersionType => {
-    return (
-        typeof data.title === "string" &&
+    const basicCheck = typeof data.title === "string" &&
         (typeof data.description === "string" || data.description === null) &&
-        typeof data.content === "string" &&
-        typeof data.postId === "number" &&
-        typeof data.publish === "boolean"
-    );
+        typeof data.content === "string";
+
+    if (data.tags !== undefined) {
+        return basicCheck &&
+            Array.isArray(data.tags) &&
+            data.tags.every((tag: string) => typeof tag === "string");
+    }
+
+    return basicCheck;
 };
 
 const newVersion = async (
@@ -52,24 +57,45 @@ const newVersion = async (
         version: newestVersion.version + 1,
         postId: data.postId
     };
-    const new_version = await prisma.post_Version.create({
-        data: insertVersion
-    });
+
     try {
-        if (data.publish) {
-            await prisma.post.update({
-                where: {
-                    id: data.postId
-                },
-                data: {
-                    current_version: new_version.version
-                }
+        // 使用事务来确保tags和版本同时更新
+        await prisma.$transaction(async (tx) => {
+            // 创建新版本
+            const new_version = await tx.post_Version.create({
+                data: insertVersion
             });
-        }
+
+            // 如果提供了tags，更新post的tags
+            if (data.tags) {
+
+                // 创建新的tags关联
+                await tx.tagOnPostVersion.createMany({
+                    data: data.tags.map(tag => ({
+                        post_VersionPostId: data.postId,
+                        post_VersionVersion: new_version.version,
+                        tagName: tag
+                    }))
+                });
+            }
+
+            // 如果需要发布，更新当前版本
+            if (data.publish) {
+                await tx.post.update({
+                    where: {
+                        id: data.postId
+                    },
+                    data: {
+                        current_version: new_version.version
+                    }
+                });
+            }
+        });
     } catch (e) {
         console.log(e);
         return { status: "db_error" };
     }
+
     return {
         status: "ok"
     };

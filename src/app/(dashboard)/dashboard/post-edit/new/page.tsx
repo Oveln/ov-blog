@@ -10,7 +10,8 @@ export default function PostEdit() {
         content: "",
         version: 0,
         update_time: new Date(),
-        postId: 0
+        postId: 0,
+        tags: []
     };
     return <PostEditor postVersion={postVersion} publish={true}></PostEditor>;
 }
