@@ -11,14 +11,26 @@ export type CreateTagResponse = {
     status: "ok" | "unauthorized" | "error";
 };
 
-// Get all tags
+// Get all tags with at least one published post
 export async function GET(): Promise<Response> {
     try {
         const tags = await prisma.tag.findMany({
+            where: {
+                postVersions: {
+                    some: {
+                        postVersion: {
+                            isCurrent: {
+                                isNot: null
+                            }
+                        }
+                    }
+                }
+            },
             select: {
                 name: true
             }
         });
+
         const response: TagsResponse = {
             status: "ok",
             tags: tags
