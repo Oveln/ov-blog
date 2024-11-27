@@ -38,7 +38,12 @@ export const getAllPostCardInfo = async () => {
                 select: {
                     title: true,
                     description: true,
-                    update_time: true
+                    update_time: true,
+                    tags: {
+                        select: {
+                            tagName: true
+                        }
+                    }
                 }
             }
         },
