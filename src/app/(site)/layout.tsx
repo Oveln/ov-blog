@@ -23,16 +23,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     enableSystem
                     disableTransitionOnChange
                 >
-                    <div
-                        className={
-                            "mx-auto max-w-[75rem] px-2 lg:px-0 w-screen h-screen " +
-                            inter.className
-                        }
-                        data-scroll-lock="1">
-                        <NavMenu></NavMenu>
-                        {children}
-
-                        <Footer></Footer>
+                    <div className={`mx-auto max-w-[calc(100vw-10px)] lg:px-0 w-screen min-h-screen flex flex-col ${inter.className}`}>
+                        <nav className="mx-auto w-full max-w-[68rem]">
+                            <NavMenu />
+                        </nav>
+                        <div className="mx-auto w-full max-w-[68rem] flex-1">
+                            {children}
+                        </div>
+                        <Footer />
                     </div>
                 </ThemeProvider>
             </body>
