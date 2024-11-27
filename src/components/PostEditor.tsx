@@ -77,7 +77,7 @@ export function PostEditor({
                 title: title,
                 description: description == "" ? null : description,
                 content: cherryInstance.current?.getValue() ?? "",
-                tags: []
+                tags: tags
             };
             const r: NewPostRetType = await (
                 await fetch(`/api/post`, {

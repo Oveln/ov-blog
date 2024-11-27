@@ -50,6 +50,13 @@ const newPost = async (data: NewPostType, userId: string): Promise<NewPostRetTyp
             });
 
             if (data.tags.length > 0) {
+                await tx.tag.createMany({
+                    data: data.tags.map(tag => ({
+                        name: tag
+                    })),
+                    skipDuplicates: true
+                });
+
                 await tx.tagOnPostVersion.createMany({
                     data: data.tags.map(tag => ({
                         post_VersionPostId: post_version.postId,
