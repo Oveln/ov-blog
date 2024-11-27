@@ -70,7 +70,15 @@ export const getPostById = async (id: number) => {
         },
         select: {
             create_time: true,
-            currentVersion: true
+            currentVersion: {
+                select: {
+                    title: true,
+                    description: true,
+                    content: true,
+                    update_time: true,
+                    tags: true
+                },
+            }
         }
     });
 };
