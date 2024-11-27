@@ -8,6 +8,7 @@ import { PostActionButtons } from "./PostActionButton";
 import { Loader2 } from "lucide-react";
 import 'cherry-markdown/dist/cherry-markdown.css';
 import Cherry from "cherry-markdown";
+import { Badge } from "@/components/ui/badge";
 
 
 export default function PostEdit() {
@@ -16,6 +17,8 @@ export default function PostEdit() {
     const [isLoading, setIsLoading] = useState(false);
     const loadingTimerRef = useRef<NodeJS.Timeout>();
     const cherryRef = useRef<Cherry | null>(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
     const handleChange = (postId: number, version: number, action: "delete" | "check_out") => {
         // 创建data的拷贝
@@ -131,15 +134,55 @@ export default function PostEdit() {
         }
     };
 
+    const getAllTags = () => {
+        const tagSet = new Set<string>();
+        data.forEach(post => {
+            post.currentVersion?.tags?.forEach((tag: { tagName: string }) => tagSet.add(tag.tagName));
+        });
+        return Array.from(tagSet);
+    };
+
+    const filteredPosts = data.filter(post => {
+        const matchesSearch = post.currentVersion?.title.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesTag = !selectedTag || post.currentVersion?.tags?.some(tag => tag.tagName === selectedTag);
+        return matchesSearch && matchesTag;
+    });
+
     return (
         <div className="h-full flex">
             {/* Left Sidebar */}
             <div className="w-[400px] border-r h-full flex flex-col">
-                <div className="p-4 border-b">
+                <div className="p-4 border-b space-y-4">
                     <h1 className="text-xl font-semibold">文章管理</h1>
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="搜索文章..."
+                            className="w-full px-4 py-2.5 border rounded-lg bg-background hover:border-primary/50 focus:border-primary focus:ring-1 focus:ring-primary transition-colors outline-none"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        {getAllTags().map(tag => (
+                            <Badge
+                                key={tag}
+                                variant={selectedTag === tag ? "default" : "secondary"}
+                                onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+                                className={cn(
+                                    "select-none hover:bg-primary/20 hover:text-primary transition-all duration-200 border",
+                                    selectedTag === tag
+                                        ? "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground border-primary"
+                                        : "border-muted-foreground/20"
+                                )}
+                            >
+                                {tag}
+                            </Badge>
+                        ))}
+                    </div>
                 </div>
                 <div className="overflow-auto flex-1">
-                    {data.map((post) => (
+                    {filteredPosts.map((post) => (
                         <div
                             key={post.id}
                             onClick={() => handlePostSelect(post)}
@@ -148,32 +191,37 @@ export default function PostEdit() {
                                 selectedPost?.id === post.id && "bg-muted"
                             )}
                         >
-                            <div className="flex flex-col gap-1">
-                                <h3 className="font-medium truncate">
+                            <div className="flex flex-col gap-2">
+                                <h3 className="font-semibold text-lg truncate">
                                     {post.currentVersion?.title ?? post.postVersions[0].title}
                                 </h3>
-                                <p className="text-sm text-muted-foreground truncate">
-                                </p>
-                                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                    <span>Version: {post.current_version}</span>
-                                    <span>{format(post.create_time, "MMM d, yyyy")}</span>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {post.currentVersion?.tags.map((tag: { tagName: string }) => (
+                                        <span key={tag.tagName} className="text-xs px-2 py-0.5 bg-secondary text-secondary-foreground rounded-full">
+                                            {tag.tagName}
+                                        </span>
+                                    ))}
+                                </div>
+                                <div className="flex items-center justify-between text-xs text-muted-foreground mt-1">
+                                    <span className="bg-primary/10 text-primary px-2 py-0.5 rounded">版本: {post.current_version}</span>
+                                    <span>{format(post.create_time, "yyyy年MM月dd日")}</span>
                                 </div>
                             </div>
                         </div>
                     ))}
-                    {data.length === 0 && (
+                    {filteredPosts.length === 0 && (
                         <div className="p-4 text-center text-muted-foreground">
-                            No posts found.
+                            没有找到匹配的文章
                         </div>
                     )}
                 </div>
             </div>
 
             {/* Right Content */}
-            <div className="flex-1 h-full overflow-auto">
+            <div className="flex-1 h-full overflow-auto px-8">
                 {selectedPost ? (
                     <div className="">
-                        <div className="flex items-center justify-between mb-6 px-6 py-6">
+                        <div className="flex items-center justify-between mb-6 py-6">
                             <h2 className="text-2xl font-semibold">
                                 {selectedPost.currentVersion?.title ?? selectedPost.postVersions[0].title}
                             </h2>
@@ -187,7 +235,7 @@ export default function PostEdit() {
                                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                             </div>
                         ) : (
-                            <div id="cherry-markdown" className="h-[calc(100vh-200px)]">
+                            <div id="cherry-markdown" className="h-[calc(100vh-200px)] border">
                                 <style>
                                     {`
                                         .cherry-markdown {

@@ -12,6 +12,7 @@ export type UserPostRetType = {
         version: number;
         title: string;
         update_time: Date;
+        tags: { tagName: string }[];
     } | null;
     postVersions: {
         version: number;
@@ -38,7 +39,12 @@ export const GET = async () => {
                 select: {
                     title: true,
                     update_time: true,
-                    version: true
+                    version: true,
+                    tags: {
+                        select: {
+                            tagName: true
+                        }
+                    },
                 }
             },
             postVersions: {

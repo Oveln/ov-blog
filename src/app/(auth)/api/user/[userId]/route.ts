@@ -38,7 +38,12 @@ export const GET = async (_req: Request, context: { params: Promise<Params> }) =
                 select: {
                     title: true,
                     update_time: true,
-                    version: true
+                    version: true,
+                    tags: {
+                        select: {
+                            tagName: true
+                        }
+                    }
                 }
             }
         }
