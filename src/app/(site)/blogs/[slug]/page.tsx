@@ -31,6 +31,10 @@ const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
     if (!postVersion) {
         return notFound();
     }
+
+    // 从 postVersion 中获取标签
+    const tags = postVersion.tags || [];
+
     const content = await unified()
         .use(remarkGithubAlerts)
         .use(remarkGfm)
@@ -44,62 +48,139 @@ const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
 
         .process(postVersion.content);
     return (
-        <div>
+        <div className="container mx-auto px-4">
             <ResizablePanelGroup
                 direction="horizontal"
                 className="w-full rounded-lg border min-h-[calc(100vh-56px)]"
-                style={{
-                    height: "auto"
-                }}
             >
                 <ResizablePanel defaultSize={75}>
-                    <article className="py-8 min-h-[calc(100vh-56px)] flex flex-col">
-                        <div className="mb-8 text-center">
-                            <h1 className="text-3xl font-bold">{postVersion?.title}</h1>
-                            <time
-                                dateTime={format(post.create_time, "yyyy-MM-dd")}
-                                className="mb-1 text-xs text-gray-600"
-                            >
-                                Created: {format(post.create_time, "yyyy-MM-dd")}
-                            </time>
-                        </div>
+                    <article className="py-6 lg:py-8 min-h-[calc(100vh-56px)] flex flex-col">
+                        <header className="mb-8 text-center space-y-4">
+                            <h1 className="text-4xl lg:text-5xl font-bold tracking-tight">
+                                {postVersion?.title}
+                            </h1>
+                            <div className="flex items-center justify-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+                                <time dateTime={format(post.create_time, "yyyy-MM-dd")}>
+                                    Created: {format(post.create_time, "yyyy-MM-dd")}
+                                </time>
+                                <span>•</span>
+                                <time dateTime={format(postVersion.update_time, "yyyy-MM-dd")}>
+                                    Updated: {format(postVersion.update_time, "yyyy-MM-dd")}
+                                </time>
+                            </div>
+                        </header>
                         <main
-                            className={
-                                `prose prose-zinc max-w-full mx-8 lg:prose-lg prose-table:w-11/12 prose-table:border prose-table:m-auto px-2 prose-td:border-x prose-th:border-x prose-li:my-0 ` +
-                                `prose-h1:mb-0 prose-h1:mt-4 prose-h1:pb-4 prose-h1:border-b ` +
-                                `prose-h2:mb-0 prose-h2:mt-4 prose-h2:pb-4 ` +
-                                `prose-h3:mb-0 prose-h3:mt-4 prose-h3:pb-4 ` +
-                                `prose-h4:mb-0 prose-h4:mt-4 prose-h4:pb-4 ` +
-                                `prose-p:my-2` +
-                                // 横向可滚动
-                                `prose-figure:overflow-x-auto`
-                            }
+                            className={`
+                                prose dark:prose-invert 
+                                prose-zinc 
+                                max-w-4xl 
+                                mx-auto 
+                                px-4 
+                                lg:px-8
+                                w-full
+                                
+                                /* 标题样式 */
+                                prose-headings:scroll-mt-20
+                                prose-headings:font-bold
+                                prose-h1:text-3xl
+                                prose-h1:mb-4
+                                prose-h2:text-2xl
+                                prose-h2:mb-4
+                                prose-h3:text-xl
+                                prose-h3:mb-3
+                                
+                                /* 段落和列表样式 */
+                                prose-p:my-4
+                                prose-p:leading-relaxed
+                                prose-li:my-1
+                                
+                                /* 表格样式 */
+                                prose-table:w-full
+                                prose-table:border
+                                prose-td:p-2
+                                prose-td:border
+                                prose-th:p-2
+                                prose-th:border
+                                
+                                /* 代码块样式 */
+                                prose-pre:bg-gray-100
+                                prose-pre:dark:bg-gray-900
+                                prose-pre:overflow-x-auto
+                                prose-pre:rounded-lg
+                                prose-pre:p-4
+                                
+                                /* 图片样式 */
+                                prose-img:rounded-lg
+                                prose-img:mx-auto
+                                prose-img:shadow-md
+                                
+                                /* 引用样式 */
+                                prose-blockquote:border-l-4
+                                prose-blockquote:border-gray-300
+                                prose-blockquote:pl-4
+                                prose-blockquote:italic
+                                
+                                /* 链接样式 */
+                                prose-a:text-blue-600
+                                prose-a:dark:text-blue-400
+                                prose-a:no-underline
+                                prose-a:hover:underline
+                            `}
                             dangerouslySetInnerHTML={{
                                 __html: String(content)
                             }}
                         />
-                        <time
-                            dateTime={format(postVersion.update_time, "yyyy-MM-dd")}
-                            className="ml-2 mt-4 mb-1 text-xs text-gray-600"
-                        >
-                            Updated: {format(postVersion.update_time, "yyyy-MM-dd")}
-                        </time>
                     </article>
                 </ResizablePanel>
                 <ResizableHandle className="hidden lg:block" />
-                <ResizablePanel defaultSize={23} className="hidden lg:block">
-                    <Image
-                        src="/avatar.jpg"
-                        alt={postVersion.title ? postVersion.title : "Oveln"}
-                        width={500}
-                        height={500}
-                        className="rounded-xl p-1"
-                    />
-                    {/* <Calendar mode="single" selected={post.create_time}>
-					</Calendar> */}
+                <ResizablePanel defaultSize={25} className="hidden lg:block">
+                    <div className="sticky top-4 p-4 space-y-6">
+                        <Image
+                            src="/avatar.jpg"
+                            alt={postVersion.title ?? "Oveln"}
+                            width={500}
+                            height={500}
+                            className="rounded-xl shadow-md transition-transform hover:scale-[1.02]"
+                        />
+
+                        {/* 标签列表 */}
+                        {tags.length > 0 && (
+                            <div className="space-y-3">
+                                <h3 className="text-lg font-semibold flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                                        <line x1="7" y1="7" x2="7.01" y2="7" />
+                                    </svg>
+                                    标签
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {tags.map((tag, index) => (
+                                        <span
+                                            key={index}
+                                            className="
+                                                inline-flex items-center
+                                                px-3 py-1
+                                                text-sm
+                                                bg-gray-100 dark:bg-gray-800
+                                                text-gray-800 dark:text-gray-200
+                                                rounded-full
+                                                hover:bg-gray-200 dark:hover:bg-gray-700
+                                                transition-colors
+                                                cursor-pointer
+                                            "
+                                        >
+                                            {tag.tagName}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 可以添加更多侧边栏内容 */}
+                    </div>
                 </ResizablePanel>
             </ResizablePanelGroup>
-            <div className="mt-4">
+            <div className="mt-12 mb-8 max-w-4xl mx-auto">
                 <CommentsArea
                     repo={process.env.NEXT_PUBLIC_REPO_NAME}
                     repoId={process.env.NEXT_PUBLIC_REPOID}
