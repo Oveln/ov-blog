@@ -33,7 +33,7 @@ export function PostEditor({
     useEffect(() => {
         // 其他组件加载完毕后再加载编辑器
         const timer = setTimeout(() => {
-            import("cherry-markdown/dist/cherry-markdown.core").then((Cherry) => {
+            import("cherry-markdown/dist/cherry-markdown").then((Cherry) => {
                 const cherry = new Cherry.default({
                     id: "markdown-container",
                     value: postVersion.content
