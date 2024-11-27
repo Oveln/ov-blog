@@ -6,6 +6,7 @@ export type NewPostType = {
     title: string;
     description: string | null;
     content: string;
+    tags: string[];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -13,7 +14,9 @@ const idNewPostType = (data: any): data is NewPostType => {
     return (
         typeof data.title === "string" &&
         (typeof data.description === "string" || data.description === null) &&
-        typeof data.content === "string"
+        typeof data.content === "string" &&
+        Array.isArray(data.tags) &&
+        data.tags.every((tag: string) => typeof tag === "string")
     );
 };
 
@@ -45,6 +48,17 @@ const newPost = async (data: NewPostType, userId: string): Promise<NewPostRetTyp
                     }
                 }
             });
+
+            if (data.tags.length > 0) {
+                await tx.tagOnPostVersion.createMany({
+                    data: data.tags.map(tag => ({
+                        post_VersionPostId: post_version.postId,
+                        post_VersionVersion: post_version.version,
+                        tagName: tag
+                    }))
+                });
+            }
+
             await tx.post.update({
                 where: {
                     id: post_version.postId

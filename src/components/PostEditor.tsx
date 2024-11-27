@@ -73,7 +73,8 @@ export function PostEditor({
             const postData: NewPostType = {
                 title: title,
                 description: description == "" ? null : description,
-                content: cherryInstance.current?.getValue() ?? ""
+                content: cherryInstance.current?.getValue() ?? "",
+                tags: []
             };
             const r: NewPostRetType = await (
                 await fetch(`/api/post`, {

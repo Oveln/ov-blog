@@ -13,6 +13,7 @@ export type GetPostVersionType = {
     version: number;
     update_time: Date;
     postId: number;
+    tags: string[];
 } | null;
 
 export default async function GET(req: Request, context: { params: Promise<Params> }) {
@@ -27,7 +28,7 @@ export default async function GET(req: Request, context: { params: Promise<Param
         return Response.json(null);
     }
 
-    const post_version: GetPostVersionType = await prisma.post_Version.findFirst({
+    const post_version = await prisma.post_Version.findFirst({
         where: {
             version: version,
             Post: {
@@ -44,6 +45,11 @@ export default async function GET(req: Request, context: { params: Promise<Param
             version: true,
             update_time: true,
             postId: true,
+            tags: {
+                select: {
+                    tagName: true
+                }
+            },
             Post: {
                 select: {
                     create_time: true
@@ -51,5 +57,11 @@ export default async function GET(req: Request, context: { params: Promise<Param
             }
         }
     });
-    return Response.json(post_version);
+
+    const transformed_post_version: GetPostVersionType = post_version ? {
+        ...post_version,
+        tags: post_version.tags.map(tag => tag.tagName)
+    } : null;
+
+    return Response.json(transformed_post_version);
 }
