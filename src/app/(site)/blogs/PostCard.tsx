@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import Link from "next/link";
 import React from "react";
+import { Badge } from "@/components/ui/badge";
 
 export type PostCardInfo = {
     User: {
@@ -12,8 +13,10 @@ export type PostCardInfo = {
         title: string;
         description: string | null;
         update_time: Date;
+        tags: { tagName: string }[];
     } | null;
 };
+
 export default function PostCard({ dataFade, info }: { dataFade: number; info: PostCardInfo }) {
     return (
         <Link href={`/blogs/${info.id}`}>
@@ -23,23 +26,36 @@ export default function PostCard({ dataFade, info }: { dataFade: number; info: P
                     animationDelay: `${dataFade * 100}ms`
                 }}
             >
-                <h2 className="mb-2 text-xl font-semibold text-gray-800 group-hover:text-gray-900">
-                    {info.currentVersion?.title}
-                </h2>
+                <div className="relative mb-2">
+                    <h2 className="text-xl font-semibold text-gray-800 group-hover:text-gray-900 pr-32">
+                        {info.currentVersion?.title}
+                    </h2>
+                    <time
+                        dateTime={format(info.create_time, "LLLL d, yyyy")}
+                        className="absolute right-0 top-0 text-xs text-gray-500"
+                    >
+                        {format(info.create_time, "LLLL d, yyyy")}
+                    </time>
+                </div>
+
                 {info.currentVersion?.description != "" && (
-                    <div className="text-sm text-gray-600 [&>*]:mb-3 [&>*:last-child]:mb-0">
+                    <div className="text-sm text-gray-600 mb-4 [&>*]:mb-3 [&>*:last-child]:mb-0">
                         {info.currentVersion?.description}
                     </div>
                 )}
-                <time
-                    dateTime={format(info.create_time, "LLLL d, yyyy")}
-                    className="mt-3 block text-xs text-gray-500"
-                >
-                    {format(info.create_time, "LLLL d, yyyy")}
-                </time>
-                <span className="absolute right-4 bottom-4 text-sm text-gray-600 group-hover:text-gray-800 font-medium animated-underline group-hover:animated-underline-hover">
-                    Go to →
-                </span>
+
+                <div className="flex justify-between items-center mt-3">
+                    <div className="flex flex-wrap gap-2">
+                        {info.currentVersion?.tags.map((tag, index) => (
+                            <Badge key={index} variant="secondary" className="text-xs">
+                                {tag.tagName}
+                            </Badge>
+                        ))}
+                    </div>
+                    <span className="text-sm text-gray-600 group-hover:text-gray-800 font-medium animated-underline group-hover:animated-underline-hover">
+                        Go to →
+                    </span>
+                </div>
             </div>
         </Link>
     );
