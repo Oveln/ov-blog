@@ -16,9 +16,6 @@ export const prisma =
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export const getAllPostCardInfo = async () => {
-    if (process.env.BUILDTIME == "true") {
-        return [];
-    }
     return await prisma.post.findMany({
         where: {
             // current_version不为null

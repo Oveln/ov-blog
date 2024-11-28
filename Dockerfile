@@ -19,7 +19,7 @@ COPY . .
 RUN bun --version
 RUN ls -la
 RUN bun run prisma generate
-RUN BUILDTIME=true bun next build
+RUN bun next build
 FROM build AS release
 
 CMD ["sh", "-c", "bun run prisma migrate deploy && bun start"]
