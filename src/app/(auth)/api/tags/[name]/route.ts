@@ -9,14 +9,14 @@ export type TagOperationResponse = {
 // Delete tag
 export async function DELETE(
     req: Request,
-    { params }: { params: { name: string } }
+    context: { params: Promise<{ name: string }> }
 ): Promise<Response> {
     const user = (await auth())?.user;
     if (!user?.id || user.role !== Role.ADMIN) {
         const response: TagOperationResponse = { status: "unauthorized" };
         return Response.json(response);
     }
-
+    const params = await context.params;
     try {
         const tag = await prisma.tag.findUnique({
             where: { name: params.name }
@@ -43,14 +43,14 @@ export async function DELETE(
 // Update tag
 export async function PUT(
     req: Request,
-    { params }: { params: { name: string } }
+    context: { params: Promise<{ name: string }> }
 ): Promise<Response> {
     const user = (await auth())?.user;
     if (!user?.id || user.role !== Role.ADMIN) {
         const response: TagOperationResponse = { status: "unauthorized" };
         return Response.json(response);
     }
-
+    const params = await context.params;
     try {
         const { newName } = await req.json();
         if (typeof newName !== "string" || !newName.trim()) {
