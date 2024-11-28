@@ -9,14 +9,14 @@ export type PostTagsResponse = {
 // 获取文章版本的标签
 export async function GET(
     req: Request,
-    { params }: { params: { id: string; version: string } }
+    context: { params: Promise<{ id: string; version: string }> }
 ): Promise<Response> {
     const user = (await auth())?.user;
     if (!user?.id) {
         const response: PostTagsResponse = { status: "unauthorized" };
         return Response.json(response);
     }
-
+    const params = await context.params;
     const postId = parseInt(params.id);
     const version = parseInt(params.version);
 
