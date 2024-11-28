@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth/auth";
-import { checkPermissionsForPost, prisma } from "@/lib/db";
+import { prisma } from "@/lib/db";
 
 export type PostTagsResponse = {
     status: "ok" | "unauthorized" | "error" | "not_found";

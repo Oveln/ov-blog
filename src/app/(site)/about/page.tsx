@@ -13,7 +13,7 @@ interface TechStackItem {
 }
 
 export default function About() {
-    const [language, setLanguage] = useState('zh');
+    const [language] = useState('zh');
 
     const techStack: Record<string, TechStackItem[]> = {
         frontend: [

@@ -38,7 +38,8 @@ module.exports = {
     plugins: ["@typescript-eslint", "react", "unused-imports"],
     rules: {
         "@typescript-eslint/no-unused-vars": "error",
-        "unused-imports/no-unused-imports": "error"
+        "unused-imports/no-unused-imports": "error",
+        "react/react-in-jsx-scope": "off"
     },
     settings: {
         react: {
