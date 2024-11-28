@@ -171,6 +171,7 @@ export function PostEditor({
                     console.warn('获取标签失败：返回数据格式不正确');
                 }
             } catch (error) {
+                console.error('获取标签失败：', error);
                 setAvailableTags([]);
                 toast("获取标签失败", {
                     description: "请检查网络连接"
