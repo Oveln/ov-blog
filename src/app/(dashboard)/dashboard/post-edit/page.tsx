@@ -114,13 +114,15 @@ export default function PostEdit() {
                     onPostSelect={handlePostSelect}
                 />
             </div>
-            <div className="flex-1 h-full overflow-auto px-8 shadow-md">
-                <PostContent
-                    post={selectedPost}
-                    isLoading={isLoading}
-                    handleChange={handleChange}
-                />
-            </div>
+            {selectedPost && (
+                <div className="flex-1 h-full px-8 shadow-md">
+                    <PostContent
+                        post={selectedPost}
+                        isLoading={isLoading}
+                        handleChange={handleChange}
+                    />
+                </div>
+            )}
         </div>
     );
 }
