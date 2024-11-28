@@ -1,4 +1,4 @@
-import { getAllPostCardInfo, getPostById } from "@/lib/db";
+import { getPostById } from "@/lib/db";
 import { notFound } from "next/navigation";
 import React from "react";
 import Image from "next/image";
@@ -20,10 +20,7 @@ import CommentsArea from "@/components/ui/giscus";
 
 export const revalidate = 10;
 
-export const generateStaticParams = async () =>
-    (await getAllPostCardInfo()).map((info) => ({
-        slug: info.id.toString(10)
-    }));
+export const generateStaticParams = async () => []
 
 const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
     const post = await getPostById(parseInt((await params).slug));
