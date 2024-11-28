@@ -24,7 +24,7 @@ export default function Home() {
     };
     return (
         <main className="relative min-h-[calc(100vh-56px)] font-mono bg-gradient-to-b from-transparent to-gray-50/30">
-            <div className="absolute w-full top-1/3 -translate-y-1/2 px-6 md:px-12">
+            <div className="absolute w-full top-14 md:top-1/3 -translate-y-0 md:-translate-y-1/2 px-4 md:px-12">
                 <div className="max-w-7xl mx-auto flex items-center gap-8 md:flex-row flex-col">
                     {/* Left content section */}
                     <div className="flex-1 space-y-6">
