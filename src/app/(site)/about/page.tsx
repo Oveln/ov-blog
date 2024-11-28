@@ -57,7 +57,7 @@ export default function About() {
                 {/* Hero Section */}
                 <section className="text-center space-y-4 py-8">
                     <h1 className="text-4xl md:text-5xl font-bold leading-[1.4] pb-1 bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent">
-                        {language === 'en' ? 'About Oveln Blog' : '关于 Oveln 博客'}
+                        {language === 'en' ? 'About Oveln Blog' : '关于 Oveln Blog'}
                     </h1>
                     <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                         {language === 'en' ?
