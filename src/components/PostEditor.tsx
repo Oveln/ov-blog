@@ -30,20 +30,22 @@ export function PostEditor({
     const [title, setTitle] = useState<string>(postVersion.title);
     const [description, setDescription] = useState<string>(postVersion.description ?? "");
     const router = useRouter();
-    const cherryInstance = useRef<Cherry | null>(null);
+    const cherryRef = useRef<HTMLDivElement | null>(null);
+    const [cherryInstance, setCherryInstance] = useState<Cherry | null>(null);
 
     useEffect(() => {
-        // 其他组件加载完毕后再加载编辑器
+        // 渲染完毕后再渲染这个
         const timer = setTimeout(() => {
             import("cherry-markdown/dist/cherry-markdown").then((Cherry) => {
-                const cherry = new Cherry.default({
-                    id: "markdown-container",
-                    value: postVersion.content
-                });
-                cherryInstance.current = cherry;
+                if (cherryRef.current) {
+                    const cherry = new Cherry.default({
+                        el: cherryRef.current,
+                        value: postVersion.content
+                    });
+                    setCherryInstance(cherry);
+                }
             });
         }, 0);
-
         return () => clearTimeout(timer);
     }, []);
 
@@ -57,7 +59,7 @@ export function PostEditor({
             const postData: NewPostVersionType = {
                 title: title,
                 description: description == "" ? null : description,
-                content: cherryInstance.current?.getValue() ?? "",
+                content: cherryInstance?.getValue() ?? "",
                 postId: postVersion.postId,
                 publish: publish,
                 tags: tags
@@ -76,7 +78,7 @@ export function PostEditor({
             const postData: NewPostType = {
                 title: title,
                 description: description == "" ? null : description,
-                content: cherryInstance.current?.getValue() ?? "",
+                content: cherryInstance?.getValue() ?? "",
                 tags: tags
             };
             const r: NewPostRetType = await (
@@ -194,7 +196,7 @@ export function PostEditor({
         <div className="flex h-full gap-6 bg-background">
             {/* 左侧编辑器区域 - 移除边框和背景 */}
             <div className="flex-1 overflow-hidden border-r">
-                <div className="editor h-full" id="markdown-container"></div>
+                <div className="editor h-full" ref={cherryRef} id="markdown-container"></div>
             </div>
 
             {/* 右侧侧边栏 */}
@@ -294,7 +296,7 @@ export function PostEditor({
                             toast("重置成功", {
                                 description: "内容已恢复到上次保存状态"
                             });
-                            cherryInstance.current?.setValue(postVersion.content);
+                            cherryInstance?.setValue(postVersion.content);
                         }}
                     >
                         <RotateCcw className="h-5 w-5 mr-2" />
