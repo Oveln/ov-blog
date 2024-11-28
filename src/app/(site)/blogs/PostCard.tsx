@@ -21,7 +21,7 @@ export default function PostCard({ dataFade, info }: { dataFade: number; info: P
     return (
         <Link href={`/blogs/${info.id}`}>
             <div
-                className="mb-8 rounded-lg border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md p-4 group relative animate-fade-up animate-ease-in-out animate-duration-300 transition-all"
+                className="mb-8 rounded-lg border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md p-4 group relative animate-fade-up animate-ease-in-out transition-all"
                 style={{
                     animationDelay: `${dataFade * 100}ms`
                 }}
