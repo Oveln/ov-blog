@@ -13,7 +13,11 @@ RUN pwd
 
 FROM install AS build
 ENV NODE_ENV=production
+# 在构建前设置ENV,使其可以构建
+ENV DATABASE_URL="postgresql://postgres:password@localhost:5432/blog_dev?schema=public"
 WORKDIR /home/app/bun/ov-blog
+#取消ENV
+ENV DATABASE_URL=""
 COPY . .
 
 RUN bun --version
