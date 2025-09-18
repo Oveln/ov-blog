@@ -13,7 +13,7 @@ export default function PostEdit() {
     const [isLoading, setIsLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
-    const loadingTimerRef = useRef<NodeJS.Timeout>();
+    const loadingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const session = useSession({
         required: true

@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+ 
 /** @type {function(import("next").NextConfig): import("next").NextConfig}} */
 const nextConfig = {
     images: {

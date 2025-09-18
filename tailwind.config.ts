@@ -1,7 +1,10 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
+import tailwindcssForms from "@tailwindcss/forms";
+import tailwindcssTypography from "@tailwindcss/typography";
+import tailwindcssAnimated from "tailwindcss-animated";
 
 const config = {
-    darkMode: ["class"],
     content: [
         "./pages/**/*.{ts,tsx}",
         "./components/**/*.{ts,tsx}",
@@ -75,10 +78,10 @@ const config = {
         }
     },
     plugins: [
-        require("tailwindcss-animate"),
-        require("@tailwindcss/forms"),
-        require("@tailwindcss/typography"),
-        require("tailwindcss-animated")
+        tailwindcssAnimate,
+        tailwindcssForms,
+        tailwindcssTypography,
+        tailwindcssAnimated
     ]
 } satisfies Config;
 

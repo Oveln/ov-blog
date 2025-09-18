@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { Role } from "@prisma/client";
 
 type Params = {
-    user_name: string;
+    userId: string;
 };
 export const GET = async (_req: Request, context: { params: Promise<Params> }) => {
     const params = await context.params;
@@ -11,7 +11,7 @@ export const GET = async (_req: Request, context: { params: Promise<Params> }) =
     if (!user) {
         return Response.json({ status: "unauthorized" });
     }
-    if (user.name != params.user_name && user.role != Role.ADMIN) {
+    if (user.id != params.userId && user.role != Role.ADMIN) {
         return Response.json({ status: "unauthorized" });
     }
     const retPosts = await prisma.post.findMany({
