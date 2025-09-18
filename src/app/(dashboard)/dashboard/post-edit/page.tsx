@@ -41,6 +41,7 @@ export default function PostEdit() {
                         if (newData[i].postVersions.length === 0) {
                             newData.splice(i, 1);
                             i--;
+                            setSelectedPost(null);
                         } else if (newData[i].current_version == version) {
                             // 找到最大的版本，设置为发布
                             const maxVersion = Math.max(

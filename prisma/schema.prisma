@@ -106,7 +106,7 @@ model Post_Version {
   update_time DateTime           @default(now())
   postId      Int
   tags        TagOnPostVersion[]
-  Post        Post               @relation(fields: [postId], references: [id])
+  Post        Post               @relation(fields: [postId], references: [id], onDelete: Cascade)
   isCurrent   Post?              @relation("PostToCurrentVersion")
 
   @@id([postId, version])
