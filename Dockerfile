@@ -5,7 +5,7 @@ FROM base AS install
 RUN mkdir ov-blog
 WORKDIR /home/app/bun/ov-blog
 COPY package.json .
-COPY bun.lockb .
+COPY bun.lock .
 COPY bunfig.toml .
 RUN bun i --frozen-lockfile
 RUN pwd
