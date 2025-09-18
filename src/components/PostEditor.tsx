@@ -36,11 +36,38 @@ export function PostEditor({
     useEffect(() => {
         // 渲染完毕后再渲染这个
         const timer = setTimeout(() => {
+            console.log()
             import("cherry-markdown/dist/cherry-markdown").then((Cherry) => {
                 if (cherryRef.current) {
                     const cherry = new Cherry.default({
                         el: cherryRef.current,
-                        value: postVersion.content
+                        value: postVersion.content,
+                        fileUpload: (file: File, callback: (url: string) => void) => {
+                            const formData = new FormData();
+                            formData.append("file", file);
+                            // 上传到服务器
+                            fetch("/api/upload", {
+                                method: "POST",
+                                body: formData  
+                            }).then(async (res) => {
+                                const data = await res.json();
+                                if (data.status === "ok") {
+                                    callback(data.url);
+                                    toast("图片上传成功", { duration: 3000 });
+                                } else {
+                                    toast("图片上传失败", {
+                                        description: data.message,
+                                        duration: 5000
+                                    });
+                                }
+                            }).catch((e) => {
+                                console.error(e);
+                                toast("图片上传失败", {
+                                    description: "请检查网络连接",
+                                    duration: 5000
+                                });
+                            });
+                        }
                     });
                     setCherryInstance(cherry);
                 }
@@ -157,21 +184,21 @@ export function PostEditor({
 
     const [tags, setTags] = useState<string[]>(postVersion.tags ?? []);
     const [availableTags, setAvailableTags] = useState<{ name: string }[]>([]);
-    const [newTag, setNewTag] = useState<string>('');
+    const [newTag, setNewTag] = useState<string>("");
 
     useEffect(() => {
         const fetchTags = async () => {
             try {
-                const response = await fetch('/api/tags');
+                const response = await fetch("/api/tags");
                 const data = await response.json();
-                if (data.status === 'ok' && Array.isArray(data.tags)) {
+                if (data.status === "ok" && Array.isArray(data.tags)) {
                     setAvailableTags(data.tags);
                 } else {
                     setAvailableTags([]);
-                    console.warn('获取标签失败：返回数据格式不正确');
+                    console.warn("获取标签失败：返回数据格式不正确");
                 }
             } catch (error) {
-                console.error('获取标签失败：', error);
+                console.error("获取标签失败：", error);
                 setAvailableTags([]);
                 toast("获取标签失败", {
                     description: "请检查网络连接"
@@ -185,12 +212,12 @@ export function PostEditor({
     const addTag = () => {
         if (newTag && !tags.includes(newTag)) {
             setTags([...tags, newTag]);
-            setNewTag('');
+            setNewTag("");
         }
     };
 
     const removeTag = (tagToRemove: string) => {
-        setTags(tags.filter(tag => tag !== tagToRemove));
+        setTags(tags.filter((tag) => tag !== tagToRemove));
     };
 
     return (
@@ -248,7 +275,11 @@ export function PostEditor({
                             </div>
                             <div className="flex flex-wrap gap-2 mb-2">
                                 {tags.map((tag, index) => (
-                                    <Badge key={`${tag}-${index}`} variant="secondary" className="px-2 py-1">
+                                    <Badge
+                                        key={`${tag}-${index}`}
+                                        variant="secondary"
+                                        className="px-2 py-1"
+                                    >
                                         {tag}
                                         <X
                                             className="ml-1 h-3 w-3 cursor-pointer"
@@ -281,10 +312,7 @@ export function PostEditor({
                 </div>
 
                 <div className="flex flex-col gap-3 mt-auto">
-                    <Button
-                        className="h-11 text-base"
-                        onClick={submit}
-                    >
+                    <Button className="h-11 text-base" onClick={submit}>
                         <Send className="h-5 w-5 mr-2" />
                         <span>发布文章</span>
                     </Button>
@@ -293,7 +321,7 @@ export function PostEditor({
                         variant="outline"
                         className="h-11 text-base"
                         onClick={() => {
-                            console.log(availableTags)
+                            console.log(availableTags);
                             toast("重置成功", {
                                 description: "内容已恢复到上次保存状态"
                             });
