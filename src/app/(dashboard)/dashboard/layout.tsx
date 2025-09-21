@@ -22,7 +22,7 @@ export default async function RootLayout({
 }>) {
     return (
         <html lang="en" className="m-0 p-0" suppressHydrationWarning>
-            <body>
+            <body className={inter.className}>
                 <MySessionProviders>
                     <ThemeProvider
                         attribute="class"
@@ -30,7 +30,7 @@ export default async function RootLayout({
                         enableSystem
                         disableTransitionOnChange
                     >
-                        <div className={`mx-auto max-w-[calc(100vw-10px)] lg:px-0 w-screen min-h-screen flex flex-col ${inter.className}`}>
+                        <div className="mx-auto max-w-[calc(100vw-10px)] lg:px-0 w-screen min-h-screen flex flex-col">
                             <nav className="mx-auto w-full max-w-[68rem]">
                                 <NavMenu />
                             </nav>
