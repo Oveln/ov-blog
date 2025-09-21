@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { auth } from "@/lib/auth/auth";
+import { Role } from "@prisma/client";
 
 const r2 = new S3Client({
     region: "auto",
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
     if (!user?.id) {
         return Response.json({ status: "error", message: "未登录" }, { status: 401 });
     }
-    if (user.role != "USER" && user.role != "ADMIN") {
+    if (user.role != Role.USER && user.role != Role.ADMIN) {
         return Response.json({ status: "error", message: "没有权限" }, { status: 403 });
     }
     // 处理文件上传

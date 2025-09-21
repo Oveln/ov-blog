@@ -77,7 +77,7 @@
 2. 执行数据库迁移
 
     ```bash
-    docker-compose exec blog npx prisma migrate deploy
+    docker-compose exec web npx prisma migrate deploy
     ```
 
 3. 查看日志
@@ -163,6 +163,11 @@ services:
             NEXT_PUBLIC_REPOID: "your_repo_id"
             NEXT_PUBLIC_CATEGORY: "Announcements"
             NEXT_PUBLIC_CATEGORYID: "your_category_id"
+
+            # R2 存储配置
+            R2_ACCOUNT_ID: your_r2_account_id
+            R2_ACCESS_KEY_ID: your_r2_access_key_id
+            R2_SECRET_ACCESS_KEY: your_r2_secret_access_key
 
             # 数据库配置
             DATABASE_URL: "postgresql://user:password@db:5432/blog?schema=public"
