@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import Typing from "@/components/ui/typing";
 import { EnvelopeClosedIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
