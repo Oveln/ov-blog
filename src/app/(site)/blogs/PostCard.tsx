@@ -27,7 +27,7 @@ export default function PostCard({ dataFade, info }: { dataFade: number; info: P
                 }}
             >
                 <div className="relative mb-2">
-                    <h2 className="text-xl font-semibold text-gray-800 group-hover:text-gray-900 pr-32">
+                    <h2 className="text-xl font-mono font-semibold text-gray-800 group-hover:text-gray-900 pr-32">
                         {info.currentVersion?.title}
                     </h2>
                     <time
@@ -52,7 +52,7 @@ export default function PostCard({ dataFade, info }: { dataFade: number; info: P
                             </Badge>
                         ))}
                     </div>
-                    <span className="text-sm text-gray-600 group-hover:text-gray-800 font-medium animated-underline group-hover:animated-underline-hover">
+                    <span className="text-sm text-gray-600 group-hover:text-gray-800 font-mono font-medium animated-underline group-hover:animated-underline-hover">
                         Go to →
                     </span>
                 </div>

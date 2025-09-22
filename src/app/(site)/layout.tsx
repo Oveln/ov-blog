@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import "@/app/globals.css";
 import { ThemeProvider } from "@/context/theme-provider";
 import React from "react";
 import { NavMenu } from "@/components/layout/nav-menu";
 import Footer from "@/components/layout/footer";
 
-const inter = Inter({ subsets: ["latin"] });
+const jetBrainsMono = JetBrains_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "Oveln Blog",
@@ -23,7 +23,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     enableSystem
                     disableTransitionOnChange
                 >
-                    <div className={`mx-auto max-w-[calc(100vw-10px)] lg:px-0 w-screen min-h-screen flex flex-col ${inter.className}`}>
+                    <div className={`mx-auto max-w-[calc(100vw-10px)] lg:px-0 w-screen min-h-screen flex flex-col ${jetBrainsMono.className}`}>
                         <nav className="mx-auto w-full max-w-[68rem]">
                             <NavMenu />
                         </nav>

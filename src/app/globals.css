@@ -71,6 +71,13 @@
     }
 }
 
+/* 添加等宽字体定义 */
+@layer base {
+    html {
+        font-family: 'JetBrains Mono', monospace;
+    }
+}
+
 
 @theme {
   --color-border: hsl(214 31% 91%);

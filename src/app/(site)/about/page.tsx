@@ -56,10 +56,10 @@ export default function About() {
 
                 {/* Hero Section */}
                 <section className="text-center space-y-4 py-8">
-                    <h1 className="text-4xl md:text-5xl font-bold leading-[1.4] pb-1 bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent">
+                    <h1 className="text-4xl md:text-5xl font-mono font-bold leading-[1.4] pb-1 bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent">
                         {language === 'en' ? 'About Oveln Blog' : '关于 Oveln Blog'}
                     </h1>
-                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-mono">
                         {language === 'en' ?
                             'A modern blog platform built with Next.js and TypeScript, featuring a clean design and powerful features for content creation and management.' :
                             '一个使用 Next.js 和 TypeScript 构建的现代博客平台，具有简洁的设计和强大的内容创建和管理功能。'}
@@ -71,7 +71,7 @@ export default function About() {
                     {Object.entries(techStack).map(([category, items]) => (
                         <Card key={category} className="shadow-sm hover:shadow-md transition-shadow duration-300">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 capitalize">
+                                <CardTitle className="flex items-center gap-2 capitalize font-mono">
                                     {categoryIcons[category as keyof typeof categoryIcons]}
                                     {language === 'en' ? category : translateCategory(category)}
                                 </CardTitle>
@@ -87,7 +87,7 @@ export default function About() {
                                         >
                                             <Badge
                                                 variant="secondary"
-                                                className="group relative cursor-pointer transition-all hover:scale-105"
+                                                className="group relative cursor-pointer transition-all hover:scale-105 font-mono"
                                             >
                                                 {item.name}
                                                 {'new' in item && item.new && (
@@ -107,7 +107,7 @@ export default function About() {
 
                 {/* Features Section */}
                 <section className="space-y-6 bg-muted/50 rounded-lg p-6">
-                    <h2 className="text-2xl font-semibold flex items-center gap-2">
+                    <h2 className="text-2xl font-mono font-semibold flex items-center gap-2">
                         <Rocket className="h-6 w-6" />
                         {language === 'en' ? 'Key Features' : '主要功能'}
                     </h2>
@@ -142,8 +142,8 @@ export default function About() {
                                 key={index}
                                 className="p-4 rounded-lg bg-card shadow-sm hover:shadow-md transition-all duration-300"
                             >
-                                <h3 className="font-semibold mb-1">{feature.title}</h3>
-                                <p className="text-sm text-muted-foreground">{feature.description}</p>
+                                <h3 className="font-mono font-semibold mb-1">{feature.title}</h3>
+                                <p className="text-sm text-muted-foreground font-mono">{feature.description}</p>
                             </div>
                         ))}
                     </div>

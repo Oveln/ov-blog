@@ -53,7 +53,7 @@ const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
                 <ResizablePanel defaultSize={75}>
                     <article className="py-6 lg:py-8 min-h-[calc(100vh-56px)] flex flex-col">
                         <header className="mb-8 text-center space-y-4">
-                            <h1 className="text-4xl lg:text-5xl font-bold tracking-tight">
+                            <h1 className="text-4xl lg:text-5xl font-mono font-bold tracking-tight">
                                 {postVersion?.title}
                             </h1>
                             <div className="flex items-center justify-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
@@ -143,7 +143,7 @@ const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
                         {/* 标签列表 */}
                         {tags.length > 0 && (
                             <div className="space-y-3">
-                                <h3 className="text-lg font-semibold flex items-center gap-2">
+                                <h3 className="text-lg font-mono font-semibold flex items-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
                                         <line x1="7" y1="7" x2="7.01" y2="7" />

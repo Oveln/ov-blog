@@ -23,7 +23,7 @@ export function SearchAndFilter({
                 <Input
                     type="text"
                     placeholder="搜索文章..."
-                    className="w-full px-4 py-2.5 border rounded-lg bg-background hover:border-primary/50 focus:border-primary focus:ring-1 focus:ring-primary transition-colors outline-none"
+                    className="w-full px-4 py-2.5 border rounded-lg bg-background hover:border-primary/50 focus:border-primary focus:ring-1 focus:ring-primary transition-colors outline-none font-mono"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -35,7 +35,7 @@ export function SearchAndFilter({
                         variant={selectedTag === tag ? "default" : "secondary"}
                         onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
                         className={cn(
-                            "select-none hover:bg-primary/20 hover:text-primary transition-all duration-200 border cursor-pointer",
+                            "select-none hover:bg-primary/20 hover:text-primary transition-all duration-200 border cursor-pointer font-mono",
                             selectedTag === tag
                                 ? "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground border-primary"
                                 : "border-muted-foreground/20"
