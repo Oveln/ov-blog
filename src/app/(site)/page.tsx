@@ -94,8 +94,10 @@ export default function Home() {
                     {/* Right content section */}
                     <div className="flex-1 flex flex-col items-center gap-8">
                         <Avatar className="size-64 md:size-72 ring-4 ring-fuchsia-500/20 hover:ring-fuchsia-500/40 transition-all duration-300">
-                            <AvatarImage src="./avatar.jpg" className="object-cover" />
-                            <AvatarFallback>Oveln</AvatarFallback>
+                            <AvatarImage
+                                src="./avatar.jpg"
+                                className="object-cover animate-fade-in"
+                            />
                         </Avatar>
                         <div className="w-full max-w-md">
                             <Typing
