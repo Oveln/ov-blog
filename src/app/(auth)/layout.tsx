@@ -4,6 +4,7 @@ import "@/app/globals.css";
 import { ThemeProvider } from "@/context/theme-provider";
 import React from "react";
 import { MySessionProviders } from "@/context/MySessionProvider";
+import { TRPCProvider } from "@/components/TRPCProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,16 +22,18 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     inter.className
                 }
             >
-                <MySessionProviders>
-                    <ThemeProvider
-                        attribute="class"
-                        defaultTheme="system"
-                        enableSystem
-                        disableTransitionOnChange
-                    >
-                        {children}
-                    </ThemeProvider>
-                </MySessionProviders>
+                <TRPCProvider>
+                    <MySessionProviders>
+                        <ThemeProvider
+                            attribute="class"
+                            defaultTheme="system"
+                            enableSystem
+                            disableTransitionOnChange
+                        >
+                            {children}
+                        </ThemeProvider>
+                    </MySessionProviders>
+                </TRPCProvider>
             </body>
         </html>
     );
