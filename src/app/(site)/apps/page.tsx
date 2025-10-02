@@ -1,23 +1,15 @@
 "use client";
 import AppCard from "@/components/ui/app-card";
 import React, { useEffect, useState } from "react";
-import { App } from "@/types/app";
+import { trpc } from "@/lib/trpc";
 
 const Apps: React.FC = () => {
     const [col, setCol] = useState(3);
-    const [apps, setApps] = useState<App[]>([]);
+    const { data: apps = [] } = trpc.apps.getAll.useQuery();
 
     useEffect(() => {
         if (window.innerWidth < 1024) setCol(2);
         else setCol(3);
-
-        const fetchApps = async () => {
-            const response = await fetch("/api/apps");
-            const data = await response.json();
-            setApps(data);
-        };
-
-        fetchApps();
     }, []);
 
     return (

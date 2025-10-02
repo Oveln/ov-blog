@@ -1,4 +1,4 @@
-import { getPostById } from "@/lib/db";
+import { createServerCaller } from "@/server/trpc/server-caller";
 import { notFound } from "next/navigation";
 import React from "react";
 import Image from "next/image";
@@ -18,24 +18,37 @@ import {
     ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { format } from "date-fns";
-// import { Calendar } from "@/components/ui/calendar";
 import { unified } from "unified";
 import CommentsArea from "@/components/ui/giscus";
 
 export const revalidate = 10;
 
-export const generateStaticParams = async () => [];
-
 const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
-    const post = await getPostById(parseInt((await params).slug));
-    const postVersion = post?.currentVersion;
+    const slug = (await params).slug;
+    const postId = parseInt(slug);
+
+    // 使用 tRPC 服务器端调用获取数据
+    const trpc = await createServerCaller();
+
+    let post;
+    try {
+        post = await trpc.posts.getPostById({ id: postId });
+    } catch {
+        return notFound();
+    }
+
+    if (!post) {
+        return notFound();
+    }
+
+    const postVersion = post.currentVersion;
     if (!postVersion) {
         return notFound();
     }
 
-    // 从 postVersion 中获取标签
     const tags = postVersion.tags || [];
 
+    // 在服务器端渲染 markdown
     const content = await unified()
         .use(remarkGithubAlerts)
         .use(remarkGfm)
@@ -44,10 +57,9 @@ const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
         .use(rehypePrettyCode)
         .use(rehypeKatex)
         .use(rehypeStringify)
-        // 类型不兼容
         .use(remarkParse as any) // eslint-disable-line @typescript-eslint/no-explicit-any
-
         .process(postVersion.content);
+
     return (
         <div className="container mx-auto px-4">
             <ResizablePanelGroup
@@ -78,14 +90,14 @@ const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
                         </header>
                         <main
                             className={`
-                                prose dark:prose-invert 
-                                prose-zinc 
-                                max-w-4xl 
-                                mx-auto 
-                                px-4 
+                                prose dark:prose-invert
+                                prose-zinc
+                                max-w-4xl
+                                mx-auto
+                                px-4
                                 lg:px-8
                                 w-full
-                                
+
                                 /* 标题样式 */
                                 prose-headings:scroll-mt-20
                                 prose-headings:font-bold
@@ -95,12 +107,12 @@ const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
                                 prose-h2:mb-4
                                 prose-h3:text-xl
                                 prose-h3:mb-3
-                                
+
                                 /* 段落和列表样式 */
                                 prose-p:my-4
                                 prose-p:leading-relaxed
                                 prose-li:my-1
-                                
+
                                 /* 表格样式 */
                                 prose-table:w-full
                                 prose-table:border
@@ -108,25 +120,25 @@ const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
                                 prose-td:border
                                 prose-th:p-2
                                 prose-th:border
-                                
+
                                 /* 代码块样式 */
                                 prose-pre:bg-gray-100
                                 prose-pre:dark:bg-gray-900
                                 prose-pre:overflow-x-auto
                                 prose-pre:rounded-lg
                                 prose-pre:p-4
-                                
+
                                 /* 图片样式 */
                                 prose-img:rounded-lg
                                 prose-img:mx-auto
                                 prose-img:shadow-md
-                                
+
                                 /* 引用样式 */
                                 prose-blockquote:border-l-4
                                 prose-blockquote:border-gray-300
                                 prose-blockquote:pl-4
                                 prose-blockquote:italic
-                                
+
                                 /* 链接样式 */
                                 prose-a:text-blue-600
                                 prose-a:dark:text-blue-400

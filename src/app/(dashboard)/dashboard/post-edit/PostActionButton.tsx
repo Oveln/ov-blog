@@ -1,5 +1,3 @@
-import { DeletePostVersionRetType } from "@/app/(auth)/api/post/[id]/[version]/delete";
-import { UserPostRetType } from "@/app/(auth)/api/user/route";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -11,18 +9,52 @@ import { BadgeCheck, BadgeMinus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
+import type { AppRouter } from "@/server/trpc";
+import type { inferRouterOutputs } from "@trpc/server";
+
+// 从 tRPC router 推断返回类型
+type RouterOutput = inferRouterOutputs<AppRouter>;
+type TRPCUserPost = RouterOutput["user"]["getUserPosts"][number];
 
 export const PostActionButtons = ({
     post,
     handleChange,
 }: {
-    post: UserPostRetType;
+    post: TRPCUserPost;
     handleChange: (
         postId: number,
         version: number,
         action: "delete" | "check_out"
     ) => void;
 }) => {
+    const deleteVersion = trpc.posts.deleteVersion.useMutation({
+        onSuccess: (_data, variables) => {
+            toast.success("删除成功", {
+                description: "Delete Success",
+            });
+            handleChange(variables.id, variables.version, "delete");
+        },
+        onError: (error) => {
+            toast.error("删除失败", {
+                description: error.message,
+            });
+        },
+    });
+
+    const checkoutVersion = trpc.posts.checkoutVersion.useMutation({
+        onSuccess: (_data, variables) => {
+            toast.success("切换成功", {
+                description: "CheckOut Success",
+            });
+            handleChange(variables.id, variables.version, "check_out");
+        },
+        onError: (error) => {
+            toast.error("切换失败", {
+                description: error.message,
+            });
+        },
+    });
     return (
         <div className="flex justify-center">
             <DropdownMenu modal={false}>
@@ -59,43 +91,12 @@ export const PostActionButtons = ({
                     {post.postVersions.map((postVersion) => (
                         <DropdownMenuItem
                             key={postVersion.version}
-                            onClick={async () => {
+                            onClick={() => {
                                 console.log("CheckOut", postVersion.version);
-                                const res = (await (
-                                    await fetch(
-                                        `/api/post/${post.id}/${postVersion.version}`,
-                                        {
-                                            method: "POST",
-                                        }
-                                    )
-                                ).json()) as DeletePostVersionRetType;
-                                switch (res.status) {
-                                    case "ok":
-                                        toast("切换成功", {
-                                            description: "CheckOut Success",
-                                        });
-                                        handleChange(
-                                            post.id,
-                                            postVersion.version,
-                                            "check_out"
-                                        );
-                                        break;
-                                    case "unauthorized":
-                                        toast("切换失败", {
-                                            description: "Unauthorized",
-                                        });
-                                        break;
-                                    case "not_found":
-                                        toast("切换失败", {
-                                            description: "Not Found",
-                                        });
-                                        break;
-                                    case "error":
-                                        toast("切换失败", {
-                                            description: "Error",
-                                        });
-                                        break;
-                                }
+                                checkoutVersion.mutate({
+                                    id: post.id,
+                                    version: postVersion.version,
+                                });
                             }}
                         >
                             {postVersion.version == post.current_version ? (
@@ -118,43 +119,12 @@ export const PostActionButtons = ({
                     {post.postVersions.map((postVersion) => (
                         <DropdownMenuItem
                             key={postVersion.version}
-                            onClick={async () => {
+                            onClick={() => {
                                 console.log("Delete", postVersion.version);
-                                const res: DeletePostVersionRetType = await (
-                                    await fetch(
-                                        `/api/post/${post.id}/${postVersion.version}`,
-                                        {
-                                            method: "DELETE",
-                                        }
-                                    )
-                                ).json();
-                                switch (res.status) {
-                                    case "ok":
-                                        toast("删除成功", {
-                                            description: "Delete Success",
-                                        });
-                                        handleChange(
-                                            post.id,
-                                            postVersion.version,
-                                            "delete"
-                                        );
-                                        break;
-                                    case "unauthorized":
-                                        toast("删除失败", {
-                                            description: "Unauthorized",
-                                        });
-                                        break;
-                                    case "not_found":
-                                        toast("删除失败", {
-                                            description: "Not Found",
-                                        });
-                                        break;
-                                    case "error":
-                                        toast("删除失败", {
-                                            description: "Error",
-                                        });
-                                        break;
-                                }
+                                deleteVersion.mutate({
+                                    id: post.id,
+                                    version: postVersion.version,
+                                });
                             }}
                         >
                             {postVersion.version == post.current_version ? (

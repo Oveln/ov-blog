@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PlusCircle, Trash2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,72 +25,41 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
-interface App {
-    id: string;
-    name: string;
-    url: string;
-    description: string;
-}
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
 
 export default function AppsPage() {
-    const [apps, setApps] = useState<App[]>([]);
     const [newApp, setNewApp] = useState({ name: "", url: "", description: "" });
     const [isOpen, setIsOpen] = useState(false);
     const [appToDelete, setAppToDelete] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchApps();
-    }, []);
-
-    const fetchApps = async () => {
-        try {
-            const response = await fetch("/api/apps");
-            if (response.ok) {
-                const data = await response.json();
-                setApps(data);
-            }
-        } catch (error) {
-            console.error("Error fetching apps:", error);
-        }
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const response = await fetch("/api/apps", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newApp),
+    const { data: apps = [] } = trpc.apps.getAll.useQuery();
+    const utils = trpc.useUtils();
+    const createApp = trpc.apps.create.useMutation({
+        onSuccess: () => {
+            setNewApp({ name: "", url: "", description: "" });
+            setIsOpen(false);
+            toast.success("创建应用成功");
+            utils.apps.getAll.invalidate();
+        },
+        onError: (error) => {
+            toast.error("创建应用失败", {
+                description: error.message,
             });
-
-            if (response.ok) {
-                setNewApp({ name: "", url: "", description: "" });
-                setIsOpen(false);
-                fetchApps();
-            }
-        } catch (error) {
-            console.error("Error creating app:", error);
-        }
-    };
-
-    const handleDeleteApp = async (id: string) => {
-        try {
-            const response = await fetch(`/api/apps/${id}`, {
-                method: "DELETE",
+        },
+    });
+    const deleteApp = trpc.apps.delete.useMutation({
+        onSuccess: () => {
+            toast.success("删除应用成功");
+            setAppToDelete(null);
+            utils.apps.getAll.invalidate();
+        },
+        onError: (error) => {
+            toast.error("删除应用失败", {
+                description: error.message,
             });
-
-            if (response.ok) {
-                fetchApps();
-                setAppToDelete(null);
-            } else {
-                throw new Error("Failed to delete app");
-            }
-        } catch (error) {
-            console.error("Error deleting app:", error);
-        }
-    };
-
+        },
+    });
     return (
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
@@ -112,7 +81,12 @@ export default function AppsPage() {
                                 在这里添加新的应用程序信息。
                             </DialogDescription>
                         </DialogHeader>
-                        <form onSubmit={handleSubmit}>
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                createApp.mutate(newApp);
+                            }}
+                        >
                             <div className="grid gap-4 py-4">
                                 <div className="grid gap-2">
                                     <Label htmlFor="name">应用名称</Label>
@@ -204,7 +178,9 @@ export default function AppsPage() {
                     <AlertDialogFooter>
                         <AlertDialogCancel>取消</AlertDialogCancel>
                         <AlertDialogAction
-                            onClick={() => appToDelete && handleDeleteApp(appToDelete)}
+                            onClick={() =>
+                                appToDelete && deleteApp.mutate({ id: appToDelete })
+                            }
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         >
                             删除

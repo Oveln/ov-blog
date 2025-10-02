@@ -114,33 +114,77 @@ async function upsertTagsForPostVersion(
 
 export const postsRouter = router({
     /**
-     * 获取所有文章（占位符）
-     * TODO: 实现真实的数据库查询
+     * 获取所有文章卡片信息（公开访问）
+     * 用于博客列表页面展示
      */
-    getAll: publicProcedure.query(async () => {
-        return [
-            {
-                id: "1",
-                title: "Hello tRPC",
-                content: "This is a post fetched via tRPC!",
-                createdAt: new Date(),
+    getAllPostCardInfo: publicProcedure.query(async () => {
+        return await prisma.post.findMany({
+            where: {
+                // current_version不为null
+                current_version: {
+                    not: null,
+                },
             },
-        ];
+            select: {
+                id: true,
+                create_time: true,
+                User: {
+                    select: {
+                        name: true,
+                    },
+                },
+                currentVersion: {
+                    select: {
+                        title: true,
+                        description: true,
+                        update_time: true,
+                        tags: {
+                            select: {
+                                tagName: true,
+                            },
+                        },
+                    },
+                },
+            },
+            orderBy: {
+                create_time: "desc",
+            },
+        });
     }),
 
     /**
-     * 根据ID获取文章（占位符）
-     * TODO: 实现真实的数据库查询
+     * 根据ID获取文章详情（公开访问）
+     * 用于博客详情页面展示
      */
-    getById: publicProcedure
-        .input(z.object({ id: z.string() }))
+    getPostById: publicProcedure
+        .input(z.object({ id: z.number() }))
         .query(async ({ input }) => {
-            return {
-                id: input.id,
-                title: "Sample Post",
-                content: "This is a sample post content",
-                createdAt: new Date(),
-            };
+            const post = await prisma.post.findUnique({
+                where: {
+                    id: input.id,
+                },
+                select: {
+                    create_time: true,
+                    currentVersion: {
+                        select: {
+                            title: true,
+                            description: true,
+                            content: true,
+                            update_time: true,
+                            tags: true,
+                        },
+                    },
+                },
+            });
+
+            if (!post) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "文章不存在",
+                });
+            }
+
+            return post;
         }),
 
     /**

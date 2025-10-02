@@ -7,15 +7,15 @@ import { toast } from "sonner";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
-import {
-    NewPostVersionRetType,
-    NewPostVersionType,
-} from "@/app/(auth)/api/post/[id]/route";
-import { NewPostRetType, NewPostType } from "@/app/(auth)/api/post/route";
-import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/get";
 import { Textarea } from "./ui/textarea";
 import { Badge } from "./ui/badge";
 import { X, Plus } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import type { AppRouter } from "@/server/trpc";
+import type { inferRouterOutputs } from "@trpc/server";
+
+type RouterOutput = inferRouterOutputs<AppRouter>;
+type GetPostVersionType = RouterOutput["posts"]["getVersion"] | null;
 
 export default dynamic(() => Promise.resolve(PostEditor), { ssr: false });
 export function PostEditor({
@@ -86,87 +86,25 @@ export function PostEditor({
             toast("不可以是空标题！");
             return;
         }
-        let res: NewPostRetType | NewPostVersionRetType;
-        if (postVersion.postId != 0) {
-            const postData: NewPostVersionType = {
-                title,
-                description: description == "" ? null : description,
-                content: cherryInstance?.getValue() ?? "",
+
+        const content = cherryInstance?.getValue() ?? "";
+        const postData = {
+            title,
+            description: description === "" ? null : description,
+            content,
+            tags,
+        };
+
+        if (postVersion.postId !== 0) {
+            // 创建新版本
+            createVersion.mutate({
+                ...postData,
                 postId: postVersion.postId,
                 publish,
-                tags,
-            };
-            const r: NewPostVersionRetType = await (
-                await fetch(`/api/post/${postVersion.postId}`, {
-                    method: "POST",
-                    body: JSON.stringify(postData),
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                })
-            ).json();
-            res = r;
+            });
         } else {
-            const postData: NewPostType = {
-                title,
-                description: description == "" ? null : description,
-                content: cherryInstance?.getValue() ?? "",
-                tags,
-            };
-            const r: NewPostRetType = await (
-                await fetch(`/api/post`, {
-                    method: "POST",
-                    body: JSON.stringify(postData),
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                })
-            ).json();
-            res = r;
-        }
-        switch (res.status) {
-            case "ok":
-                router.refresh();
-                toast("提交成功", {
-                    description: "提交成功",
-                    action: {
-                        label: "查看",
-                        onClick: () => {
-                            // 判断res类型
-                            if ("post_id" in res) {
-                                router.push(`/blogs/${res.post_id}`);
-                            } else {
-                                router.push(`/blogs/${postVersion.postId}`);
-                            }
-                        },
-                    },
-                });
-                return;
-            case "data_error":
-                toast("提交失败", {
-                    description: "数据错误",
-                });
-                return;
-            case "db_error":
-                toast("提交失败", {
-                    description: "数据库错误",
-                });
-                return;
-            case "error":
-                toast("提交失败", {
-                    description: "请检查网络连接",
-                });
-                return;
-            case "busy":
-                toast("提交失败", {
-                    description: "请勿频繁提交",
-                });
-                return;
-            case "unauthorized":
-                toast("提交失败", {
-                    description: "无提交权限",
-                });
-                return;
+            // 创建新文章
+            createPost.mutate(postData);
         }
     };
     // 获取高度
@@ -187,32 +125,61 @@ export function PostEditor({
     // }, []);
     // const editorRef = useRef<Cherry | null>(null);
 
-    const [tags, setTags] = useState<string[]>(postVersion.tags ?? []);
-    const [availableTags, setAvailableTags] = useState<{ name: string }[]>([]);
+    const [tags, setTags] = useState<string[]>(
+        postVersion.tags?.map((tag) => tag.tagName) ?? []
+    );
     const [newTag, setNewTag] = useState<string>("");
 
-    useEffect(() => {
-        const fetchTags = async () => {
-            try {
-                const response = await fetch("/api/tags");
-                const data = await response.json();
-                if (data.status === "ok" && Array.isArray(data.tags)) {
-                    setAvailableTags(data.tags);
-                } else {
-                    setAvailableTags([]);
-                    console.warn("获取标签失败：返回数据格式不正确");
-                }
-            } catch (error) {
-                console.error("获取标签失败：", error);
-                setAvailableTags([]);
-                toast("获取标签失败", {
-                    description: "请检查网络连接",
+    // 使用 tRPC 获取标签
+    const { data: availableTagsData = [] } = trpc.tags.getAll.useQuery();
+    const availableTags = availableTagsData;
+
+    // tRPC mutations
+    const createPost = trpc.posts.create.useMutation({
+        onSuccess: (data) => {
+            router.refresh();
+            toast("提交成功", {
+                description: "文章创建成功",
+                action: {
+                    label: "查看",
+                    onClick: () => {
+                        router.push(`/blogs/${data.post_id}`);
+                    },
+                },
+            });
+        },
+        onError: (error) => {
+            if (error.message.includes("访客用户")) {
+                toast("提交失败", {
+                    description: "无提交权限",
+                });
+            } else {
+                toast("提交失败", {
+                    description: error.message || "请检查网络连接",
                 });
             }
-        };
+        },
+    });
 
-        fetchTags();
-    }, []);
+    const createVersion = trpc.posts.createVersion.useMutation({
+        onSuccess: () => {
+            router.refresh();
+            toast("提交成功", {
+                description: "版本创建成功",
+                action: {
+                    label: "查看",
+                    onClick: () => {
+                        router.push(`/blogs/${postVersion.postId}`);
+                    },
+                },
+            });
+        },
+        onError: (error) => {
+            toast("提交失败", {
+                description: error.message || "请检查网络连接",
+            });
+        },
+    });
 
     const addTag = () => {
         if (newTag && !tags.includes(newTag)) {

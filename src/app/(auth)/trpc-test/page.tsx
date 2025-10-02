@@ -1,6 +1,5 @@
 import React from "react";
 import { TestTRPC } from "@/components/testing/TestTRPC";
-import { TestPostsTRPC } from "@/components/testing/TestPostsTRPC";
 import { TestCurrentUser } from "@/components/testing/TestCurrentUser";
 
 export default function TRPCTestPage() {
@@ -11,9 +10,6 @@ export default function TRPCTestPage() {
             <div className="grid gap-6 md:grid-cols-2">
                 <div>
                     <TestTRPC />
-                </div>
-                <div>
-                    <TestPostsTRPC />
                 </div>
             </div>
 

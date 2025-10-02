@@ -1,12 +1,17 @@
-import { UserPostRetType } from "@/app/(auth)/api/user/route";
 import { PostActionButtons } from "./PostActionButton";
 import { Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Cherry from "cherry-markdown";
 import { cn } from "@/lib/utils";
+import type { AppRouter } from "@/server/trpc";
+import type { inferRouterOutputs } from "@trpc/server";
+
+// 从 tRPC router 推断返回类型
+type RouterOutput = inferRouterOutputs<AppRouter>;
+type TRPCUserPost = RouterOutput["user"]["getUserPosts"][number];
 
 interface PostContentProps {
-    post: UserPostRetType;
+    post: TRPCUserPost;
     isLoading: boolean;
     handleChange: (
         postId: number,

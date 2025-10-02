@@ -1,11 +1,16 @@
-import { UserPostRetType } from "@/app/(auth)/api/user/route";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import type { AppRouter } from "@/server/trpc";
+import type { inferRouterOutputs } from "@trpc/server";
+
+// 从 tRPC router 推断返回类型
+type RouterOutput = inferRouterOutputs<AppRouter>;
+type TRPCUserPost = RouterOutput["user"]["getUserPosts"][number];
 
 interface PostListProps {
-    posts: UserPostRetType[];
-    selectedPost: UserPostRetType | null;
-    onPostSelect: (post: UserPostRetType) => void;
+    posts: TRPCUserPost[];
+    selectedPost: TRPCUserPost | null;
+    onPostSelect: (post: TRPCUserPost) => void;
 }
 
 export function PostList({ posts, selectedPost, onPostSelect }: PostListProps) {

@@ -8,3 +8,4 @@ export { createContext, type Context } from "./context";
 export { postsRouter } from "./routers/posts";
 export { userRouter } from "./routers/user";
 export { requireAuth, requireAdmin } from "./utils";
+export { createServerCaller } from "./server-caller";
