@@ -1,8 +1,9 @@
-import { Role } from '@prisma/client';
-import 'next-auth';
+import { Role } from "@prisma/client";
+import "next-auth";
 
-declare module 'next-auth' {
+declare module "next-auth" {
     interface User {
-        role?: Role;
+        id: string;
+        role: Role;
     }
-} 
+}
