@@ -1,12 +1,23 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Noto_Sans_SC, JetBrains_Mono } from "next/font/google";
 import "@/app/globals.css";
 import { ThemeProvider } from "@/context/theme-provider";
 import React from "react";
 import { MySessionProviders } from "@/context/MySessionProvider";
 import { TRPCProvider } from "@/components/TRPCProvider";
 
-const inter = Inter({ subsets: ["latin"] });
+const jetBrainsMono = JetBrains_Mono({ 
+    subsets: ["latin"],
+    display: "swap",
+    variable: "--font-mono"
+});
+
+const notoSansSC = Noto_Sans_SC({ 
+    subsets: ["latin"],
+    weight: ["300", "400", "500", "700"],
+    display: "swap",
+    variable: "--font-sans"
+});
 
 export const metadata: Metadata = {
     title: "Oveln Blog",
@@ -18,8 +29,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <html lang="en" className="m-0 p-0" suppressHydrationWarning>
             <body
                 className={
-                    "mx-auto max-w-[68rem] px-2 lg:px-0 w-screen h-screen " +
-                    inter.className
+                    "mx-auto max-w-272 px-2 lg:px-0 w-screen h-screen " +
+                    `${jetBrainsMono.variable} ${notoSansSC.variable}`
                 }
             >
                 <TRPCProvider>

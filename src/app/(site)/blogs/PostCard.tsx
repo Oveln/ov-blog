@@ -39,7 +39,7 @@ export default function PostCard({ dataFade, info }: { dataFade: number; info: P
                 </div>
 
                 {info.currentVersion?.description != "" && (
-                    <div className="text-sm text-gray-600 mb-4 [&>*]:mb-3 [&>*:last-child]:mb-0">
+                    <div className="text-sm text-gray-600 mb-4 *:mb-3 [&>*:last-child]:mb-0">
                         {info.currentVersion?.description}
                     </div>
                 )}

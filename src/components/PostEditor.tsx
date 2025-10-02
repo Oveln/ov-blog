@@ -266,7 +266,7 @@ export function PostEditor({
                                     value={newTag}
                                     onChange={(e) => setNewTag(e.target.value)}
                                     placeholder="输入新标签"
-                                    className="flex-grow"
+                                    className="grow"
                                 />
                                 <Button onClick={addTag} variant="outline">
                                     <Plus className="h-4 w-4 mr-2" />
