@@ -30,7 +30,7 @@ handler.on("error", (err) => {
 handler.on("push", (event) => {
     console.log(
         `[${new Date().toLocaleString("zh-CN", {
-            timeZone: "Asia/Shanghai"
+            timeZone: "Asia/Shanghai",
         })}] Received a push event from ${event.payload.pusher.name} to ${event.payload.ref}`
     );
     if (!BANCH.includes(event.payload.ref)) {
@@ -44,7 +44,7 @@ handler.on("push", (event) => {
             console.error(`exec error: ${error}`);
             console.error(
                 `[${new Date().toLocaleString("zh-CN", {
-                    timeZone: "Asia/Shanghai"
+                    timeZone: "Asia/Shanghai",
                 })}]${event.payload.ref} 更新失败`
             );
             return;
@@ -53,16 +53,16 @@ handler.on("push", (event) => {
         console.error(`stderr: ${stderr}`);
         console.log(
             `[${new Date().toLocaleString("zh-CN", {
-                timeZone: "Asia/Shanghai"
+                timeZone: "Asia/Shanghai",
             })}]${event.payload.ref} 更新完成`
         );
     });
 });
 
 handler.on("ping", () => {
-    console.log(
+    console.warn(
         `[${new Date().toLocaleString("zh-CN", {
-            timeZone: "Asia/Shanghai"
+            timeZone: "Asia/Shanghai",
         })}] Received a ping event`
     );
 });

@@ -42,28 +42,30 @@ export const GET = async () => {
                     version: true,
                     tags: {
                         select: {
-                            tagName: true
-                        }
+                            tagName: true,
+                        },
                     },
-                }
+                },
             },
             postVersions: {
                 select: {
                     title: true,
                     update_time: true,
-                    version: true
+                    version: true,
                 },
                 orderBy: {
-                    update_time: "desc"
-                }
+                    update_time: "desc",
+                },
             },
             User: {
                 select: {
+                    id: true,
                     name: true,
-                    email: true
-                }
-            }
-        }
+                    email: true,
+                    role: true,
+                },
+            },
+        },
     });
     return Response.json(retPosts);
 };

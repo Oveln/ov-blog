@@ -7,7 +7,7 @@ export const GET = async () => {
     const user = (await auth())?.user;
     if (!user || user.role !== Role.ADMIN) {
         return Response.json({
-            status: "unauthorized"
+            status: "unauthorized",
         });
     }
     // 本地地址
@@ -15,7 +15,7 @@ export const GET = async () => {
     console.log(env);
     if (!env) {
         return Response.json({
-            status: "not found"
+            status: "not found",
         });
     }
     const fileName = env.split("/").pop();

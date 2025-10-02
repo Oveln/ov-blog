@@ -12,7 +12,11 @@ import rehypeStringify from "rehype-stringify";
 import remarkGithubAlerts from "remark-github-alerts";
 import "katex/dist/katex.min.css";
 import "./code.css";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import {
+    ResizableHandle,
+    ResizablePanel,
+    ResizablePanelGroup,
+} from "@/components/ui/resizable";
 import { format } from "date-fns";
 // import { Calendar } from "@/components/ui/calendar";
 import { unified } from "unified";
@@ -20,7 +24,7 @@ import CommentsArea from "@/components/ui/giscus";
 
 export const revalidate = 10;
 
-export const generateStaticParams = async () => []
+export const generateStaticParams = async () => [];
 
 const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
     const post = await getPostById(parseInt((await params).slug));
@@ -61,8 +65,14 @@ const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
                                     Created: {format(post.create_time, "yyyy-MM-dd")}
                                 </time>
                                 <span>•</span>
-                                <time dateTime={format(postVersion.update_time, "yyyy-MM-dd")}>
-                                    Updated: {format(postVersion.update_time, "yyyy-MM-dd")}
+                                <time
+                                    dateTime={format(
+                                        postVersion.update_time,
+                                        "yyyy-MM-dd"
+                                    )}
+                                >
+                                    Updated:{" "}
+                                    {format(postVersion.update_time, "yyyy-MM-dd")}
                                 </time>
                             </div>
                         </header>
@@ -124,7 +134,7 @@ const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
                                 prose-a:hover:underline
                             `}
                             dangerouslySetInnerHTML={{
-                                __html: String(content)
+                                __html: String(content),
                             }}
                         />
                     </article>
@@ -144,7 +154,17 @@ const Post = async ({ params }: { params: Promise<{ slug: string }> }) => {
                         {tags.length > 0 && (
                             <div className="space-y-3">
                                 <h3 className="text-lg font-mono font-semibold flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="20"
+                                        height="20"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
                                         <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
                                         <line x1="7" y1="7" x2="7.01" y2="7" />
                                     </svg>

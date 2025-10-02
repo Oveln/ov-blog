@@ -1,6 +1,10 @@
 "use client";
 import * as React from "react";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "../ui/navigation-menu";
+import {
+    NavigationMenu,
+    NavigationMenuItem,
+    NavigationMenuList,
+} from "../ui/navigation-menu";
 import Link from "next/link";
 const linkClass =
     "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-mono font-medium pl-0 hover:underline underline-offset-4";

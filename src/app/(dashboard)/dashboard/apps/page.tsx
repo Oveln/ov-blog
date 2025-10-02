@@ -8,7 +8,7 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -61,7 +61,7 @@ export default function AppsPage() {
             const response = await fetch("/api/apps", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newApp)
+                body: JSON.stringify(newApp),
             });
 
             if (response.ok) {
@@ -77,7 +77,7 @@ export default function AppsPage() {
     const handleDeleteApp = async (id: string) => {
         try {
             const response = await fetch(`/api/apps/${id}`, {
-                method: "DELETE"
+                method: "DELETE",
             });
 
             if (response.ok) {
@@ -108,7 +108,9 @@ export default function AppsPage() {
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>添加新应用</DialogTitle>
-                            <DialogDescription>在这里添加新的应用程序信息。</DialogDescription>
+                            <DialogDescription>
+                                在这里添加新的应用程序信息。
+                            </DialogDescription>
                         </DialogHeader>
                         <form onSubmit={handleSubmit}>
                             <div className="grid gap-4 py-4">
@@ -141,7 +143,10 @@ export default function AppsPage() {
                                         id="description"
                                         value={newApp.description}
                                         onChange={(e) =>
-                                            setNewApp({ ...newApp, description: e.target.value })
+                                            setNewApp({
+                                                ...newApp,
+                                                description: e.target.value,
+                                            })
                                         }
                                     />
                                 </div>
@@ -170,7 +175,9 @@ export default function AppsPage() {
                         </Button>
 
                         <h3 className="font-semibold mb-2">{app.name}</h3>
-                        <p className="text-sm text-muted-foreground mb-2">{app.description}</p>
+                        <p className="text-sm text-muted-foreground mb-2">
+                            {app.description}
+                        </p>
                         <a
                             href={app.url}
                             target="_blank"
@@ -183,7 +190,10 @@ export default function AppsPage() {
                 ))}
             </div>
 
-            <AlertDialog open={!!appToDelete} onOpenChange={(open: boolean) => !open && setAppToDelete(null)}>
+            <AlertDialog
+                open={!!appToDelete}
+                onOpenChange={(open: boolean) => !open && setAppToDelete(null)}
+            >
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>确认删除</AlertDialogTitle>

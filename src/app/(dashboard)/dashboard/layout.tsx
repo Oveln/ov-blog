@@ -9,26 +9,26 @@ import { NavMenu } from "@/components/layout/nav-menu";
 import { Toaster } from "@/components/ui/sonner";
 import { TRPCProvider } from "@/components/TRPCProvider";
 
-const jetBrainsMono = JetBrains_Mono({ 
+const jetBrainsMono = JetBrains_Mono({
     subsets: ["latin"],
     display: "swap",
-    variable: "--font-mono"
+    variable: "--font-mono",
 });
 
-const notoSansSC = Noto_Sans_SC({ 
+const notoSansSC = Noto_Sans_SC({
     subsets: ["latin"],
     weight: ["300", "400", "500", "700"],
     display: "swap",
-    variable: "--font-sans"
+    variable: "--font-sans",
 });
 
 export const metadata: Metadata = {
     title: "Oveln Blog",
-    description: "Oveln的小站，记录一些有趣的事"
+    description: "Oveln的小站，记录一些有趣的事",
 };
 
 export default async function RootLayout({
-    children
+    children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
@@ -55,14 +55,14 @@ export default async function RootLayout({
                                             </nav>
                                         </aside>
                                         <main className="flex-1">{children}</main>
-                                        </div>
                                     </div>
                                 </div>
-                            </ThemeProvider>
-                        </MySessionProviders>
-                    </TRPCProvider>
-                    <Toaster />
-                </body>
-            </html>
-        );
+                            </div>
+                        </ThemeProvider>
+                    </MySessionProviders>
+                </TRPCProvider>
+                <Toaster />
+            </body>
+        </html>
+    );
 }

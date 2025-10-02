@@ -29,7 +29,7 @@ export function SearchAndFilter({
                 />
             </div>
             <div className="flex flex-wrap gap-2">
-                {tags.map(tag => (
+                {tags.map((tag) => (
                     <Badge
                         key={tag}
                         variant={selectedTag === tag ? "default" : "secondary"}
@@ -47,4 +47,4 @@ export function SearchAndFilter({
             </div>
         </div>
     );
-} 
+}

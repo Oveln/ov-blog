@@ -10,13 +10,13 @@ const Apps: React.FC = () => {
     useEffect(() => {
         if (window.innerWidth < 1024) setCol(2);
         else setCol(3);
-        
+
         const fetchApps = async () => {
-            const response = await fetch('/api/apps');
+            const response = await fetch("/api/apps");
             const data = await response.json();
             setApps(data);
         };
-        
+
         fetchApps();
     }, []);
 
@@ -28,14 +28,16 @@ const Apps: React.FC = () => {
                         <li
                             className="animate-fade-up animate-ease-in-out animate-duration-300"
                             style={{
-                                animationDelay: `${Math.floor(idx / col) * 100}ms`
+                                animationDelay: `${Math.floor(idx / col) * 100}ms`,
                             }}
                             key={app.id}
                         >
-                            <AppCard appData={{
-                                APP_NAME: app.name,
-                                APP_URL: app.url
-                            }}></AppCard>
+                            <AppCard
+                                appData={{
+                                    APP_NAME: app.name,
+                                    APP_URL: app.url,
+                                }}
+                            ></AppCard>
                         </li>
                     );
                 })}

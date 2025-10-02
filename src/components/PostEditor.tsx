@@ -7,7 +7,10 @@ import { toast } from "sonner";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
-import { NewPostVersionRetType, NewPostVersionType } from "@/app/(auth)/api/post/[id]/route";
+import {
+    NewPostVersionRetType,
+    NewPostVersionType,
+} from "@/app/(auth)/api/post/[id]/route";
 import { NewPostRetType, NewPostType } from "@/app/(auth)/api/post/route";
 import { GetPostVersionType } from "@/app/(auth)/api/post/[id]/[version]/get";
 import { Textarea } from "./ui/textarea";
@@ -17,7 +20,7 @@ import { X, Plus } from "lucide-react";
 export default dynamic(() => Promise.resolve(PostEditor), { ssr: false });
 export function PostEditor({
     postVersion,
-    publish
+    publish,
 }: {
     postVersion: GetPostVersionType;
     publish: boolean;
@@ -36,7 +39,7 @@ export function PostEditor({
     useEffect(() => {
         // 渲染完毕后再渲染这个
         const timer = setTimeout(() => {
-            console.log()
+            console.log();
             import("cherry-markdown/dist/cherry-markdown").then((Cherry) => {
                 if (cherryRef.current) {
                     const cherry = new Cherry.default({
@@ -48,26 +51,28 @@ export function PostEditor({
                             // 上传到服务器
                             fetch("/api/upload", {
                                 method: "POST",
-                                body: formData  
-                            }).then(async (res) => {
-                                const data = await res.json();
-                                if (data.status === "ok") {
-                                    callback(data.url);
-                                    toast("图片上传成功", { duration: 3000 });
-                                } else {
+                                body: formData,
+                            })
+                                .then(async (res) => {
+                                    const data = await res.json();
+                                    if (data.status === "ok") {
+                                        callback(data.url);
+                                        toast("图片上传成功", { duration: 3000 });
+                                    } else {
+                                        toast("图片上传失败", {
+                                            description: data.message,
+                                            duration: 5000,
+                                        });
+                                    }
+                                })
+                                .catch((e) => {
+                                    console.error(e);
                                     toast("图片上传失败", {
-                                        description: data.message,
-                                        duration: 5000
+                                        description: "请检查网络连接",
+                                        duration: 5000,
                                     });
-                                }
-                            }).catch((e) => {
-                                console.error(e);
-                                toast("图片上传失败", {
-                                    description: "请检查网络连接",
-                                    duration: 5000
                                 });
-                            });
-                        }
+                        },
                     });
                     setCherryInstance(cherry);
                 }
@@ -84,37 +89,37 @@ export function PostEditor({
         let res: NewPostRetType | NewPostVersionRetType;
         if (postVersion.postId != 0) {
             const postData: NewPostVersionType = {
-                title: title,
+                title,
                 description: description == "" ? null : description,
                 content: cherryInstance?.getValue() ?? "",
                 postId: postVersion.postId,
-                publish: publish,
-                tags: tags
+                publish,
+                tags,
             };
             const r: NewPostVersionRetType = await (
                 await fetch(`/api/post/${postVersion.postId}`, {
                     method: "POST",
                     body: JSON.stringify(postData),
                     headers: {
-                        "Content-Type": "application/json"
-                    }
+                        "Content-Type": "application/json",
+                    },
                 })
             ).json();
             res = r;
         } else {
             const postData: NewPostType = {
-                title: title,
+                title,
                 description: description == "" ? null : description,
                 content: cherryInstance?.getValue() ?? "",
-                tags: tags
+                tags,
             };
             const r: NewPostRetType = await (
                 await fetch(`/api/post`, {
                     method: "POST",
                     body: JSON.stringify(postData),
                     headers: {
-                        "Content-Type": "application/json"
-                    }
+                        "Content-Type": "application/json",
+                    },
                 })
             ).json();
             res = r;
@@ -133,33 +138,33 @@ export function PostEditor({
                             } else {
                                 router.push(`/blogs/${postVersion.postId}`);
                             }
-                        }
-                    }
+                        },
+                    },
                 });
                 return;
             case "data_error":
                 toast("提交失败", {
-                    description: "数据错误"
+                    description: "数据错误",
                 });
                 return;
             case "db_error":
                 toast("提交失败", {
-                    description: "数据库错误"
+                    description: "数据库错误",
                 });
                 return;
             case "error":
                 toast("提交失败", {
-                    description: "请检查网络连接"
+                    description: "请检查网络连接",
                 });
                 return;
             case "busy":
                 toast("提交失败", {
-                    description: "请勿频繁提交"
+                    description: "请勿频繁提交",
                 });
                 return;
             case "unauthorized":
                 toast("提交失败", {
-                    description: "无提交权限"
+                    description: "无提交权限",
                 });
                 return;
         }
@@ -201,7 +206,7 @@ export function PostEditor({
                 console.error("获取标签失败：", error);
                 setAvailableTags([]);
                 toast("获取标签失败", {
-                    description: "请检查网络连接"
+                    description: "请检查网络连接",
                 });
             }
         };
@@ -224,7 +229,11 @@ export function PostEditor({
         <div className="flex h-full gap-6 bg-background">
             {/* 左侧编辑器区域 - 移除边框和背景 */}
             <div className="flex-1 overflow-hidden border-r">
-                <div className="editor h-full" ref={cherryRef} id="markdown-container"></div>
+                <div
+                    className="editor h-full"
+                    ref={cherryRef}
+                    id="markdown-container"
+                ></div>
             </div>
 
             {/* 右侧侧边栏 */}
@@ -289,7 +298,9 @@ export function PostEditor({
                                 ))}
                             </div>
                             <div className="mt-2">
-                                <p className="text-sm text-muted-foreground mb-1">可用标签：</p>
+                                <p className="text-sm text-muted-foreground mb-1">
+                                    可用标签：
+                                </p>
                                 <div className="flex flex-wrap gap-2">
                                     {availableTags.map((tag, index) => (
                                         <Badge
@@ -323,7 +334,7 @@ export function PostEditor({
                         onClick={() => {
                             console.log(availableTags);
                             toast("重置成功", {
-                                description: "内容已恢复到上次保存状态"
+                                description: "内容已恢复到上次保存状态",
                             });
                             cherryInstance?.setValue(postVersion.content);
                         }}

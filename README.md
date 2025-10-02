@@ -6,37 +6,36 @@
 
 ### 技术栈
 
--   **前端**
+- **前端**
+    - Next.js 15
+    - React 18
+    - TypeScript
+    - Tailwind CSS
+    - shadcn/ui
 
-    -   Next.js 15
-    -   React 18
-    -   TypeScript
-    -   Tailwind CSS
-    -   shadcn/ui
-
--   **后端**
-    -   Next.js API Routes
-    -   Prisma ORM
-    -   PostgreSQL
-    -   NextAuth.js
+- **后端**
+    - Next.js API Routes
+    - Prisma ORM
+    - PostgreSQL
+    - NextAuth.js
 
 ### 核心功能
 
--   🔐 GitHub OAuth 登录
--   📝 Cherry Markdown 编辑器
--   ✨ 代码高亮 (rehype-pretty-code & Shiki)
--   🔢 数学公式支持 (KaTeX)
--   💬 评论系统 (Giscus)
--   🌓 深色模式
--   📱 响应式设计
+- 🔐 GitHub OAuth 登录
+- 📝 Cherry Markdown 编辑器
+- ✨ 代码高亮 (rehype-pretty-code & Shiki)
+- 🔢 数学公式支持 (KaTeX)
+- 💬 评论系统 (Giscus)
+- 🌓 深色模式
+- 📱 响应式设计
 
 ## 快速开始
 
 ### 环境要求
 
--   Node.js 18+
--   Docker & Docker Compose
--   PostgreSQL
+- Node.js 18+
+- Docker & Docker Compose
+- PostgreSQL
 
 ### 本地开发
 
@@ -103,28 +102,28 @@ src/
 
 ### 内容管理
 
--   Markdown 文章编辑
--   文章版本控制
--   草稿和发布管理
+- Markdown 文章编辑
+- 文章版本控制
+- 草稿和发布管理
 
 ### 用户系统
 
--   GitHub OAuth 登录
--   用户角色管理（管理员/普通用户）
+- GitHub OAuth 登录
+- 用户角色管理（管理员/普通用户）
 
 ### 展示功能
 
--   响应式设计
--   深色模式
--   代码高亮
--   数学公式
--   评论系统
+- 响应式设计
+- 深色模式
+- 代码高亮
+- 数学公式
+- 评论系统
 
 ### 管理功能
 
--   文章管理
--   应用管理
--   用户管理（管理员）
+- 文章管理
+- 应用管理
+- 用户管理（管理员）
 
 ## 部署
 
@@ -207,16 +206,16 @@ docker-compose down
 
 ## 联系方式
 
--   作者：Oveln
--   邮箱：oveln@outlook.com
--   博客：[oveln.icu](https://oveln.icu)
+- 作者：Oveln
+- 邮箱：oveln@outlook.com
+- 博客：[oveln.icu](https://oveln.icu)
 
 ## 致谢
 
 感谢以下开源项目：
 
--   [Next.js](https://nextjs.org/)
--   [Tailwind CSS](https://tailwindcss.com/)
--   [shadcn/ui](https://ui.shadcn.com/)
--   [Cherry Markdown](https://github.com/Tencent/cherry-markdown)
--   [Prisma](https://www.prisma.io/)
+- [Next.js](https://nextjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [shadcn/ui](https://ui.shadcn.com/)
+- [Cherry Markdown](https://github.com/Tencent/cherry-markdown)
+- [Prisma](https://www.prisma.io/)

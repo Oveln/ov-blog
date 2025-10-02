@@ -41,38 +41,38 @@ const newPost = async (data: NewPostType, userId: string): Promise<NewPostRetTyp
                         create: {
                             User: {
                                 connect: {
-                                    id: userId
-                                }
-                            }
-                        }
-                    }
-                }
+                                    id: userId,
+                                },
+                            },
+                        },
+                    },
+                },
             });
 
             if (data.tags.length > 0) {
                 await tx.tag.createMany({
-                    data: data.tags.map(tag => ({
-                        name: tag
+                    data: data.tags.map((tag) => ({
+                        name: tag,
                     })),
-                    skipDuplicates: true
+                    skipDuplicates: true,
                 });
 
                 await tx.tagOnPostVersion.createMany({
-                    data: data.tags.map(tag => ({
+                    data: data.tags.map((tag) => ({
                         post_VersionPostId: post_version.postId,
                         post_VersionVersion: post_version.version,
-                        tagName: tag
-                    }))
+                        tagName: tag,
+                    })),
                 });
             }
 
             await tx.post.update({
                 where: {
-                    id: post_version.postId
+                    id: post_version.postId,
                 },
                 data: {
-                    current_version: post_version.version
-                }
+                    current_version: post_version.version,
+                },
             });
             return post_version.postId;
         });
@@ -81,7 +81,7 @@ const newPost = async (data: NewPostType, userId: string): Promise<NewPostRetTyp
     }
     return {
         status: "ok",
-        post_id: post_id
+        post_id,
     };
 };
 
@@ -100,7 +100,7 @@ async function handler(req: Request): Promise<NewPostRetType> {
         debounceMap.set(
             user.id,
             setTimeout(() => {
-                debounceMap.delete(user.id!);
+                debounceMap.delete(user.id);
             }, delay)
         );
         return { status: "busy", post_id: null };
@@ -108,7 +108,7 @@ async function handler(req: Request): Promise<NewPostRetType> {
         debounceMap.set(
             user.id,
             setTimeout(() => {
-                debounceMap.delete(user.id!);
+                debounceMap.delete(user.id);
             }, delay)
         );
     }

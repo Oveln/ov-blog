@@ -3,13 +3,21 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { auth } from "@/lib/auth/auth";
 import { Role } from "@prisma/client";
 
+if (
+    !process.env.R2_ACCOUNT_ID ||
+    !process.env.R2_ACCESS_KEY_ID ||
+    !process.env.R2_SECRET_ACCESS_KEY
+) {
+    throw new Error("Missing required R2 environment variables.");
+}
+
 const r2 = new S3Client({
     region: "auto",
     endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
     credentials: {
-        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!
-    }
+        accessKeyId: process.env.R2_ACCESS_KEY_ID,
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+    },
 });
 
 /**
@@ -44,7 +52,10 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const file = formData.get("file") as File;
     if (!file || !/image/i.test(file.type)) {
-        return Response.json({ status: "error", message: "只能上传图片文件" }, { status: 400 });
+        return Response.json(
+            { status: "error", message: "只能上传图片文件" },
+            { status: 400 }
+        );
     }
     // 指定路径和文件名
     const path = "blog-images" + (process.env.NODE_ENV === "production" ? "" : "-dev");
@@ -56,12 +67,12 @@ export async function POST(req: NextRequest) {
                 Key: path + "/" + key,
                 Body: Buffer.from(await file.arrayBuffer()),
                 ContentType: file.type,
-                ACL: "public-read"
+                ACL: "public-read",
             })
         );
         return Response.json({
             status: "ok",
-            url: `https://pic.oveln.icu/${path}/${key}`
+            url: `https://pic.oveln.icu/${path}/${key}`,
         });
     } catch (e) {
         console.error(e);

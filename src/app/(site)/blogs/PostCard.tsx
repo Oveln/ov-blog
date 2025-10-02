@@ -17,13 +17,19 @@ export type PostCardInfo = {
     } | null;
 };
 
-export default function PostCard({ dataFade, info }: { dataFade: number; info: PostCardInfo }) {
+export default function PostCard({
+    dataFade,
+    info,
+}: {
+    dataFade: number;
+    info: PostCardInfo;
+}) {
     return (
         <Link href={`/blogs/${info.id}`}>
             <div
                 className="mb-8 rounded-lg border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md p-4 group relative animate-fade-up animate-ease-in-out transition-all"
                 style={{
-                    animationDelay: `${dataFade * 100}ms`
+                    animationDelay: `${dataFade * 100}ms`,
                 }}
             >
                 <div className="relative mb-2">

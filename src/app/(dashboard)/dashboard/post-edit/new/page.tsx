@@ -11,7 +11,7 @@ export default function PostEdit() {
         version: 0,
         update_time: new Date(),
         postId: 0,
-        tags: []
+        tags: [],
     };
     return <PostEditor postVersion={postVersion} publish={true}></PostEditor>;
 }

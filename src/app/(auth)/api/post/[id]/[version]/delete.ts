@@ -24,7 +24,7 @@ export default async function DELETE(req: Request, context: { params: Promise<Pa
     // 检测是否是本用户的Post
     if ((await checkPermissionsForPost(user.id, id)) === false) {
         return Response.json({
-            status: "unauthorized"
+            status: "unauthorized",
         });
     }
 
@@ -34,31 +34,33 @@ export default async function DELETE(req: Request, context: { params: Promise<Pa
             where: {
                 postId: id,
                 version: {
-                    not: version
-                }
-            }
+                    not: version,
+                },
+            },
         })) == 0
     ) {
         await prisma.post.delete({
             where: {
-                id: id
-            }
+                id,
+            },
         });
     } else {
         // 如果删除版本正在发布，则删除时将发布权交给最新版本
-        if ((await prisma.post.findUnique({ where: { id: id } }))?.current_version === version) {
+        if (
+            (await prisma.post.findUnique({ where: { id } }))?.current_version === version
+        ) {
             // 找到最新版本
             const latest_version = (
                 await prisma.post_Version.findFirst({
                     where: {
                         postId: id,
                         version: {
-                            not: version
-                        }
+                            not: version,
+                        },
                     },
                     orderBy: {
-                        version: "desc"
-                    }
+                        version: "desc",
+                    },
                 })
             )?.version;
             if (latest_version === undefined) {
@@ -70,18 +72,18 @@ export default async function DELETE(req: Request, context: { params: Promise<Pa
                         where: {
                             postId_version: {
                                 postId: id,
-                                version: version
-                            }
-                        }
+                                version,
+                            },
+                        },
                     }),
                     prisma.post.update({
                         where: {
-                            id: id
+                            id,
                         },
                         data: {
-                            current_version: latest_version
-                        }
-                    })
+                            current_version: latest_version,
+                        },
+                    }),
                 ]);
             } catch {
                 return Response.json({ status: "db_error" });
@@ -92,18 +94,18 @@ export default async function DELETE(req: Request, context: { params: Promise<Pa
                     where: {
                         postId_version: {
                             postId: id,
-                            version: version
+                            version,
                         },
                         Post: {
                             User: {
-                                id: user.id
-                            }
-                        }
-                    }
+                                id: user.id,
+                            },
+                        },
+                    },
                 });
             } catch {
                 return Response.json({
-                    status: "not_found"
+                    status: "not_found",
                 });
             }
         }

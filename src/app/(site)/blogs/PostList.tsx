@@ -12,16 +12,20 @@ export default function PostList({ posts }: { posts: PostCardInfo[] }) {
     // 获取所有不重复的标签
     const getAllTags = () => {
         const tagSet = new Set<string>();
-        posts.forEach(post => {
-            post.currentVersion?.tags?.forEach(tag => tagSet.add(tag.tagName));
+        posts.forEach((post) => {
+            post.currentVersion?.tags?.forEach((tag) => tagSet.add(tag.tagName));
         });
         return Array.from(tagSet);
     };
 
     // 过滤文章
-    const filteredPosts = posts.filter(post => {
-        const matchesSearch = post.currentVersion?.title.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesTag = !selectedTag || post.currentVersion?.tags?.some(tag => tag.tagName === selectedTag);
+    const filteredPosts = posts.filter((post) => {
+        const matchesSearch = post.currentVersion?.title
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase());
+        const matchesTag =
+            !selectedTag ||
+            post.currentVersion?.tags?.some((tag) => tag.tagName === selectedTag);
         return matchesSearch && matchesTag;
     });
 

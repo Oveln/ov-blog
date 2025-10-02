@@ -6,25 +6,27 @@ import React from "react";
 import { MySessionProviders } from "@/context/MySessionProvider";
 import { TRPCProvider } from "@/components/TRPCProvider";
 
-const jetBrainsMono = JetBrains_Mono({ 
+const jetBrainsMono = JetBrains_Mono({
     subsets: ["latin"],
     display: "swap",
-    variable: "--font-mono"
+    variable: "--font-mono",
 });
 
-const notoSansSC = Noto_Sans_SC({ 
+const notoSansSC = Noto_Sans_SC({
     subsets: ["latin"],
     weight: ["300", "400", "500", "700"],
     display: "swap",
-    variable: "--font-sans"
+    variable: "--font-sans",
 });
 
 export const metadata: Metadata = {
     title: "Oveln Blog",
-    description: "Oveln的小站，记录一些有趣的事"
+    description: "Oveln的小站，记录一些有趣的事",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+    children,
+}: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en" className="m-0 p-0" suppressHydrationWarning>
             <body

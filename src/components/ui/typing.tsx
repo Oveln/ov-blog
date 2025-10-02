@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 const TypingEffect = ({
     text,
     speed = 500,
-    className = ""
+    className = "",
 }: {
     text: string;
     speed?: number;
@@ -31,7 +31,7 @@ const TypingEffect = ({
             <span
                 style={{
                     display: "inline",
-                    fontWeight: "bold"
+                    fontWeight: "bold",
                 }}
                 className="blinking-cursor"
             >

@@ -5,7 +5,7 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuTrigger
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { BadgeCheck, BadgeMinus } from "lucide-react";
 import Link from "next/link";
@@ -14,10 +14,14 @@ import { toast } from "sonner";
 
 export const PostActionButtons = ({
     post,
-    handleChange
+    handleChange,
 }: {
     post: UserPostRetType;
-    handleChange: (postId: number, version: number, action: "delete" | "check_out") => void;
+    handleChange: (
+        postId: number,
+        version: number,
+        action: "delete" | "check_out"
+    ) => void;
 }) => {
     return (
         <div className="flex justify-center">
@@ -58,30 +62,37 @@ export const PostActionButtons = ({
                             onClick={async () => {
                                 console.log("CheckOut", postVersion.version);
                                 const res = (await (
-                                    await fetch(`/api/post/${post.id}/${postVersion.version}`, {
-                                        method: "POST"
-                                    })
+                                    await fetch(
+                                        `/api/post/${post.id}/${postVersion.version}`,
+                                        {
+                                            method: "POST",
+                                        }
+                                    )
                                 ).json()) as DeletePostVersionRetType;
                                 switch (res.status) {
                                     case "ok":
                                         toast("切换成功", {
-                                            description: "CheckOut Success"
+                                            description: "CheckOut Success",
                                         });
-                                        handleChange(post.id, postVersion.version, "check_out");
+                                        handleChange(
+                                            post.id,
+                                            postVersion.version,
+                                            "check_out"
+                                        );
                                         break;
                                     case "unauthorized":
                                         toast("切换失败", {
-                                            description: "Unauthorized"
+                                            description: "Unauthorized",
                                         });
                                         break;
                                     case "not_found":
                                         toast("切换失败", {
-                                            description: "Not Found"
+                                            description: "Not Found",
                                         });
                                         break;
                                     case "error":
                                         toast("切换失败", {
-                                            description: "Error"
+                                            description: "Error",
                                         });
                                         break;
                                 }
@@ -110,30 +121,37 @@ export const PostActionButtons = ({
                             onClick={async () => {
                                 console.log("Delete", postVersion.version);
                                 const res: DeletePostVersionRetType = await (
-                                    await fetch(`/api/post/${post.id}/${postVersion.version}`, {
-                                        method: "DELETE"
-                                    })
+                                    await fetch(
+                                        `/api/post/${post.id}/${postVersion.version}`,
+                                        {
+                                            method: "DELETE",
+                                        }
+                                    )
                                 ).json();
                                 switch (res.status) {
                                     case "ok":
                                         toast("删除成功", {
-                                            description: "Delete Success"
+                                            description: "Delete Success",
                                         });
-                                        handleChange(post.id, postVersion.version, "delete");
+                                        handleChange(
+                                            post.id,
+                                            postVersion.version,
+                                            "delete"
+                                        );
                                         break;
                                     case "unauthorized":
                                         toast("删除失败", {
-                                            description: "Unauthorized"
+                                            description: "Unauthorized",
                                         });
                                         break;
                                     case "not_found":
                                         toast("删除失败", {
-                                            description: "Not Found"
+                                            description: "Not Found",
                                         });
                                         break;
                                     case "error":
                                         toast("删除失败", {
-                                            description: "Error"
+                                            description: "Error",
                                         });
                                         break;
                                 }

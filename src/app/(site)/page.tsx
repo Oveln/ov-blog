@@ -8,13 +8,13 @@ const ovLinks = [
     {
         name: "github",
         url: "https://github.com/Oveln",
-        icon: <GitHubLogoIcon className="size-5" />
+        icon: <GitHubLogoIcon className="size-5" />,
     },
     {
         name: "Email",
         url: "mailto:oveln@outlook.com",
-        icon: <EnvelopeClosedIcon className="size-5" />
-    }
+        icon: <EnvelopeClosedIcon className="size-5" />,
+    },
 ];
 
 export default function Home() {
@@ -31,7 +31,7 @@ export default function Home() {
                         <p
                             className="text-4xl md:text-6xl 2xl:text-7xl font-mono font-bold animate-fade-up"
                             style={{
-                                animationDelay: `${getT() * 100}ms`
+                                animationDelay: `${getT() * 100}ms`,
                             }}
                         >
                             {"Hi!👋"}
@@ -39,11 +39,13 @@ export default function Home() {
                         <p
                             className="text-4xl md:text-6xl 2xl:text-7xl font-mono font-bold animate-fade-up"
                             style={{
-                                animationDelay: `${getT() * 100}ms`
+                                animationDelay: `${getT() * 100}ms`,
                             }}
                         >
                             {"I'm "}
-                            <span className="text-fuchsia-500 text-opacity-85">Oveln🎉</span>
+                            <span className="text-fuchsia-500 text-opacity-85">
+                                Oveln🎉
+                            </span>
                         </p>
 
                         {/* Language and interests section */}
@@ -51,20 +53,26 @@ export default function Home() {
                             <p
                                 className="text-lg md:text-xl font-mono animate-fade-up"
                                 style={{
-                                    animationDelay: `${getT() * 100}ms`
+                                    animationDelay: `${getT() * 100}ms`,
                                 }}
                             >
                                 Language:&nbsp;
-                                <span className="text-amber-700 font-mono font-bold hover:opacity-80 transition-opacity cursor-default">Rust</span>
+                                <span className="text-amber-700 font-mono font-bold hover:opacity-80 transition-opacity cursor-default">
+                                    Rust
+                                </span>
                                 <span className="mx-2">/</span>
-                                <span className="text-blue-500 font-mono font-bold hover:opacity-80 transition-opacity cursor-default">Typescript</span>
+                                <span className="text-blue-500 font-mono font-bold hover:opacity-80 transition-opacity cursor-default">
+                                    Typescript
+                                </span>
                                 <span className="mx-2">/</span>
-                                <span className="text-green-500 font-mono font-bold hover:opacity-80 transition-opacity cursor-default">Python</span>
+                                <span className="text-green-500 font-mono font-bold hover:opacity-80 transition-opacity cursor-default">
+                                    Python
+                                </span>
                             </p>
                             <p
                                 className="text-lg md:text-xl font-mono animate-fade-up"
                                 style={{
-                                    animationDelay: `${getT() * 100}ms`
+                                    animationDelay: `${getT() * 100}ms`,
                                 }}
                             >
                                 Programing⌨️ and Gaming🎮
@@ -74,7 +82,7 @@ export default function Home() {
                         <div
                             className="flex gap-4 animate-fade-up"
                             style={{
-                                animationDelay: `${getT() * 100}ms`
+                                animationDelay: `${getT() * 100}ms`,
                             }}
                         >
                             {ovLinks.map((link) => {

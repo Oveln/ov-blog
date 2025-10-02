@@ -6,7 +6,7 @@ export default function CommentsArea({
     repo,
     repoId,
     category,
-    categoryId
+    categoryId,
 }: {
     repo: string | undefined;
     repoId: string | undefined;

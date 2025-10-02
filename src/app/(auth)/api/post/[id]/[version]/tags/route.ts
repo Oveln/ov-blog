@@ -30,10 +30,10 @@ export async function GET(
         const postVersion = await prisma.post_Version.findUnique({
             where: {
                 postId_version: {
-                    postId: postId,
-                    version: version
-                }
-            }
+                    postId,
+                    version,
+                },
+            },
         });
 
         if (!postVersion) {
@@ -44,16 +44,16 @@ export async function GET(
         const tags = await prisma.tagOnPostVersion.findMany({
             where: {
                 post_VersionPostId: postId,
-                post_VersionVersion: version
+                post_VersionVersion: version,
             },
             select: {
-                tagName: true
-            }
+                tagName: true,
+            },
         });
 
         const response: PostTagsResponse = {
             status: "ok",
-            tags: tags.map(t => t.tagName)
+            tags: tags.map((t) => t.tagName),
         };
         return Response.json(response);
     } catch (error) {
@@ -61,4 +61,4 @@ export async function GET(
         const response: PostTagsResponse = { status: "error" };
         return Response.json(response);
     }
-} 
+}

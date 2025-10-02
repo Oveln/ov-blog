@@ -26,13 +26,18 @@ export function PostList({ posts, selectedPost, onPostSelect }: PostListProps) {
                         </h3>
                         <div className="flex flex-wrap gap-1.5">
                             {post.currentVersion?.tags.map((tag: { tagName: string }) => (
-                                <span key={tag.tagName} className="text-xs px-2 py-0.5 bg-secondary text-secondary-foreground rounded-full">
+                                <span
+                                    key={tag.tagName}
+                                    className="text-xs px-2 py-0.5 bg-secondary text-secondary-foreground rounded-full"
+                                >
                                     {tag.tagName}
                                 </span>
                             ))}
                         </div>
                         <div className="flex items-center justify-between text-xs text-muted-foreground mt-1">
-                            <span className="bg-primary/10 text-primary px-2 py-0.5 rounded">版本: {post.current_version}</span>
+                            <span className="bg-primary/10 text-primary px-2 py-0.5 rounded">
+                                版本: {post.current_version}
+                            </span>
                             <span>{format(post.create_time, "yyyy年MM月dd日")}</span>
                         </div>
                     </div>
@@ -45,4 +50,4 @@ export function PostList({ posts, selectedPost, onPostSelect }: PostListProps) {
             )}
         </div>
     );
-} 
+}

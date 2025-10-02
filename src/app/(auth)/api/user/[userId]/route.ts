@@ -17,8 +17,8 @@ export const GET = async (_req: Request, context: { params: Promise<Params> }) =
     const retPosts = await prisma.post.findMany({
         where: {
             User: {
-                id: user.id
-            }
+                id: user.id,
+            },
         },
         select: {
             id: true,
@@ -27,11 +27,11 @@ export const GET = async (_req: Request, context: { params: Promise<Params> }) =
                 select: {
                     title: true,
                     update_time: true,
-                    version: true
+                    version: true,
                 },
                 orderBy: {
-                    update_time: "desc"
-                }
+                    update_time: "desc",
+                },
             },
             current_version: true,
             currentVersion: {
@@ -41,12 +41,12 @@ export const GET = async (_req: Request, context: { params: Promise<Params> }) =
                     version: true,
                     tags: {
                         select: {
-                            tagName: true
-                        }
-                    }
-                }
-            }
-        }
+                            tagName: true,
+                        },
+                    },
+                },
+            },
+        },
     });
     return Response.json(retPosts);
 };

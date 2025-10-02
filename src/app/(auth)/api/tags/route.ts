@@ -20,20 +20,20 @@ export async function GET(): Promise<Response> {
                     some: {
                         postVersion: {
                             isCurrent: {
-                                isNot: null
-                            }
-                        }
-                    }
-                }
+                                isNot: null,
+                            },
+                        },
+                    },
+                },
             },
             select: {
-                name: true
-            }
+                name: true,
+            },
         });
 
         const response: TagsResponse = {
             status: "ok",
-            tags: tags
+            tags,
         };
         return Response.json(response);
     } catch (error) {
@@ -60,8 +60,8 @@ export async function POST(req: Request): Promise<Response> {
 
         await prisma.tag.create({
             data: {
-                name: name.trim()
-            }
+                name: name.trim(),
+            },
         });
 
         const response: CreateTagResponse = { status: "ok" };
@@ -71,4 +71,4 @@ export async function POST(req: Request): Promise<Response> {
         const response: CreateTagResponse = { status: "error" };
         return Response.json(response);
     }
-} 
+}

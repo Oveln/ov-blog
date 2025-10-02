@@ -1,7 +1,13 @@
 "use client";
 import * as React from "react";
 import Link from "next/link";
-import { HomeIcon, LucideIcon, NotebookPenIcon, PencilLine, Settings } from "lucide-react";
+import {
+    HomeIcon,
+    LucideIcon,
+    NotebookPenIcon,
+    PencilLine,
+    Settings,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
 import { Tooltip, TooltipContent, TooltipProvider } from "../ui/tooltip";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
@@ -16,26 +22,26 @@ const navItems: NavItem[] = [
     {
         name: "仪表盘",
         to: "/dashboard",
-        icon: HomeIcon
+        icon: HomeIcon,
     },
     {
         name: "新文章",
         to: "/dashboard/post-edit/new",
-        icon: PencilLine
+        icon: PencilLine,
     },
     {
         name: "文章管理",
         to: "/dashboard/post-edit",
-        icon: NotebookPenIcon
-    }
+        icon: NotebookPenIcon,
+    },
 ];
 
 const adminItems: NavItem[] = [
     {
         name: "应用管理",
         to: "/dashboard/apps",
-        icon: Settings
-    }
+        icon: Settings,
+    },
 ];
 
 export function NavMenuDashboard() {

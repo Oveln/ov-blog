@@ -11,7 +11,7 @@ export const UserCard = () => {
             <CardHeader>{data?.user?.name}</CardHeader>
             <CardContent>
                 <Avatar>
-                    <AvatarImage src={data!.user!.image!} />
+                    <AvatarImage src={data?.user?.image ?? undefined} />
                     <AvatarFallback>Oveln</AvatarFallback>
                 </Avatar>
             </CardContent>

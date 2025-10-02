@@ -21,31 +21,31 @@ export default async function POST(req: Request, context: { params: Promise<Para
     const version = parseInt(params.version);
     if (!id || !version) {
         return Response.json({
-            status: "error"
+            status: "error",
         });
     }
     // 如果这个文章不是该用户的
     if ((await checkPermissionsForPost(user.id, id)) === false) {
         return Response.json({
-            status: "unauthorized"
+            status: "unauthorized",
         });
     }
 
     try {
         await prisma.post.update({
             where: {
-                id: id
+                id,
             },
             data: {
-                current_version: version
-            }
+                current_version: version,
+            },
         });
     } catch {
         return Response.json({
-            status: "db_error"
+            status: "db_error",
         });
     }
     return Response.json({
-        status: "ok"
+        status: "ok",
     });
 }

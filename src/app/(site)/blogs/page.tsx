@@ -4,7 +4,7 @@ import PostList from "./PostList";
 import { getAllPostCardInfo } from "@/lib/db";
 
 export const revalidate = 30;
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 const Blogs = async () => {
     const posts = await getAllPostCardInfo();

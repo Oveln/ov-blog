@@ -6,4 +6,4 @@ export interface App {
     icon?: string;
     createdAt: Date;
     updatedAt: Date;
-} 
+}

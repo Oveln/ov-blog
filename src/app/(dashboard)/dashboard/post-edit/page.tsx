@@ -5,7 +5,7 @@ import { UserPostRetType } from "@/app/(auth)/api/user/route";
 import { SearchAndFilter } from "./SearchAndFilter";
 import { PostList } from "./PostList";
 import { PostContent } from "./PostContent";
-import 'cherry-markdown/dist/cherry-markdown.css';
+import "cherry-markdown/dist/cherry-markdown.css";
 
 export default function PostEdit() {
     const [data, setData] = useState<UserPostRetType[]>([]);
@@ -16,7 +16,7 @@ export default function PostEdit() {
     const loadingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const session = useSession({
-        required: true
+        required: true,
     });
 
     useEffect(() => {
@@ -28,7 +28,11 @@ export default function PostEdit() {
         getData();
     }, [session.status]);
 
-    const handleChange = (postId: number, version: number, action: "delete" | "check_out") => {
+    const handleChange = (
+        postId: number,
+        version: number,
+        action: "delete" | "check_out"
+    ) => {
         // 创建data的拷贝
         const newData = [...data];
         switch (action) {
@@ -87,15 +91,21 @@ export default function PostEdit() {
 
     const getAllTags = () => {
         const tagSet = new Set<string>();
-        data.forEach(post => {
-            post.currentVersion?.tags?.forEach((tag: { tagName: string }) => tagSet.add(tag.tagName));
+        data.forEach((post) => {
+            post.currentVersion?.tags?.forEach((tag: { tagName: string }) =>
+                tagSet.add(tag.tagName)
+            );
         });
         return Array.from(tagSet);
     };
 
-    const filteredPosts = data.filter(post => {
-        const matchesSearch = post.currentVersion?.title.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesTag = !selectedTag || post.currentVersion?.tags?.some(tag => tag.tagName === selectedTag);
+    const filteredPosts = data.filter((post) => {
+        const matchesSearch = post.currentVersion?.title
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase());
+        const matchesTag =
+            !selectedTag ||
+            post.currentVersion?.tags?.some((tag) => tag.tagName === selectedTag);
         return matchesSearch && matchesTag;
     });
 

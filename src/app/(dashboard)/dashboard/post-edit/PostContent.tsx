@@ -8,7 +8,11 @@ import { cn } from "@/lib/utils";
 interface PostContentProps {
     post: UserPostRetType;
     isLoading: boolean;
-    handleChange: (postId: number, version: number, action: "delete" | "check_out") => void;
+    handleChange: (
+        postId: number,
+        version: number,
+        action: "delete" | "check_out"
+    ) => void;
 }
 
 export function PostContent({ post, isLoading, handleChange }: PostContentProps) {
@@ -22,13 +26,13 @@ export function PostContent({ post, isLoading, handleChange }: PostContentProps)
             // 只有在有 post 且不在加载状态时才创建实例
             if (post && !isLoading && cherryRef.current) {
                 console.log("initCherry");
-                const Cherry = await import('cherry-markdown/dist/cherry-markdown');
+                const Cherry = await import("cherry-markdown/dist/cherry-markdown");
                 const instance = new Cherry.default({
                     el: cherryRef.current,
-                    value: '',
+                    value: "",
                     editor: {
-                        defaultModel: 'previewOnly'
-                    }
+                        defaultModel: "previewOnly",
+                    },
                 });
                 setCherryInstance(instance);
             }
@@ -53,14 +57,16 @@ export function PostContent({ post, isLoading, handleChange }: PostContentProps)
             if (!post) return;
 
             try {
-                const response = await fetch(`/api/post/${post.id}/${post.current_version}`);
+                const response = await fetch(
+                    `/api/post/${post.id}/${post.current_version}`
+                );
                 if (!response.ok) {
-                    throw new Error('Failed to fetch post content');
+                    throw new Error("Failed to fetch post content");
                 }
                 const data = await response.json();
                 setContent(data.content);
             } catch (error) {
-                console.error('Error fetching post content:', error);
+                console.error("Error fetching post content:", error);
             }
         };
 
@@ -81,7 +87,11 @@ export function PostContent({ post, isLoading, handleChange }: PostContentProps)
                 </div>
             )}
             <div className="h-[calc(100vh-250px)] overflow-auto mb-2">
-                <div ref={cherryRef} id="cherry-markdown" className={cn("border", isLoading ? "hidden" : "")}>
+                <div
+                    ref={cherryRef}
+                    id="cherry-markdown"
+                    className={cn("border", isLoading ? "hidden" : "")}
+                >
                     <style>
                         {`
               .cherry-markdown {
@@ -102,4 +112,4 @@ export function PostContent({ post, isLoading, handleChange }: PostContentProps)
             </div>
         </div>
     );
-} 
+}

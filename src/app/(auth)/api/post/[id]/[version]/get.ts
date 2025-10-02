@@ -30,13 +30,13 @@ export default async function GET(req: Request, context: { params: Promise<Param
 
     const post_version = await prisma.post_Version.findFirst({
         where: {
-            version: version,
+            version,
             Post: {
-                id: id,
+                id,
                 User: {
-                    id: user.id
-                }
-            }
+                    id: user.id,
+                },
+            },
         },
         select: {
             title: true,
@@ -47,21 +47,23 @@ export default async function GET(req: Request, context: { params: Promise<Param
             postId: true,
             tags: {
                 select: {
-                    tagName: true
-                }
+                    tagName: true,
+                },
             },
             Post: {
                 select: {
-                    create_time: true
-                }
-            }
-        }
+                    create_time: true,
+                },
+            },
+        },
     });
 
-    const transformed_post_version: GetPostVersionType = post_version ? {
-        ...post_version,
-        tags: post_version.tags.map(tag => tag.tagName)
-    } : null;
+    const transformed_post_version: GetPostVersionType = post_version
+        ? {
+              ...post_version,
+              tags: post_version.tags.map((tag) => tag.tagName),
+          }
+        : null;
 
     return Response.json(transformed_post_version);
 }

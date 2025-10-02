@@ -19,7 +19,7 @@ export async function DELETE(
     const params = await context.params;
     try {
         const tag = await prisma.tag.findUnique({
-            where: { name: params.name }
+            where: { name: params.name },
         });
 
         if (!tag) {
@@ -28,7 +28,7 @@ export async function DELETE(
         }
 
         await prisma.tag.delete({
-            where: { name: params.name }
+            where: { name: params.name },
         });
 
         const response: TagOperationResponse = { status: "ok" };
@@ -59,7 +59,7 @@ export async function PUT(
         }
 
         const tag = await prisma.tag.findUnique({
-            where: { name: params.name }
+            where: { name: params.name },
         });
 
         if (!tag) {
@@ -69,7 +69,7 @@ export async function PUT(
 
         await prisma.tag.update({
             where: { name: params.name },
-            data: { name: newName.trim() }
+            data: { name: newName.trim() },
         });
 
         const response: TagOperationResponse = { status: "ok" };
@@ -79,4 +79,4 @@ export async function PUT(
         const response: TagOperationResponse = { status: "error" };
         return Response.json(response);
     }
-} 
+}

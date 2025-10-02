@@ -18,14 +18,17 @@ const debounceMap = new Map<string, NodeJS.Timeout>();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isNewPostVersionType = (data: any): data is NewPostVersionType => {
-    const basicCheck = typeof data.title === "string" &&
+    const basicCheck =
+        typeof data.title === "string" &&
         (typeof data.description === "string" || data.description === null) &&
         typeof data.content === "string";
 
     if (data.tags !== undefined) {
-        return basicCheck &&
+        return (
+            basicCheck &&
             Array.isArray(data.tags) &&
-            data.tags.every((tag: string) => typeof tag === "string");
+            data.tags.every((tag: string) => typeof tag === "string")
+        );
     }
 
     return basicCheck;
@@ -41,11 +44,11 @@ const newVersion = async (
     }
     const newestVersion = await prisma.post_Version.findFirst({
         where: {
-            postId: data.postId
+            postId: data.postId,
         },
         orderBy: {
-            version: "desc"
-        }
+            version: "desc",
+        },
     });
     if (!newestVersion) {
         return { status: "db_error" };
@@ -55,7 +58,7 @@ const newVersion = async (
         description: data.description,
         content: data.content,
         version: newestVersion.version + 1,
-        postId: data.postId
+        postId: data.postId,
     };
 
     try {
@@ -63,7 +66,7 @@ const newVersion = async (
         await prisma.$transaction(async (tx) => {
             // 创建新版本
             const new_version = await tx.post_Version.create({
-                data: insertVersion
+                data: insertVersion,
             });
 
             // 如果提供了tags，更新post的tags
@@ -74,7 +77,7 @@ const newVersion = async (
                     const tag = await tx.tag.upsert({
                         where: { name: tagName },
                         update: {},
-                        create: { name: tagName }
+                        create: { name: tagName },
                     });
 
                     // 创建新的tags关联
@@ -82,8 +85,8 @@ const newVersion = async (
                         data: {
                             post_VersionPostId: data.postId,
                             post_VersionVersion: new_version.version,
-                            tagName: tag.name
-                        }
+                            tagName: tag.name,
+                        },
                     });
                 }
             }
@@ -92,11 +95,11 @@ const newVersion = async (
             if (data.publish) {
                 await tx.post.update({
                     where: {
-                        id: data.postId
+                        id: data.postId,
                     },
                     data: {
-                        current_version: new_version.version
-                    }
+                        current_version: new_version.version,
+                    },
                 });
             }
         });
@@ -106,7 +109,7 @@ const newVersion = async (
     }
 
     return {
-        status: "ok"
+        status: "ok",
     };
 };
 
@@ -123,7 +126,7 @@ export const POST = async (req: Request) => {
         debounceMap.set(
             user.id,
             setTimeout(() => {
-                debounceMap.delete(user.id!);
+                debounceMap.delete(user.id);
             }, delay)
         );
         return Response.json({ status: "busy" });
@@ -131,7 +134,7 @@ export const POST = async (req: Request) => {
         debounceMap.set(
             user.id,
             setTimeout(() => {
-                debounceMap.delete(user.id!);
+                debounceMap.delete(user.id);
             }, delay)
         );
     }

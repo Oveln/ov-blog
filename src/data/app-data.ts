@@ -16,5 +16,5 @@ export const appsData = [
     new AppData("Oveln Note", "Oveln的学习笔记，基于Obisidan", "https://note.oveln.icu"),
     new AppData("Oveln Pan", "Oveln自用的网盘", "https://pan.oveln.icu:5080/"),
     new AppData("Oveln Music", "Oveln自用的音乐播放器", "https://music.oveln.icu:5080/"),
-    new AppData("Suger OJ", "Oveln搭建的在线评测平台", "https://oj.oveln.icu:5080")
+    new AppData("Suger OJ", "Oveln搭建的在线评测平台", "https://oj.oveln.icu:5080"),
 ];
