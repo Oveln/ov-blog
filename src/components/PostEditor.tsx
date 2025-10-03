@@ -193,117 +193,144 @@ export function PostEditor({
     };
 
     return (
-        <div className="flex h-full gap-6 bg-background">
-            {/* 左侧编辑器区域 - 移除边框和背景 */}
-            <div className="flex-1 overflow-hidden border-r">
+        <div className="flex h-full gap-6 bg-gradient-to-br from-gray-50 to-gray-100/50 dark:from-gray-900 dark:to-gray-950">
+            {/* 左侧编辑器区域 */}
+            <div className="flex-1 overflow-hidden">
                 <div
-                    className="editor h-full"
+                    className="editor h-full rounded-l-xl border border-gray-200 dark:border-gray-800 shadow-lg overflow-hidden bg-white dark:bg-gray-950"
                     ref={cherryRef}
                     id="markdown-container"
                 ></div>
             </div>
 
-            {/* 右侧侧边栏 */}
-            <div className="w-96 flex flex-col gap-6 rounded-lg border bg-card p-6 m-4">
-                <div>
-                    <h2 className="text-xl font-semibold mb-6">文章信息</h2>
+            {/* 右侧信息面板 */}
+            <div className="w-96 flex flex-col gap-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-lg p-6 my-6 mr-6">
+                <div className="flex-1 overflow-y-auto">
+                    <h2 className="text-xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent">
+                        文章信息
+                    </h2>
 
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-muted-foreground">
-                                文章标题
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                文章标题 <span className="text-red-500">*</span>
                             </label>
                             <Input
                                 value={title}
                                 onChange={(s) => setTitle(s.target.value)}
                                 placeholder="请输入标题"
-                                className="h-10"
+                                className="h-10 border-gray-300 dark:border-gray-700 focus:border-primary focus:ring-primary"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-muted-foreground">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                 文章简介
                             </label>
                             <Textarea
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 placeholder="请输入简介"
-                                className="min-h-[100px] resize-none"
+                                className="min-h-[100px] resize-none border-gray-300 dark:border-gray-700 focus:border-primary focus:ring-primary"
                             />
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-muted-foreground">
+                        <div className="space-y-3">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                 文章标签
                             </label>
+
                             <div className="flex gap-2">
                                 <Input
                                     value={newTag}
                                     onChange={(e) => setNewTag(e.target.value)}
-                                    placeholder="输入新标签"
-                                    className="grow"
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            e.preventDefault();
+                                            addTag();
+                                        }
+                                    }}
+                                    placeholder="输入新标签并按回车"
+                                    className="flex-1 border-gray-300 dark:border-gray-700"
                                 />
-                                <Button onClick={addTag} variant="outline">
-                                    <Plus className="h-4 w-4 mr-2" />
+                                <Button
+                                    onClick={addTag}
+                                    variant="outline"
+                                    size="sm"
+                                    className="px-4"
+                                >
+                                    <Plus className="h-4 w-4 mr-1" />
                                     添加
                                 </Button>
                             </div>
-                            <div className="flex flex-wrap gap-2 mb-2">
-                                {tags.map((tag, index) => (
-                                    <Badge
-                                        key={`${tag}-${index}`}
-                                        variant="secondary"
-                                        className="px-2 py-1"
-                                    >
-                                        {tag}
-                                        <X
-                                            className="ml-1 h-3 w-3 cursor-pointer"
-                                            onClick={() => removeTag(tag)}
-                                        />
-                                    </Badge>
-                                ))}
-                            </div>
-                            <div className="mt-2">
-                                <p className="text-sm text-muted-foreground mb-1">
-                                    可用标签：
-                                </p>
-                                <div className="flex flex-wrap gap-2">
-                                    {availableTags.map((tag, index) => (
+
+                            {tags.length > 0 && (
+                                <div className="flex flex-wrap gap-2 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
+                                    {tags.map((tag, index) => (
                                         <Badge
-                                            key={`${tag.name}-${index}`}
-                                            variant="outline"
-                                            className="cursor-pointer"
-                                            onClick={() => {
-                                                if (!tags.includes(tag.name)) {
-                                                    setTags([...tags, tag.name]);
-                                                }
-                                            }}
+                                            key={`${tag}-${index}`}
+                                            variant="secondary"
+                                            className="px-3 py-1.5 text-sm bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
                                         >
-                                            {tag.name}
+                                            {tag}
+                                            <X
+                                                className="ml-2 h-3.5 w-3.5 cursor-pointer hover:text-red-600 transition-colors"
+                                                onClick={() => removeTag(tag)}
+                                            />
                                         </Badge>
                                     ))}
                                 </div>
-                            </div>
+                            )}
+
+                            {availableTags.length > 0 && (
+                                <div className="space-y-2">
+                                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                                        可用标签
+                                    </p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {availableTags.map((tag, index) => (
+                                            <Badge
+                                                key={`${tag.name}-${index}`}
+                                                variant="outline"
+                                                className="cursor-pointer hover:bg-primary/10 hover:text-primary hover:border-primary transition-all"
+                                                onClick={() => {
+                                                    if (!tags.includes(tag.name)) {
+                                                        setTags([...tags, tag.name]);
+                                                    }
+                                                }}
+                                            >
+                                                {tag.name}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-3 mt-auto">
-                    <Button className="h-11 text-base" onClick={submit}>
+                <div className="flex flex-col gap-3 pt-4 border-t border-gray-200 dark:border-gray-800">
+                    <Button
+                        className="h-11 text-base bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all"
+                        onClick={submit}
+                        disabled={createPost.isPending || createVersion.isPending}
+                    >
                         <Send className="h-5 w-5 mr-2" />
-                        <span>发布文章</span>
+                        <span>
+                            {createPost.isPending || createVersion.isPending
+                                ? "发布中..."
+                                : "发布文章"}
+                        </span>
                     </Button>
 
                     <Button
                         variant="outline"
-                        className="h-11 text-base"
+                        className="h-11 text-base border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
                         onClick={() => {
-                            console.log(availableTags);
-                            toast("重置成功", {
+                            cherryInstance?.setValue(postVersion.content);
+                            toast.success("重置成功", {
                                 description: "内容已恢复到上次保存状态",
                             });
-                            cherryInstance?.setValue(postVersion.content);
                         }}
                     >
                         <RotateCcw className="h-5 w-5 mr-2" />

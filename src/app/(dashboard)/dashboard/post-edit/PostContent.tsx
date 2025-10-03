@@ -2,23 +2,13 @@ import { PostActionButtons } from "./PostActionButton";
 import { Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Cherry from "cherry-markdown";
-import { cn } from "@/lib/utils";
-import type { AppRouter } from "@/server/trpc";
-import type { inferRouterOutputs } from "@trpc/server";
 import { trpc } from "@/lib/trpc";
-
-// 从 tRPC router 推断返回类型
-type RouterOutput = inferRouterOutputs<AppRouter>;
-type TRPCUserPost = RouterOutput["user"]["getUserPosts"][number];
+import type { TRPCUserPost } from "./types";
 
 interface PostContentProps {
     post: TRPCUserPost;
     isLoading: boolean;
-    handleChange: (
-        postId: number,
-        version: number,
-        action: "delete" | "check_out"
-    ) => void;
+    handleChange: () => void;
 }
 
 export function PostContent({ post, isLoading, handleChange }: PostContentProps) {
@@ -73,40 +63,53 @@ export function PostContent({ post, isLoading, handleChange }: PostContentProps)
     }, [postQuery.data, postQuery.isSuccess, postQuery.isError, post]);
 
     return (
-        <div className="overflow-hidden">
-            <div className="flex items-center justify-between mb-6 py-6">
-                <h2 className="text-2xl font-semibold">
-                    {post.currentVersion?.title ?? post.postVersions[0].title}
-                </h2>
+        <div className="h-full flex flex-col">
+            {/* 标题栏 */}
+            <div className="flex items-center justify-between pb-6 mb-6 border-b border-gray-200 dark:border-gray-800">
+                <div className="flex-1 min-w-0">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 truncate">
+                        {post.currentVersion?.title ?? post.postVersions[0].title}
+                    </h2>
+                </div>
                 <PostActionButtons post={post} handleChange={handleChange} />
             </div>
-            {isLoading && (
-                <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                </div>
-            )}
-            <div className="h-[calc(100vh-250px)] overflow-auto mb-2">
-                <div
-                    ref={cherryRef}
-                    id="cherry-markdown"
-                    className={cn("border", isLoading ? "hidden" : "")}
-                >
-                    <style>
-                        {`
-              .cherry-markdown {
-                border: none !important;
-                box-shadow: none !important;
-                padding: 2 !important;
-              }
-              .cherry {
-                box-shadow: none !important;
-              }
-              .cherry-editor,
-              .cherry-previewer {
-                box-shadow: none !important;
-              }
-            `}
-                    </style>
+
+            {/* 内容区域 */}
+            <div className="flex-1 overflow-hidden bg-white dark:bg-gray-950 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
+                {isLoading && (
+                    <div className="h-full flex items-center justify-center">
+                        <div className="flex flex-col items-center gap-3">
+                            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                加载中...
+                            </p>
+                        </div>
+                    </div>
+                )}
+                <div className={`h-full overflow-auto ${isLoading ? "hidden" : ""}`}>
+                    <div ref={cherryRef} id="cherry-markdown" className="h-full">
+                        <style>
+                            {`
+                                .cherry-markdown {
+                                    border: none !important;
+                                    box-shadow: none !important;
+                                    padding: 0 !important;
+                                    height: 100% !important;
+                                }
+                                .cherry {
+                                    box-shadow: none !important;
+                                    height: 100% !important;
+                                }
+                                .cherry-editor,
+                                .cherry-previewer {
+                                    box-shadow: none !important;
+                                }
+                                .cherry-previewer {
+                                    padding: 2rem !important;
+                                }
+                            `}
+                        </style>
+                    </div>
                 </div>
             </div>
         </div>
