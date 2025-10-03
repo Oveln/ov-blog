@@ -11,6 +11,7 @@ import { Textarea } from "./ui/textarea";
 import { Badge } from "./ui/badge";
 import { X, Plus } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { uploadFile } from "@/lib/upload";
 import type { AppRouter } from "@/server/trpc";
 import type { inferRouterOutputs } from "@trpc/server";
 
@@ -45,33 +46,32 @@ export function PostEditor({
                     const cherry = new Cherry.default({
                         el: cherryRef.current,
                         value: postVersion.content,
-                        fileUpload: (file: File, callback: (url: string) => void) => {
-                            const formData = new FormData();
-                            formData.append("file", file);
-                            // 上传到服务器
-                            fetch("/api/upload", {
-                                method: "POST",
-                                body: formData,
-                            })
-                                .then(async (res) => {
-                                    const data = await res.json();
-                                    if (data.status === "ok") {
+                        fileUpload: async (
+                            file: File,
+                            callback: (url: string) => void
+                        ) => {
+                            const result = await uploadFile(file, {
+                                onSuccess: (data) => {
+                                    if (data) {
                                         callback(data.url);
-                                        toast("图片上传成功", { duration: 3000 });
-                                    } else {
-                                        toast("图片上传失败", {
-                                            description: data.message,
-                                            duration: 5000,
-                                        });
+                                        toast("文件上传成功", { duration: 3000 });
                                     }
-                                })
-                                .catch((e) => {
-                                    console.error(e);
-                                    toast("图片上传失败", {
-                                        description: "请检查网络连接",
+                                },
+                                onError: (error) => {
+                                    toast("文件上传失败", {
+                                        description: error,
                                         duration: 5000,
                                     });
+                                },
+                            });
+
+                            // 如果上传失败但没有触发回调，显示默认错误
+                            if (result.status === "error" && !result.message) {
+                                toast("文件上传失败", {
+                                    description: "请检查网络连接",
+                                    duration: 5000,
                                 });
+                            }
                         },
                     });
                     setCherryInstance(cherry);
