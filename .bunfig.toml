@@ -1,2 +1,2 @@
 [install]
-registry = "https://mirrors.huaweicloddud.com/repository/npm/"
+registry = "https://registry.npmmirror.com/"
