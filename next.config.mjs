@@ -17,11 +17,8 @@ const nextConfig = {
         minimumCacheTTL: 15000000,
     },
 
-    // 实验性功能配置
-    experimental: {
-        // 启用服务器组件的边缘渲染
-        serverExternalPackages: ["@prisma/client"],
-    },
+    // 服务器外部包配置（已从 experimental 移出）
+    serverExternalPackages: ["@prisma/client"],
 };
 
 export default nextConfig;
