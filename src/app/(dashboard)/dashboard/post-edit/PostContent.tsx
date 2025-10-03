@@ -1,7 +1,7 @@
 import { PostActionButtons } from "./PostActionButton";
 import { Loader2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import Cherry from "cherry-markdown";
+import { useEffect, useRef, useState, useCallback } from "react";
+import type Cherry from "cherry-markdown";
 import { trpc } from "@/lib/trpc";
 import type { TRPCUserPost } from "./types";
 
@@ -13,54 +13,156 @@ interface PostContentProps {
 
 export function PostContent({ post, isLoading, handleChange }: PostContentProps) {
     const cherryRef = useRef<HTMLDivElement | null>(null);
-    const [cherryInstance, setCherryInstance] = useState<Cherry | null>(null);
-    const [content, setContent] = useState<string>("");
+    const cherryInstanceRef = useRef<Cherry | null>(null);
+    const [isInitialized, setIsInitialized] = useState(false);
 
-    // 监听 post 和 isLoading 变化来管理 Cherry 实例
-    useEffect(() => {
-        const initCherry = async () => {
-            // 只有在有 post 且不在加载状态时才创建实例
-            if (post && !isLoading && cherryRef.current) {
-                console.log("initCherry");
-                const Cherry = await import("cherry-markdown/dist/cherry-markdown");
-                const instance = new Cherry.default({
-                    el: cherryRef.current,
-                    value: "",
-                    editor: {
-                        defaultModel: "previewOnly",
-                    },
-                });
-                setCherryInstance(instance);
-            }
-        };
-        const timer = setTimeout(() => {
-            initCherry();
-        }, 0);
-        return () => clearTimeout(timer);
-    }, []); // 同时依赖 post 和 isLoading
-
-    // 监听 content 变化更新内容
-    useEffect(() => {
-        if (cherryInstance && content) {
-            cherryInstance.setValue(content);
-        }
-    }, [cherryInstance, content]);
-
-    // 监听 post 变化获取内容
+    // 获取文章内容
     const postQuery = trpc.posts.getPostById.useQuery(
         { id: post?.id ?? 0 },
         { enabled: !!post }
     );
 
+    // 清理 Cherry 实例
+    // 注意：Cherry Markdown 没有公开的 destroy() 方法
+    // 正确的清理方式是清空 DOM 引用，让垃圾回收处理
+    const destroyCherry = useCallback(() => {
+        if (cherryInstanceRef.current && cherryRef.current) {
+            try {
+                // 清空容器内容，释放 DOM 引用
+                if (cherryRef.current) {
+                    cherryRef.current.innerHTML = "";
+                }
+            } catch (error) {
+                console.warn("Failed to clean Cherry container:", error);
+            }
+            cherryInstanceRef.current = null;
+            setIsInitialized(false);
+        }
+    }, []);
+
+    // 初始化 Cherry Markdown 实例（只初始化一次）
     useEffect(() => {
-        setContent("");
-        if (postQuery.isSuccess) {
-            setContent(postQuery.data?.currentVersion?.content ?? "");
+        let isMounted = true;
+
+        const initCherry = async () => {
+            // 条件检查：必须有容器，且还没有实例
+            if (!cherryRef.current || cherryInstanceRef.current) {
+                return;
+            }
+
+            try {
+                // 动态导入 Cherry Markdown
+                const CherryModule = await import(
+                    "cherry-markdown/dist/cherry-markdown.core"
+                );
+
+                // 检查组件是否还挂载
+                if (!isMounted || !cherryRef.current) {
+                    return;
+                }
+
+                // 创建新实例 - 使用纯预览模式配置
+                const instance = new CherryModule.default({
+                    el: cherryRef.current,
+                    value: "", // 初始为空，后续通过 setMarkdown 更新
+                    // 编辑器配置
+                    editor: {
+                        defaultModel: "previewOnly", // 纯预览模式
+                    },
+                    // 工具栏配置 - 预览模式下不显示
+                    toolbars: {
+                        toolbar: false,
+                    },
+                    // 性能优化配置
+                    engine: {
+                        syntax: {
+                            table: {
+                                enableChart: false, // 禁用图表生成（如果不需要）
+                            },
+                            mathBlock: {
+                                engine: "katex", // 数学公式引擎
+                            },
+                        },
+                    },
+                    // 预览区域配置
+                    previewer: {
+                        // 启用 DOM 性能优化
+                        enablePreviewerBubble: false, // 禁用气泡菜单
+                        // 懒加载图片
+                        lazyLoadImg: {
+                            loadingImgPath: "", // 加载中图片路径
+                            maxNumPerTime: 5, // 每次最多加载图片数
+                            noLoadImgNum: 3, // 不懒加载的图片数
+                        },
+                    },
+                    // 回调函数
+                    callback: {
+                        // 初始化完成回调
+                        afterInit: () => {
+                            if (isMounted) {
+                                setIsInitialized(true);
+                                console.log(
+                                    "Cherry Markdown 预览实例初始化成功（复用实例）"
+                                );
+                            }
+                        },
+                    },
+                });
+
+                cherryInstanceRef.current = instance;
+            } catch (error) {
+                console.error("Failed to initialize Cherry Markdown:", error);
+            }
+        };
+
+        initCherry();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []); // 空依赖数组 - 只在组件挂载时初始化一次
+
+    // 组件卸载时清理
+    useEffect(() => {
+        return () => {
+            destroyCherry();
+        };
+    }, [destroyCherry]);
+
+    // 更新内容（复用同一个实例）
+    useEffect(() => {
+        // 必须：实例已初始化、有文章数据、不在加载状态
+        if (
+            !cherryInstanceRef.current ||
+            !isInitialized ||
+            !post ||
+            isLoading ||
+            !postQuery.isSuccess ||
+            !postQuery.data?.currentVersion?.content
+        ) {
+            return;
         }
-        if (postQuery.isError) {
-            console.error("Error fetching post content:", postQuery.error);
+
+        const newContent = postQuery.data.currentVersion.content;
+
+        // 使用 setMarkdown 方法更新内容（Cherry 官方推荐）
+        try {
+            cherryInstanceRef.current.setMarkdown(newContent);
+            console.log("Cherry 实例内容已更新（复用实例）");
+        } catch {
+            // 降级到 setValue 方法
+            const currentContent = cherryInstanceRef.current.getValue?.();
+            if (newContent !== currentContent) {
+                cherryInstanceRef.current.setValue?.(newContent);
+            }
         }
-    }, [postQuery.data, postQuery.isSuccess, postQuery.isError, post]);
+    }, [
+        post?.id,
+        isLoading,
+        postQuery.data?.currentVersion?.content,
+        postQuery.isSuccess,
+        isInitialized,
+    ]);
 
     return (
         <div className="h-full flex flex-col">
