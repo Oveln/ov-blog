@@ -4,9 +4,10 @@ import { S3Client } from "bun";
 import { Role } from "@prisma/client";
 
 if (
-    !process.env.R2_ACCOUNT_ID ||
-    !process.env.R2_ACCESS_KEY_ID ||
-    !process.env.R2_SECRET_ACCESS_KEY
+    !process.env.BUILDING &&
+    (!process.env.R2_ACCOUNT_ID ||
+        !process.env.R2_ACCESS_KEY_ID ||
+        !process.env.R2_SECRET_ACCESS_KEY)
 ) {
     throw new Error("Missing required R2 environment variables.");
 }
