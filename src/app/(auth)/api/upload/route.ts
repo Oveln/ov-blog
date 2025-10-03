@@ -1,24 +1,33 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth/auth";
-import { S3Client } from "bun";
 import { Role } from "@prisma/client";
+import { getRequiredEnvVar, isBuild } from "@/lib/env";
 
-if (
-    !process.env.BUILDING &&
-    (!process.env.R2_ACCOUNT_ID ||
-        !process.env.R2_ACCESS_KEY_ID ||
-        !process.env.R2_SECRET_ACCESS_KEY)
-) {
-    throw new Error("Missing required R2 environment variables.");
+// 获取 S3 客户端（运行时延迟初始化）
+function getS3Client() {
+    // 如果是构建时，跳过初始化
+    if (isBuild()) {
+        throw new Error("S3Client not available during build time");
+    }
+
+    // 获取必要的环境变量
+    const accessKeyId = getRequiredEnvVar("R2_ACCESS_KEY_ID");
+    const secretAccessKey = getRequiredEnvVar("R2_SECRET_ACCESS_KEY");
+    const accountId = getRequiredEnvVar("R2_ACCOUNT_ID");
+
+    const config = {
+        accessKeyId,
+        secretAccessKey,
+        bucket: "blog",
+        endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+    };
+
+    // 在运行时检查 Bun 是否可用
+    if (typeof Bun !== "undefined" && Bun.S3Client) {
+        return new Bun.S3Client(config);
+    }
+    throw new Error("Bun S3Client is not available");
 }
-
-// 使用全局 Bun.S3Client
-const r2 = new S3Client({
-    accessKeyId: process.env.R2_ACCESS_KEY_ID,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
-    bucket: "blog",
-    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-});
 
 // 文件类型配置
 const FILE_TYPES = {
@@ -210,6 +219,7 @@ export async function POST(req: NextRequest) {
         const s3Key = `${pathPrefix}/${safeFilename}`;
 
         // 上传到 R2
+        const r2 = getS3Client();
         const s3file = r2.file(s3Key);
         await s3file.write(file, {
             type: file.type || "application/octet-stream",

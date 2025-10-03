@@ -3,6 +3,7 @@ import GitHub from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient, Role } from "@prisma/client";
 import { getUserCount, setUserRole } from "../db";
+import { getRequiredEnvVar } from "@/lib/env";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
@@ -11,7 +12,7 @@ const prisma =
     new PrismaClient({
         datasources: {
             db: {
-                url: process.env.DATABASE_URL,
+                url: getRequiredEnvVar("DATABASE_URL"),
             },
         },
     });
