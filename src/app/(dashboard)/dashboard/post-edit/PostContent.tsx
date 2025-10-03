@@ -5,6 +5,7 @@ import Cherry from "cherry-markdown";
 import { cn } from "@/lib/utils";
 import type { AppRouter } from "@/server/trpc";
 import type { inferRouterOutputs } from "@trpc/server";
+import { trpc } from "@/lib/trpc";
 
 // 从 tRPC router 推断返回类型
 type RouterOutput = inferRouterOutputs<AppRouter>;
@@ -56,27 +57,20 @@ export function PostContent({ post, isLoading, handleChange }: PostContentProps)
     }, [cherryInstance, content]);
 
     // 监听 post 变化获取内容
+    const postQuery = trpc.posts.getPostById.useQuery(
+        { id: post?.id ?? 0 },
+        { enabled: !!post }
+    );
+
     useEffect(() => {
         setContent("");
-        const fetchContent = async () => {
-            if (!post) return;
-
-            try {
-                const response = await fetch(
-                    `/api/post/${post.id}/${post.current_version}`
-                );
-                if (!response.ok) {
-                    throw new Error("Failed to fetch post content");
-                }
-                const data = await response.json();
-                setContent(data.content);
-            } catch (error) {
-                console.error("Error fetching post content:", error);
-            }
-        };
-
-        fetchContent();
-    }, [post]); // 只在 post 变化时获取新内容
+        if (postQuery.isSuccess) {
+            setContent(postQuery.data?.currentVersion?.content ?? "");
+        }
+        if (postQuery.isError) {
+            console.error("Error fetching post content:", postQuery.error);
+        }
+    }, [postQuery.data, postQuery.isSuccess, postQuery.isError, post]);
 
     return (
         <div className="overflow-hidden">
