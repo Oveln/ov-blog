@@ -2,7 +2,6 @@ import NextAuth, { User } from "next-auth";
 import GitHub from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient, Role } from "@prisma/client";
-import { getUserCount, setUserRole } from "../db";
 import { getRequiredEnvVar } from "@/lib/env";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
@@ -36,8 +35,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     events: {
         createUser: async (message: { user: User }) => {
             // 如果是第一个用户，将其设置为管理员
-            if ((await getUserCount()) == 1 && message.user.id) {
-                setUserRole(message.user.id, Role.ADMIN);
+            if ((await prisma.user.count()) == 1 && message.user.id) {
+                await prisma.user.update({
+                    where: { id: message.user.id },
+                    data: { role: Role.ADMIN },
+                });
             }
         },
     },
