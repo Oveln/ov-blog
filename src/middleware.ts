@@ -3,7 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 export default function middleware(req: NextRequest) {
     const isDashboard = req.nextUrl.pathname.startsWith("/dashboard");
     const cookies = req.cookies;
-    const sessionToken = cookies.get("authjs.session-token");
+    const sessionToken =
+        cookies.get("authjs.session-token") ||
+        cookies.get("__Secure-authjs.session-token");
 
     if (isDashboard && !sessionToken) {
         console.log("No session token found, redirecting to login.", sessionToken);
