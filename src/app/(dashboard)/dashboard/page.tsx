@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -12,13 +11,7 @@ import {
 } from "@/components/ui/card";
 
 export default function Dashboard() {
-    const router = useRouter();
-    const { data } = useSession({
-        required: true,
-        onUnauthenticated() {
-            router.push("/login");
-        },
-    });
+    const { data } = useSession();
     return (
         <>
             {/* <header>
