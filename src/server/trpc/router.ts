@@ -12,6 +12,7 @@ import { postsRouter } from "./routers/posts";
 import { userRouter } from "./routers/user";
 import { appsRouter } from "./routers/apps";
 import { tagsRouter } from "./routers/tags";
+import { versionRouter } from "./routers/version";
 
 /**
  * 应用主路由
@@ -22,6 +23,7 @@ import { tagsRouter } from "./routers/tags";
  * - user: 用户相关 API
  * - apps: 应用相关 API
  * - tags: 标签相关 API
+ * - version: trpc 版本信息接口
  */
 export const appRouter = router({
     /** 健康检查端点 - 用于监控服务状态 */
@@ -38,6 +40,9 @@ export const appRouter = router({
 
     /** 标签管理 API */
     tags: tagsRouter,
+
+    /** trpc 版本信息接口 */
+    version: versionRouter,
 });
 
 /**

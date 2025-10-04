@@ -9,9 +9,14 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { trpc } from "@/lib/trpc";
+import { Version } from "@/lib/version";
 
 export default function Dashboard() {
     const { data } = useSession();
+    const { data: versionInfo, isLoading } = trpc.version.info.useQuery();
+    const version = versionInfo ? Version.fromJSON(versionInfo) : null;
+
     return (
         <>
             {/* <header>
@@ -24,6 +29,26 @@ export default function Dashboard() {
                     <CardHeader>
                         <CardTitle>{data?.user?.name} !</CardTitle>
                         WelCome to Dashboard
+                        {!isLoading && (
+                            <div className="mt-2 text-xs text-gray-500">
+                                <div>
+                                    Commit:{" "}
+                                    <span className="font-mono">{version?.commitId}</span>
+                                </div>
+                                <div>
+                                    CommitTime:{" "}
+                                    <span className="font-mono">
+                                        {version?.commitTime?.toLocaleString()}
+                                    </span>
+                                </div>
+                                <div>
+                                    BuildTime:{" "}
+                                    <span className="font-mono">
+                                        {version?.buildTime?.toLocaleString()}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                     </CardHeader>
                     <CardContent className="space-y-2">
                         <p>
