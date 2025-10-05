@@ -6,7 +6,10 @@
         "dev": "next dev --turbo",
         "build": "next build --turbo",
         "start": "next start",
-        "lint": "eslint"
+        "lint": "eslint",
+        "image-build": "podman-compose -f docker-compose.test.yml build",
+        "image-up": "podman-compose -f docker-compose.test.yml up -d --build",
+        "image-down": "podman-compose -f docker-compose.test.yml down"
     },
     "dependencies": {
         "@auth/prisma-adapter": "^2.10.0",
