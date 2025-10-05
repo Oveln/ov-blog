@@ -115,10 +115,6 @@ export default function About() {
                 name: "GitHub Actions",
                 description: language === "en" ? "CI/CD pipeline" : "CI/CD 流水线",
             },
-            {
-                name: "GitHub Webhook",
-                description: language === "en" ? "Auto deployment" : "自动部署",
-            },
         ],
     };
 

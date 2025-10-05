@@ -97,9 +97,6 @@ src/
 - `R2_ACCESS_KEY_ID` - R2 访问密钥 ID
 - `R2_SECRET_ACCESS_KEY` - R2 密钥访问令牌
 
-**Webhook 密钥**:
-- `WEBHOOK_SECRET` - 自定义的 webhook 密钥（如果使用 webhook 功能）
-
 #### 环境变量配置示例
 
 ```bash
@@ -123,9 +120,6 @@ NEXT_PUBLIC_CATEGORYID=your_category_id
 R2_ACCOUNT_ID=your_r2_account_id
 R2_ACCESS_KEY_ID=your_r2_access_key_id
 R2_SECRET_ACCESS_KEY=your_r2_secret_access_key
-
-# Webhook（可选）
-WEBHOOK_SECRET=your_webhook_secret
 ```
 
 ### 部署方式
