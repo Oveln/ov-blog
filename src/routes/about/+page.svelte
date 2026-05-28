@@ -20,7 +20,7 @@
 		<div class="grid md:grid-cols-2 gap-6">
 			{#each [
 				{ title: "前端", icon: Terminal, items: ["SvelteKit", "Svelte 5", "TypeScript", "Tailwind CSS v4", "shadcn-svelte"] },
-				{ title: "内容系统", icon: Globe, items: ["unified + remark + rehype", "Milkdown Editor", "Shiki 代码高亮", "KaTeX 数学公式", "Markdown-first"] },
+				{ title: "内容系统", icon: Globe, items: ["unified + remark + rehype", "SourceEditor", "Shiki 代码高亮", "KaTeX 数学公式", "Markdown-first"] },
 				{ title: "功能", icon: Rocket, items: ["GitHub OAuth", "Markdown 编辑器", "代码高亮", "数学公式", "评论系统"] },
 				{ title: "部署", icon: Globe, items: ["Docker", "GitHub Actions"] },
 			] as category}
