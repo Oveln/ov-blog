@@ -5,13 +5,15 @@
 
 	let { data } = $props()
 
-	let slug = $derived(data.slug)
-	let title = $state(data.title)
-	let description = $state(data.description)
-	let tags = $state(data.tags)
-	let published = $state(data.published)
-	let createdAt = $derived(data.createdAt)
-	let markdown = $state(data.content)
+	const d = () => data
+	let slug = $derived(d().slug)
+	let createdAt = $derived(d().createdAt)
+
+	let title = $state(d().title)
+	let description = $state(d().description)
+	let tags = $state(d().tags)
+	let published = $state(d().published)
+	let markdown = $state(d().content)
 	let saving = $state(false)
 	let message = $state("")
 
