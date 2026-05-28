@@ -95,7 +95,7 @@ HTML / RSS / Plain Text / Search Entry
 
 ## 开发约束
 
-- 主题变量使用 HSL（非 oklch），与旧站保持一致
+- 主题变量使用 oklch（感知均匀色彩空间）
 - 字体: JetBrains Mono + Noto Sans SC (Google Fonts CDN)
 - `mode-watcher` v1 API: 使用 `mode.current`（runes），非 `$mode`（store）
 - `Input` 组件需 `value = $bindable("")` 才支持 `bind:value`
