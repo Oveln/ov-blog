@@ -1,8 +1,9 @@
 import { processPost, processPostSummary } from "$lib/content/pipeline"
-import { isPublished, sortPostsByDate } from "$lib/content/schema"
+import { sortPostsByDate } from "$lib/content/schema"
 import type { PipelineResult, PostSummary } from "$lib/content"
 import type { Storage } from "$lib/storage"
 import { createStorage } from "$lib/storage"
+import { join } from "node:path"
 
 const POSTS_PREFIX = "posts"
 
@@ -14,7 +15,7 @@ function slugFromKey(key: string): string {
 function createPostStorage(): Storage {
 	return createStorage({
 		kind: "local",
-		baseDir: "content",
+		baseDir: join(process.cwd(), "content"),
 	})
 }
 
@@ -33,9 +34,7 @@ export async function getAllPosts(): Promise<PipelineResult[]> {
 		}),
 	)
 
-	return results
-		.filter((r): r is PipelineResult => r !== null)
-		.filter((r) => isPublished(r.meta))
+	return results.filter((r): r is PipelineResult => r !== null)
 }
 
 export async function getAllPostSummaries(): Promise<PostSummary[]> {
@@ -51,11 +50,9 @@ export async function getAllPostSummaries(): Promise<PostSummary[]> {
 		}),
 	)
 
-	const published = results
-		.filter((r): r is PipelineResult => r !== null)
-		.filter((r) => isPublished(r.meta))
-	const bySlug = new Map(published.map((r) => [r.meta.slug, r]))
-	const sorted = sortPostsByDate(published.map((r) => r.meta))
+	const valid = results.filter((r): r is PipelineResult => r !== null)
+	const bySlug = new Map(valid.map((r) => [r.meta.slug, r]))
+	const sorted = sortPostsByDate(valid.map((r) => r.meta))
 
 	return sorted.map((meta) => {
 		const result = bySlug.get(meta.slug)!
@@ -82,9 +79,7 @@ export async function getPost(slug: string): Promise<PipelineResult | null> {
 	const key = `${POSTS_PREFIX}/${slug}.md`
 	const raw = await storage.read(key)
 	if (!raw) return null
-	const result = await processPost(slug, raw)
-	if (!isPublished(result.meta)) return null
-	return result
+	return await processPost(slug, raw)
 }
 
 export async function getAllSlugs(): Promise<string[]> {

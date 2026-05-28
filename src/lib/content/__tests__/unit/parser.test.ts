@@ -47,7 +47,9 @@ describe("parseFrontmatter", () => {
     const raw = "Just plain text"
     const result = parseFrontmatter(raw)
     expect(result.content).toBe("Just plain text")
-    expect(result.frontmatter.title).toBeUndefined()
+    expect(result.frontmatter.title).toBe("")
+    expect(result.frontmatter.tags).toEqual([])
+    expect(result.frontmatter.published).toBe(false)
   })
 
   it("处理 updatedAt 可选字段", () => {

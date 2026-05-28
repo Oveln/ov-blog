@@ -25,7 +25,14 @@ function stringifyDates(data: Record<string, unknown>): void {
 export function parseFrontmatter(raw: string): ParsedPost {
   const { data, content } = matter(raw)
   stringifyDates(data as Record<string, unknown>)
-  const frontmatter = data as PostFrontmatter
+  const frontmatter = {
+    title: data.title ?? "",
+    description: data.description ?? "",
+    tags: data.tags ?? [],
+    published: data.published ?? false,
+    createdAt: data.createdAt ?? "",
+    updatedAt: data.updatedAt,
+  } as PostFrontmatter
   return {
     meta: { ...frontmatter, slug: "" },
     raw,

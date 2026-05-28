@@ -1,7 +1,6 @@
 <script lang="ts">
 	import SourceEditor from "$lib/components/editor/SourceEditor.svelte"
 	import { Button } from "$lib/components/ui/button"
-	import { Input } from "$lib/components/ui/input"
 	import { Badge } from "$lib/components/ui/badge"
 
 	let title = $state("")
@@ -12,7 +11,6 @@
 	let markdown = $state("")
 	let saving = $state(false)
 	let message = $state("")
-	let showMeta = $state(false)
 
 	let tagList = $derived(
 		tags
@@ -72,61 +70,49 @@
 	<title>写文章 - Dashboard - Oveln Blog</title>
 </svelte:head>
 
-<div class="flex flex-col gap-4 h-full">
-	<div class="flex items-center justify-between">
-		<div class="flex-1 min-w-0 mr-4">
-			<input
-				type="text"
-				placeholder="文章标题"
-				bind:value={title}
-				class="w-full text-3xl font-mono font-bold bg-transparent outline-none placeholder:text-muted-foreground/40"
-			/>
-		</div>
+<div class="flex flex-col gap-3 h-full">
+	<div class="flex items-center gap-3">
+		<input
+			type="text"
+			placeholder="文章标题"
+			bind:value={title}
+			class="flex-1 text-2xl font-mono font-bold bg-transparent outline-none placeholder:text-muted-foreground/40"
+		/>
 		<div class="flex items-center gap-2 shrink-0">
-			<Button variant="ghost" size="sm" onclick={() => (showMeta = !showMeta)}>
-				<span class="font-mono text-sm">设置</span>
-			</Button>
+			{#if message}
+				<span class="text-xs font-mono text-muted-foreground">{message}</span>
+			{/if}
 			<Button size="sm" onclick={handleSave} disabled={saving}>
 				<span class="font-mono">{saving ? "保存中..." : "保存"}</span>
 			</Button>
 		</div>
 	</div>
 
-	{#if message}
-		<div class="text-sm font-mono text-muted-foreground px-1">{message}</div>
-	{/if}
-
-	{#if showMeta}
-		<div class="border rounded-lg p-4 space-y-4 bg-card">
-			<div class="grid grid-cols-2 gap-4">
-				<div class="space-y-1">
-					<label for="write-slug" class="text-xs font-mono text-muted-foreground">Slug</label>
-					<Input id="write-slug" type="text" placeholder="url-slug" bind:value={slug} />
-				</div>
-				<div class="space-y-1">
-					<label for="write-desc" class="text-xs font-mono text-muted-foreground">描述</label>
-					<Input id="write-desc" type="text" placeholder="简短描述" bind:value={description} />
-				</div>
-			</div>
-			<div class="flex items-end gap-6">
-				<div class="flex-1 space-y-1">
-					<label for="write-tags" class="text-xs font-mono text-muted-foreground">标签</label>
-					<Input id="write-tags" type="text" placeholder="svelte, typescript" bind:value={tags} />
-				</div>
-				<label class="flex items-center gap-2 cursor-pointer pb-2">
-					<input type="checkbox" bind:checked={published} class="rounded" />
-					<span class="text-sm font-mono">发布</span>
-				</label>
-			</div>
-			{#if tagList.length > 0}
-				<div class="flex flex-wrap gap-1.5">
-					{#each tagList as tag}
-						<Badge variant="secondary" class="text-xs">{tag}</Badge>
-					{/each}
-				</div>
-			{/if}
-		</div>
-	{/if}
+	<div class="flex items-center gap-2 flex-wrap">
+		<span class="px-2 py-1 text-xs font-mono bg-muted/50 rounded text-muted-foreground">{slug || "auto-slug"}</span>
+		<input
+			type="text"
+			placeholder="描述"
+			bind:value={description}
+			class="flex-1 min-w-[120px] px-2 py-1 text-xs font-mono bg-muted/50 rounded outline-none placeholder:text-muted-foreground/50"
+		/>
+		<input
+			type="text"
+			placeholder="标签 (逗号分隔)"
+			bind:value={tags}
+			class="w-48 px-2 py-1 text-xs font-mono bg-muted/50 rounded outline-none placeholder:text-muted-foreground/50"
+		/>
+		{#each tagList as tag}
+			<Badge variant="secondary" class="text-[10px]">{tag}</Badge>
+		{/each}
+		<button
+			type="button"
+			onclick={() => (published = !published)}
+			class="flex items-center gap-1 px-2 py-1 text-xs font-mono rounded cursor-pointer select-none transition-colors {published ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground'}"
+		>
+			{published ? "已发布" : "草稿"}
+		</button>
+	</div>
 
 	<SourceEditor bind:source={markdown} />
 </div>

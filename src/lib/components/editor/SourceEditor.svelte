@@ -3,7 +3,9 @@
 
 	let { source = $bindable("") }: { source?: string } = $props()
 
+	let textareaValue = $state("")
 	let previewHtml = $state("")
+	let lastSyncedSource = ""
 	let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
 	async function updatePreview(md: string) {
@@ -14,16 +16,21 @@
 		}
 	}
 
-	function onInput(e: Event) {
-		const target = e.target as HTMLTextAreaElement
-		source = target.value
+	function onInput() {
+		lastSyncedSource = textareaValue
+		source = textareaValue
 		if (debounceTimer) clearTimeout(debounceTimer)
-		debounceTimer = setTimeout(() => updatePreview(source), 300)
+		debounceTimer = setTimeout(() => updatePreview(textareaValue), 300)
 	}
 
 	$effect(() => {
-		if (source) {
-			updatePreview(source)
+		const currentSource = source
+		if (currentSource !== lastSyncedSource) {
+			textareaValue = currentSource
+			lastSyncedSource = currentSource
+		}
+		if (currentSource) {
+			updatePreview(currentSource)
 		}
 	})
 </script>
@@ -34,11 +41,10 @@
 			Markdown
 		</div>
 		<textarea
+			bind:value={textareaValue}
 			class="flex-1 w-full resize-none p-4 font-mono text-sm bg-transparent outline-none leading-relaxed"
 			placeholder="在这里写 Markdown..."
-			{...{}}
 			oninput={onInput}
-			value={source}
 		></textarea>
 	</div>
 	<div class="w-1/2 flex flex-col">

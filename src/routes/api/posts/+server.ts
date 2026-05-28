@@ -1,8 +1,9 @@
 import { json } from "@sveltejs/kit"
 import type { RequestHandler } from "./$types"
 import { createStorage } from "$lib/storage"
+import { join } from "node:path"
 
-const storage = createStorage({ kind: "local", baseDir: "content" })
+const storage = createStorage({ kind: "local", baseDir: join(process.cwd(), "content") })
 
 export const GET: RequestHandler = async ({ url }) => {
 	const slug = url.searchParams.get("slug")
