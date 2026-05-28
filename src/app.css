@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -259,4 +260,52 @@
 		from { opacity: 0; }
 		to { opacity: 1; }
 	}
+}
+
+.prose pre {
+	@apply overflow-x-auto rounded-lg p-4;
+}
+
+.prose pre code {
+	counter-reset: line;
+	font-size: 0.875rem;
+	line-height: 1.7;
+}
+
+.prose pre code > [data-line]::before {
+	counter-increment: line;
+	content: counter(line);
+	display: inline-block;
+	width: 1rem;
+	margin-right: 1rem;
+	text-align: right;
+	color: oklch(0.556 0 0);
+}
+
+.prose code:not(pre code) {
+	@apply rounded bg-muted px-1.5 py-0.5 text-sm font-mono;
+}
+
+.prose :is(h1, h2, h3, h4, h5, h6) {
+	@apply scroll-mt-20 font-bold;
+}
+
+.prose img {
+	@apply rounded-lg mx-auto shadow-md;
+}
+
+.prose blockquote {
+	@apply border-l-4 border-border pl-4 italic;
+}
+
+.prose a {
+	@apply text-primary hover:underline;
+}
+
+.prose table {
+	@apply w-full border;
+}
+
+.prose :is(td, th) {
+	@apply border p-2;
 }

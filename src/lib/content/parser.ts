@@ -13,8 +13,18 @@ export interface ParsedPost {
   frontmatter: PostFrontmatter
 }
 
+function stringifyDates(data: Record<string, unknown>): void {
+  for (const key of ["createdAt", "updatedAt"]) {
+    const val = data[key]
+    if (val instanceof Date) {
+      data[key] = val.toISOString().slice(0, 10)
+    }
+  }
+}
+
 export function parseFrontmatter(raw: string): ParsedPost {
   const { data, content } = matter(raw)
+  stringifyDates(data as Record<string, unknown>)
   const frontmatter = data as PostFrontmatter
   return {
     meta: { ...frontmatter, slug: "" },
