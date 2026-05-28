@@ -14,9 +14,9 @@
 			<li>
 				<a
 					href={item.href}
-					class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-mono font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none pl-0"
+					class="nav-link inline-flex h-10 w-max items-center justify-center px-4 py-2 text-sm font-mono font-medium focus:outline-none"
 				>
-					{item.label}
+					<span class="animated-underline">{item.label}</span>
 				</a>
 			</li>
 		{/each}

@@ -171,17 +171,16 @@
 	}
 }
 
-@layer components {
-	.animated-underline {
-		background: linear-gradient(to right, rgb(190, 190, 190), #111) no-repeat left bottom;
-		background-size: 0 2px;
-		background-position: 0 100%;
-		transition: background-size 0.3s ease;
-	}
+.nav-link:hover .animated-underline {
+	box-shadow: inset 0 -2px 0 0 currentColor;
+}
 
-	.animated-underline-hover {
-		background-size: 100% 2px;
-	}
+.animated-underline {
+	box-shadow: inset 0 -2px 0 0 transparent;
+	transition: box-shadow 0.3s ease;
+}
+
+@layer components {
 
 	.animate-shadow {
 		position: relative;
