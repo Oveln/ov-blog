@@ -1,6 +1,6 @@
 import { json } from "@sveltejs/kit"
 import type { RequestHandler } from "./$types"
-import { getRawPost, savePost } from "$lib/server/posts"
+import { getRawPost, savePost, deletePost } from "$lib/server/posts"
 
 export const GET: RequestHandler = async ({ url }) => {
 	const slug = url.searchParams.get("slug")
@@ -26,4 +26,14 @@ export const PUT: RequestHandler = async ({ request }) => {
 
 	await savePost(slug, raw)
 	return json({ ok: true, slug })
+}
+
+export const DELETE: RequestHandler = async ({ url }) => {
+	const slug = url.searchParams.get("slug")
+	if (!slug) {
+		return json({ error: "slug is required" }, { status: 400 })
+	}
+
+	await deletePost(slug)
+	return json({ ok: true })
 }

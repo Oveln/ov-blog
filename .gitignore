@@ -22,3 +22,9 @@ Thumbs.db
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 docs/
+
+# Content (managed by app, not versioned)
+/content/
+
+# CodeGraph
+.codegraph/

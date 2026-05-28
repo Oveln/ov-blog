@@ -10,7 +10,7 @@
 </script>
 
 {#if isEditor}
-	<div class="px-4 py-4 min-h-[calc(100vh-56px)]">
+	<div class="flex flex-col px-4 py-3 h-full">
 		{@render children()}
 	</div>
 {:else}
@@ -24,15 +24,6 @@
 				新建文章
 			</a>
 		</div>
-
-		<nav class="flex gap-4 mb-6 border-b pb-2">
-			<a
-				href="/dashboard"
-				class={currentPath === "/dashboard" ? "text-primary font-medium" : "text-muted-foreground hover:text-foreground"}
-			>
-				文章列表
-			</a>
-		</nav>
 
 		{@render children()}
 	</div>

@@ -96,7 +96,22 @@ export async function savePost(slug: string, raw: string): Promise<void> {
 	await storage.write(key, raw)
 }
 
+export async function deletePost(slug: string): Promise<void> {
+	const key = `${POSTS_PREFIX}/${slug}.md`
+	await storage.delete(key)
+}
+
 export async function getAllSlugs(): Promise<string[]> {
 	const mdKeys = await listPostKeys()
 	return mdKeys.map(slugFromKey)
+}
+
+export async function getNextId(): Promise<number> {
+	const slugs = await getAllSlugs()
+	let maxId = 0
+	for (const s of slugs) {
+		const n = parseInt(s, 10)
+		if (!isNaN(n) && n > maxId) maxId = n
+	}
+	return maxId + 1
 }

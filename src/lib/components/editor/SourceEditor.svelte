@@ -37,7 +37,7 @@
 	})
 </script>
 
-<div class="flex h-[calc(100vh-180px)] min-h-[400px] rounded-lg border overflow-hidden bg-background">
+<div class="flex flex-1 min-h-0 rounded-lg border overflow-hidden bg-background">
 	<div class="w-1/2 flex flex-col border-r">
 		<div class="px-3 py-2 text-xs font-mono text-muted-foreground border-b bg-muted/30 select-none">
 			Markdown
