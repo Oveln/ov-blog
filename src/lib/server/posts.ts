@@ -1,4 +1,5 @@
 import { processPost, processPostSummary } from "$lib/content/pipeline"
+import { parseFrontmatter } from "$lib/content/parser"
 import { sortPostsByDate } from "$lib/content/schema"
 import type { PostContent, PostSummary } from "$lib/content/schema"
 import type { Storage } from "$lib/storage"
@@ -41,14 +42,24 @@ export async function getAllPosts(): Promise<PostContent[]> {
 	return results.filter((r): r is PostContent => r !== null)
 }
 
-export async function getAllPostSummaries(): Promise<PostSummary[]> {
+export async function getAllPostSummaries(
+	options?: { publishedOnly?: boolean }
+): Promise<PostSummary[]> {
 	const mdKeys = await listPostKeys()
+	const publishedOnly = options?.publishedOnly ?? false
 
 	const results = await Promise.all(
 		mdKeys.map(async (key) => {
 			const slug = slugFromKey(key)
 			const raw = await storage.read(key)
 			if (!raw) return null
+
+			if (publishedOnly) {
+				const parsed = parseFrontmatter(raw)
+				if (!parsed.meta.published) return null
+				return processPostSummary(slug, raw, { meta: parsed.meta, content: parsed.content })
+			}
+
 			return processPostSummary(slug, raw)
 		}),
 	)

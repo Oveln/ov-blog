@@ -30,9 +30,10 @@ export async function processPost(slug: string, raw: string): Promise<PostConten
 
 export async function processPostSummary(
   slug: string,
-  raw: string
+  raw: string,
+  preParsed?: { meta: import("./schema").PostMeta; content: string }
 ): Promise<PostSummary> {
-  const parsed = parseFrontmatter(raw)
+  const parsed = preParsed ?? parseFrontmatter(raw)
   parsed.meta.slug = slug
 
   const tree = await parseToMdast(parsed.content)
