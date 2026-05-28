@@ -27,19 +27,29 @@ async function listPostKeys(): Promise<string[]> {
 	return keys.filter((k) => k.endsWith(".md"))
 }
 
-export async function getAllPosts(): Promise<PostContent[]> {
+export async function getAllPosts(
+	options?: { publishedOnly?: boolean }
+): Promise<PostContent[]> {
 	const mdKeys = await listPostKeys()
+	const publishedOnly = options?.publishedOnly ?? false
 
 	const results = await Promise.all(
 		mdKeys.map(async (key) => {
 			const slug = slugFromKey(key)
 			const raw = await storage.read(key)
 			if (!raw) return null
+
+			if (publishedOnly) {
+				const parsed = parseFrontmatter(raw)
+				if (!parsed.meta.published) return null
+				return processPost(slug, raw, { meta: parsed.meta, content: parsed.content })
+			}
+
 			return processPost(slug, raw)
 		}),
 	)
 
-	return results.filter((r): r is PostContent => r !== null)
+	return sortPostsByDate(results.filter((r): r is PostContent => r !== null)) as PostContent[]
 }
 
 export async function getAllPostSummaries(
@@ -68,8 +78,10 @@ export async function getAllPostSummaries(
 	return sortPostsByDate(valid) as PostSummary[]
 }
 
-export async function getAllTags(): Promise<string[]> {
-	const summaries = await getAllPostSummaries()
+export async function getAllTags(
+	options?: { publishedOnly?: boolean }
+): Promise<string[]> {
+	const summaries = await getAllPostSummaries(options)
 	const tagSet = new Set<string>()
 	for (const s of summaries) {
 		for (const tag of s.tags) {

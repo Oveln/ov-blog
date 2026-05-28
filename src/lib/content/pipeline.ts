@@ -5,8 +5,12 @@ import { extractExcerpt } from "./transforms/excerpt"
 import { calculateReadingTime } from "./transforms/reading-time"
 import { renderHtml } from "./renderers/html"
 
-export async function processPost(slug: string, raw: string): Promise<PostContent> {
-  const parsed = parseFrontmatter(raw)
+export async function processPost(
+  slug: string,
+  raw: string,
+  preParsed?: { meta: import("./schema").PostMeta; content: string }
+): Promise<PostContent> {
+  const parsed = preParsed ?? parseFrontmatter(raw)
   parsed.meta.slug = slug
 
   const tree = await parseToMdast(parsed.content)
