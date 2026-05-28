@@ -1,9 +1,6 @@
 import { json } from "@sveltejs/kit"
 import type { RequestHandler } from "./$types"
-import { createStorage } from "$lib/storage"
-import { join } from "node:path"
-
-const storage = createStorage({ kind: "local", baseDir: join(process.cwd(), "content") })
+import { getRawPost, savePost } from "$lib/server/posts"
 
 export const GET: RequestHandler = async ({ url }) => {
 	const slug = url.searchParams.get("slug")
@@ -11,8 +8,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		return json({ error: "slug is required" }, { status: 400 })
 	}
 
-	const key = `posts/${slug}.md`
-	const raw = await storage.read(key)
+	const raw = await getRawPost(slug)
 	if (!raw) {
 		return json({ error: "not found" }, { status: 404 })
 	}
@@ -28,8 +24,6 @@ export const PUT: RequestHandler = async ({ request }) => {
 		return json({ error: "slug and raw are required" }, { status: 400 })
 	}
 
-	const key = `posts/${slug}.md`
-	await storage.write(key, raw)
-
+	await savePost(slug, raw)
 	return json({ ok: true, slug })
 }

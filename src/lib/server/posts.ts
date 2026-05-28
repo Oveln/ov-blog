@@ -1,6 +1,6 @@
 import { processPost, processPostSummary } from "$lib/content/pipeline"
 import { sortPostsByDate } from "$lib/content/schema"
-import type { PipelineResult, PostSummary } from "$lib/content"
+import type { PostContent, PostSummary } from "$lib/content/schema"
 import type { Storage } from "$lib/storage"
 import { createStorage } from "$lib/storage"
 import { join } from "node:path"
@@ -21,9 +21,13 @@ function createPostStorage(): Storage {
 
 const storage = createPostStorage()
 
-export async function getAllPosts(): Promise<PipelineResult[]> {
+async function listPostKeys(): Promise<string[]> {
 	const keys = await storage.list(POSTS_PREFIX)
-	const mdKeys = keys.filter((k) => k.endsWith(".md"))
+	return keys.filter((k) => k.endsWith(".md"))
+}
+
+export async function getAllPosts(): Promise<PostContent[]> {
+	const mdKeys = await listPostKeys()
 
 	const results = await Promise.all(
 		mdKeys.map(async (key) => {
@@ -34,12 +38,11 @@ export async function getAllPosts(): Promise<PipelineResult[]> {
 		}),
 	)
 
-	return results.filter((r): r is PipelineResult => r !== null)
+	return results.filter((r): r is PostContent => r !== null)
 }
 
 export async function getAllPostSummaries(): Promise<PostSummary[]> {
-	const keys = await storage.list(POSTS_PREFIX)
-	const mdKeys = keys.filter((k) => k.endsWith(".md"))
+	const mdKeys = await listPostKeys()
 
 	const results = await Promise.all(
 		mdKeys.map(async (key) => {
@@ -50,18 +53,8 @@ export async function getAllPostSummaries(): Promise<PostSummary[]> {
 		}),
 	)
 
-	const valid = results.filter((r): r is PipelineResult => r !== null)
-	const bySlug = new Map(valid.map((r) => [r.meta.slug, r]))
-	const sorted = sortPostsByDate(valid.map((r) => r.meta))
-
-	return sorted.map((meta) => {
-		const result = bySlug.get(meta.slug)!
-		return {
-			...meta,
-			excerpt: result.excerpt,
-			readingTime: result.readingTime,
-		}
-	})
+	const valid = results.filter((r): r is PostSummary => r !== null)
+	return sortPostsByDate(valid) as PostSummary[]
 }
 
 export async function getAllTags(): Promise<string[]> {
@@ -75,14 +68,24 @@ export async function getAllTags(): Promise<string[]> {
 	return Array.from(tagSet).sort()
 }
 
-export async function getPost(slug: string): Promise<PipelineResult | null> {
+export async function getPost(slug: string): Promise<PostContent | null> {
 	const key = `${POSTS_PREFIX}/${slug}.md`
 	const raw = await storage.read(key)
 	if (!raw) return null
-	return await processPost(slug, raw)
+	return processPost(slug, raw)
+}
+
+export async function getRawPost(slug: string): Promise<string | null> {
+	const key = `${POSTS_PREFIX}/${slug}.md`
+	return storage.read(key)
+}
+
+export async function savePost(slug: string, raw: string): Promise<void> {
+	const key = `${POSTS_PREFIX}/${slug}.md`
+	await storage.write(key, raw)
 }
 
 export async function getAllSlugs(): Promise<string[]> {
-	const keys = await storage.list(POSTS_PREFIX)
-	return keys.filter((k) => k.endsWith(".md")).map(slugFromKey)
+	const mdKeys = await listPostKeys()
+	return mdKeys.map(slugFromKey)
 }

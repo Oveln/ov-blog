@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { renderRss } from "$lib/content/renderers/rss"
-import type { PostContent } from "$lib/content/types/post"
+import type { PostContent } from "$lib/content/schema"
 
 function makePost(overrides: Partial<PostContent> = {}): PostContent {
   return {

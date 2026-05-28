@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { renderHtml } from "$lib/content/renderers/html"
+	import { parseToMdast } from "$lib/content/parser"
 
 	let { source = $bindable("") }: { source?: string } = $props()
 
@@ -10,7 +11,8 @@
 
 	async function updatePreview(md: string) {
 		try {
-			previewHtml = await renderHtml(md)
+			const tree = await parseToMdast(md)
+			previewHtml = await renderHtml(tree)
 		} catch {
 			previewHtml = "<p>渲染失败</p>"
 		}

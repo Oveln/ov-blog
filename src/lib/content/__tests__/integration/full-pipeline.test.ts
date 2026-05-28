@@ -83,9 +83,9 @@ describe("全链路集成测试", () => {
   it("复杂 Markdown 完整处理", async () => {
     const result = await processPost("complex-post", COMPLEX_POST)
 
-    expect(result.meta.slug).toBe("complex-post")
-    expect(result.meta.title).toBe("复杂文章：GFM + 数学 + 代码 + 中文")
-    expect(result.meta.tags).toEqual(["svelte", "typescript", "math"])
+    expect(result.slug).toBe("complex-post")
+    expect(result.title).toBe("复杂文章：GFM + 数学 + 代码 + 中文")
+    expect(result.tags).toEqual(["svelte", "typescript", "math"])
   })
 
   it("GFM 表格渲染", async () => {
@@ -155,8 +155,7 @@ describe("跨模块集成", () => {
 
   it("pipeline → RSS 完整流程", async () => {
     const result = await processPost("slug-1", COMPLEX_POST)
-    const postContent = { ...result.meta, raw: result.raw, html: result.html, toc: result.toc, excerpt: result.excerpt, readingTime: result.readingTime }
-    const rss = renderRss([postContent], SITE_URL)
+    const rss = renderRss([result], SITE_URL)
     expect(rss).toContain("<?xml")
     expect(rss).toContain("slug-1")
     expect(rss).toContain(SITE_URL)
@@ -164,7 +163,7 @@ describe("跨模块集成", () => {
 
   it("pipeline → search index 完整流程", async () => {
     const result = await processPost("slug-1", COMPLEX_POST)
-    const entry = buildSearchEntry(result.meta, result.toc)
+    const entry = buildSearchEntry(result, result.toc)
     expect(entry.slug).toBe("slug-1")
     expect(entry.headings.length).toBeGreaterThan(0)
     expect(entry.tags).toEqual(["svelte", "typescript", "math"])

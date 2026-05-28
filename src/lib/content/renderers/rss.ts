@@ -1,4 +1,4 @@
-import type { PostContent } from "../types/post"
+import type { PostContent } from "../schema"
 
 export function renderRss(posts: PostContent[], siteUrl: string): string {
   const items = posts

@@ -1,13 +1,11 @@
 import { error } from "@sveltejs/kit"
 import type { PageServerLoad } from "./$types"
-import { createStorage } from "$lib/storage"
-import { join } from "node:path"
+import { getRawPost } from "$lib/server/posts"
 import { parseFrontmatter } from "$lib/content/parser"
 
 export const load: PageServerLoad = async ({ params }) => {
 	const slug = params.slug
-	const storage = createStorage({ kind: "local", baseDir: join(process.cwd(), "content") })
-	const raw = await storage.read(`posts/${slug}.md`)
+	const raw = await getRawPost(slug)
 	if (!raw) {
 		error(404, "文章不存在")
 	}

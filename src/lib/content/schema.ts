@@ -1,9 +1,23 @@
-import type { PostFrontmatter, PostMeta, PostContent, PostSummary, TocItem } from "./types/post"
+export interface PostFrontmatter {
+  title: string
+  description: string
+  tags: string[]
+  published: boolean
+  createdAt: string
+  updatedAt?: string
+}
 
-export type { PostFrontmatter, PostMeta, PostContent, PostSummary, TocItem }
+export interface PostMeta extends PostFrontmatter {
+  slug: string
+}
 
-export interface PipelineResult {
-  meta: PostMeta
+export interface TocItem {
+  depth: number
+  text: string
+  id: string
+}
+
+export interface PostContent extends PostMeta {
   raw: string
   html: string
   toc: TocItem[]
@@ -11,8 +25,9 @@ export interface PipelineResult {
   readingTime: number
 }
 
-export function isPublished(post: PostMeta): boolean {
-  return post.published
+export interface PostSummary extends PostMeta {
+  excerpt: string
+  readingTime: number
 }
 
 export function sortPostsByDate(posts: PostMeta[]): PostMeta[] {

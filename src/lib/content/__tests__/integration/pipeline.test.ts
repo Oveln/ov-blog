@@ -37,12 +37,12 @@ describe("processPost", () => {
   it("完整处理一篇文章", async () => {
     const result = await processPost("test-post", SAMPLE_POST)
 
-    expect(result.meta.slug).toBe("test-post")
-    expect(result.meta.title).toBe("测试文章")
-    expect(result.meta.description).toBe("用于集成测试的描述")
-    expect(result.meta.tags).toEqual(["test", "svelte"])
-    expect(result.meta.published).toBe(true)
-    expect(result.meta.updatedAt).toBe("2026-05-29")
+    expect(result.slug).toBe("test-post")
+    expect(result.title).toBe("测试文章")
+    expect(result.description).toBe("用于集成测试的描述")
+    expect(result.tags).toEqual(["test", "svelte"])
+    expect(result.published).toBe(true)
+    expect(result.updatedAt).toBe("2026-05-29")
   })
 
   it("生成 HTML", async () => {
@@ -85,21 +85,18 @@ describe("processPost", () => {
 })
 
 describe("processPostSummary", () => {
-  it("不生成 HTML（省略渲染）", async () => {
+  it("提取摘要级字段", async () => {
     const result = await processPostSummary("test-post", SAMPLE_POST)
-    expect(result.html).toBe("")
-  })
-
-  it("仍提取 meta/toc/excerpt/readingTime", async () => {
-    const result = await processPostSummary("test-post", SAMPLE_POST)
-    expect(result.meta.slug).toBe("test-post")
-    expect(result.toc.length).toBeGreaterThan(0)
+    expect(result.slug).toBe("test-post")
+    expect(result.title).toBe("测试文章")
     expect(result.excerpt).toBeTruthy()
     expect(result.readingTime).toBeGreaterThanOrEqual(1)
   })
 
-  it("保留原始内容", async () => {
+  it("不包含 html/raw/toc", async () => {
     const result = await processPostSummary("test-post", SAMPLE_POST)
-    expect(result.raw).toBe(SAMPLE_POST)
+    expect("html" in result).toBe(false)
+    expect("raw" in result).toBe(false)
+    expect("toc" in result).toBe(false)
   })
 })

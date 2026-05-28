@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
-import { isPublished, sortPostsByDate } from "$lib/content/schema"
-import type { PostMeta } from "$lib/content/types/post"
+import { sortPostsByDate } from "$lib/content/schema"
+import type { PostMeta } from "$lib/content/schema"
 
 function makePost(overrides: Partial<PostMeta> = {}): PostMeta {
   return {
@@ -13,16 +13,6 @@ function makePost(overrides: Partial<PostMeta> = {}): PostMeta {
     ...overrides,
   }
 }
-
-describe("isPublished", () => {
-  it("published: true 返回 true", () => {
-    expect(isPublished(makePost({ published: true }))).toBe(true)
-  })
-
-  it("published: false 返回 false", () => {
-    expect(isPublished(makePost({ published: false }))).toBe(false)
-  })
-})
 
 describe("sortPostsByDate", () => {
   it("按 createdAt 降序排列", () => {
