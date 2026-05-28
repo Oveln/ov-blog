@@ -30,7 +30,7 @@ export interface PostSummary extends PostMeta {
   readingTime: number
 }
 
-export function sortPostsByDate(posts: PostMeta[]): PostMeta[] {
+export function sortPostsByDate<T extends PostMeta>(posts: T[]): T[] {
   return [...posts].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )

@@ -49,7 +49,7 @@ export async function getAllPosts(
 		}),
 	)
 
-	return sortPostsByDate(results.filter((r): r is PostContent => r !== null)) as PostContent[]
+	return sortPostsByDate(results.filter((r): r is PostContent => r !== null))
 }
 
 export async function getAllPostSummaries(
@@ -75,7 +75,7 @@ export async function getAllPostSummaries(
 	)
 
 	const valid = results.filter((r): r is PostSummary => r !== null)
-	return sortPostsByDate(valid) as PostSummary[]
+	return sortPostsByDate(valid)
 }
 
 export async function getAllTags(
