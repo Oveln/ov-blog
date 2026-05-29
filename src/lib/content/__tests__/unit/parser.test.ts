@@ -7,7 +7,6 @@ description: 这是一篇测试文章
 tags:
   - svelte
   - ai
-published: true
 createdAt: "2026-05-28"
 ---
 
@@ -21,7 +20,6 @@ describe("parseFrontmatter", () => {
     expect(result.frontmatter.title).toBe("测试文章")
     expect(result.frontmatter.description).toBe("这是一篇测试文章")
     expect(result.frontmatter.tags).toEqual(["svelte", "ai"])
-    expect(result.frontmatter.published).toBe(true)
     expect(result.frontmatter.createdAt).toBe("2026-05-28")
   })
 
@@ -37,10 +35,11 @@ describe("parseFrontmatter", () => {
     expect(result.meta.slug).toBe("")
   })
 
-  it("meta 继承 frontmatter 所有字段", () => {
+  it("meta 继承 frontmatter 所有字段并附加 published", () => {
     const result = parseFrontmatter(VALID_POST)
     expect(result.meta.title).toBe(result.frontmatter.title)
     expect(result.meta.tags).toBe(result.frontmatter.tags)
+    expect(result.meta.published).toBe(false)
   })
 
   it("处理无 frontmatter 的内容", () => {
@@ -49,7 +48,6 @@ describe("parseFrontmatter", () => {
     expect(result.content).toBe("Just plain text")
     expect(result.frontmatter.title).toBe("")
     expect(result.frontmatter.tags).toEqual([])
-    expect(result.frontmatter.published).toBe(false)
   })
 
   it("处理 updatedAt 可选字段", () => {
@@ -57,13 +55,26 @@ describe("parseFrontmatter", () => {
 title: 有更新
 description: desc
 tags: []
-published: true
 createdAt: "2026-01-01"
 updatedAt: "2026-05-28"
 ---
 content`
     const result = parseFrontmatter(raw)
     expect(result.frontmatter.updatedAt).toBe("2026-05-28")
+  })
+
+  it("从 YAML 读取 published 并放入 meta（向后兼容）", () => {
+    const raw = `---
+title: test
+description: desc
+tags: []
+published: true
+createdAt: "2026-01-01"
+---
+content`
+    const result = parseFrontmatter(raw)
+    expect(result.meta.published).toBe(true)
+    expect("published" in result.frontmatter).toBe(false)
   })
 })
 

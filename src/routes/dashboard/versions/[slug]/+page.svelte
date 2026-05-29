@@ -6,16 +6,15 @@
 	import { ArrowLeft, ArrowRightLeft, Pencil } from "lucide-svelte"
 	import { Button } from "$lib/components/ui/button"
 	import { Badge } from "$lib/components/ui/badge"
+	import { goto } from "$app/navigation"
 
 	let { data } = $props()
 
-	const d = () => data
-	let slug = $derived(d().slug)
-	let versions = $state<VersionMeta[]>(d().versions)
-	let currentVersion = $state(d().currentVersion ?? (versions.length > 0 ? versions[versions.length - 1].version : 0))
+	let slug = $derived(data.slug)
+	let versions = $state<VersionMeta[]>(data.versions)
+	let currentVersion = $state(data.currentVersion ?? (versions.length > 0 ? versions[versions.length - 1].version : 0))
 
 	let selectedVersion = $state(0)
-	let versionContent = $state<string | null>(null)
 	let versionHtml = $state("")
 	let loadedVersion = $state(0)
 	let loading = $state(false)
@@ -23,6 +22,11 @@
 	let message = $state("")
 
 	let selectedMeta = $derived(versions.find((v) => v.version === selectedVersion))
+	let backHref = $derived(
+		data.from === "editor"
+			? `/dashboard/edit/${slug}`
+			: "/dashboard",
+	)
 
 	async function loadVersionContent(version: number) {
 		if (version === loadedVersion && versionHtml) return
@@ -31,16 +35,13 @@
 			const resp = await fetch(`/api/versions?slug=${encodeURIComponent(slug)}&version=${version}`)
 			if (resp.ok) {
 				const result = await resp.json()
-				versionContent = result.content
-				const tree = await parseToMdast(versionContent!)
+				const tree = await parseToMdast(result.content)
 				versionHtml = await renderHtml(tree)
 				loadedVersion = version
 			} else {
-				versionContent = null
 				versionHtml = "<p>版本不存在</p>"
 			}
 		} catch {
-			versionContent = null
 			versionHtml = "<p>加载失败</p>"
 		} finally {
 			loading = false
@@ -48,7 +49,7 @@
 	}
 
 	async function handleSwitchTo(version: number) {
-		if (!confirm(`确认切换到 v${version}？当前版本指针将变为 v${version}。`)) return
+		if (!confirm(`确认切换到 v${version}？当前版本指针将变为 v${version}，不会创建新版本。`)) return
 
 		switching = true
 		message = ""
@@ -67,7 +68,6 @@
 					versions = vData.versions
 					currentVersion = vData.currentVersion ?? version
 				}
-				selectedVersion = version
 				loadedVersion = 0
 				await loadVersionContent(version)
 			} else {
@@ -81,7 +81,7 @@
 	}
 
 	function handleEditFromVersion(version: number) {
-		window.location.href = `/dashboard/edit/${slug}?fromVersion=${version}`
+		goto(`/dashboard/edit/${slug}?fromVersion=${version}&from=versions`)
 	}
 
 	function handleSelectVersion(version: number) {
@@ -114,7 +114,7 @@
 <div class="flex flex-col h-full">
 	<div class="flex items-center justify-between py-3 px-1">
 		<div class="flex items-center gap-3">
-			<a href="/dashboard" class="shrink-0 text-muted-foreground hover:text-foreground transition-colors">
+			<a href={backHref} class="shrink-0 text-muted-foreground hover:text-foreground transition-colors">
 				<ArrowLeft size={20} />
 			</a>
 			<div>
@@ -126,11 +126,6 @@
 			{#if message}
 				<span class="text-xs font-mono text-muted-foreground">{message}</span>
 			{/if}
-			<a href="/dashboard/edit/{slug}">
-				<Button size="sm" variant="outline" class="font-mono">
-					<Pencil size={14} class="mr-1" />编辑当前
-				</Button>
-			</a>
 		</div>
 	</div>
 
@@ -142,16 +137,17 @@
 		<div class="flex gap-4 flex-1 min-h-0">
 			<div class="w-[380px] shrink-0 flex flex-col gap-3">
 				<div class="rounded-lg border bg-card h-[280px] overflow-hidden relative">
-					<div class="px-3 py-2 text-xs font-mono text-muted-foreground border-b bg-muted/30 select-none relative z-10">
-						版本图
+					<div class="px-3 py-2 text-xs font-mono text-muted-foreground border-b bg-muted/30 select-none relative z-10 flex items-center justify-between">
+						<span>版本图</span>
+						<span class="text-[10px] opacity-60">拖拽 · 滚轮缩放</span>
 					</div>
 					<div class="h-[calc(100%-36px)] relative z-0">
-						<VersionGraph
-							bind:versions
-							bind:currentVersion
-							bind:selectedVersion
-							onSelect={handleSelectVersion}
-						/>
+					<VersionGraph
+						{versions}
+						{currentVersion}
+						bind:selectedVersion
+						onSelect={handleSelectVersion}
+					/>
 					</div>
 				</div>
 
@@ -182,7 +178,7 @@
 								<div class="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground font-mono">
 									<span>{formatDate(v.createdAt)}</span>
 									{#if v.parent !== null}
-										<span>← v{v.parent}</span>
+										<span>&larr; v{v.parent}</span>
 									{/if}
 								</div>
 								{#if v.summary}
@@ -196,44 +192,42 @@
 
 			<div class="flex-1 flex flex-col min-w-0">
 				<div class="flex items-center justify-between px-3 py-2 border-b bg-muted/30">
-					<div class="flex items-center gap-2">
-						<span class="text-xs font-mono text-muted-foreground">
-							{#if selectedMeta}
-								v{selectedMeta.version} · {formatDate(selectedMeta.createdAt)}
-								{#if selectedMeta.summary}
-									· {selectedMeta.summary}
-								{/if}
-								{#if selectedMeta.parent !== null}
-									· parent: v{selectedMeta.parent}
-								{/if}
-							{:else}
-								选择版本
+					<span class="text-xs font-mono text-muted-foreground">
+						{#if selectedMeta}
+							v{selectedMeta.version} · {formatDate(selectedMeta.createdAt)}
+							{#if selectedMeta.summary}
+								· {selectedMeta.summary}
 							{/if}
-						</span>
-					</div>
+							{#if selectedMeta.parent !== null}
+								· &larr; v{selectedMeta.parent}
+							{/if}
+						{:else}
+							选择版本查看内容
+						{/if}
+					</span>
 					<div class="flex items-center gap-2">
 						{#if selectedVersion > 0 && selectedMeta}
+							<Button
+								size="sm"
+								variant="secondary"
+								class="font-mono text-xs"
+								onclick={() => handleEditFromVersion(selectedVersion)}
+							>
+								<Pencil size={12} class="mr-1" />
+								编辑
+							</Button>
 							{#if selectedVersion !== currentVersion}
 								<Button
 									size="sm"
 									variant="outline"
-									class="font-mono text-xs hover:bg-primary hover:text-primary-foreground transition-colors"
+									class="font-mono text-xs"
 									onclick={() => handleSwitchTo(selectedVersion)}
 									disabled={switching}
 								>
 									<ArrowRightLeft size={12} class="mr-1" />
-									{switching ? "切换中..." : "设为当前版本"}
+									{switching ? "切换中..." : "切换到此版本"}
 								</Button>
 							{/if}
-							<Button
-								size="sm"
-								variant="secondary"
-								class="font-mono text-xs hover:bg-primary hover:text-primary-foreground transition-colors"
-								onclick={() => handleEditFromVersion(selectedVersion)}
-							>
-								<Pencil size={12} class="mr-1" />
-								从此版本修改
-							</Button>
 						{/if}
 					</div>
 				</div>
@@ -249,7 +243,7 @@
 						</div>
 					{:else}
 						<div class="flex items-center justify-center h-full text-muted-foreground font-mono text-sm">
-							点击版本查看内容
+							点击左侧版本查看内容
 						</div>
 					{/if}
 				</div>

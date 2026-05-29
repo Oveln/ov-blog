@@ -17,8 +17,8 @@
 	}
 
 	let {
-		versions = $bindable([]),
-		currentVersion = $bindable(0),
+		versions = [],
+		currentVersion = 0,
 		selectedVersion = $bindable(0),
 		onSelect,
 	}: {
@@ -84,10 +84,6 @@
 			x: width / 2 - pos.x * scale,
 			y: height / 2 - pos.y * scale,
 		}
-	}
-
-	export function focusVersion(version: number) {
-		centerOnNode(version)
 	}
 
 	let simRef: ReturnType<typeof forceSimulation<GraphNode>> | null = null
@@ -484,4 +480,10 @@
 			{/each}
 		</g>
 	</svg>
+
+	<div class="absolute bottom-2 left-3 flex items-center gap-3 text-[10px] font-mono text-muted-foreground/60 select-none pointer-events-none">
+		<span class="flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-full bg-primary"></span> 快照</span>
+		<span class="flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-full bg-secondary border border-border"></span> 补丁</span>
+		<span class="flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-full border-2 border-dashed border-primary"></span> 当前</span>
+	</div>
 </div>

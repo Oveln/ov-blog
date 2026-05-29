@@ -30,6 +30,29 @@ async function listPostKeys(): Promise<string[]> {
 	return keys.filter((k) => k.endsWith(".md"))
 }
 
+interface PostMetaFile {
+	published: boolean
+}
+
+function metaKey(slug: string): string {
+	return `${POSTS_PREFIX}/${slug}.meta.json`
+}
+
+async function getPublished(slug: string): Promise<boolean> {
+	const raw = await storage.read(metaKey(slug))
+	if (!raw) return false
+	try {
+		const meta = JSON.parse(raw) as PostMetaFile
+		return meta.published ?? false
+	} catch {
+		return false
+	}
+}
+
+async function setPublished(slug: string, published: boolean): Promise<void> {
+	await storage.write(metaKey(slug), JSON.stringify({ published }, null, 2))
+}
+
 export async function getAllPosts(
 	options?: { publishedOnly?: boolean }
 ): Promise<PostContent[]> {
@@ -42,13 +65,10 @@ export async function getAllPosts(
 			const raw = await storage.read(key)
 			if (!raw) return null
 
-			if (publishedOnly) {
-				const parsed = parseFrontmatter(raw)
-				if (!parsed.meta.published) return null
-				return processPost(slug, raw, { meta: parsed.meta, content: parsed.content })
-			}
+			const pub = await getPublished(slug)
+			if (publishedOnly && !pub) return null
 
-			return processPost(slug, raw)
+			return processPost(slug, raw, pub)
 		}),
 	)
 
@@ -67,13 +87,10 @@ export async function getAllPostSummaries(
 			const raw = await storage.read(key)
 			if (!raw) return null
 
-			if (publishedOnly) {
-				const parsed = parseFrontmatter(raw)
-				if (!parsed.meta.published) return null
-				return processPostSummary(slug, raw, { meta: parsed.meta, content: parsed.content })
-			}
+			const pub = await getPublished(slug)
+			if (publishedOnly && !pub) return null
 
-			return processPostSummary(slug, raw)
+			return processPostSummary(slug, raw, pub)
 		}),
 	)
 
@@ -98,7 +115,8 @@ export async function getPost(slug: string): Promise<PostContent | null> {
 	const key = `${POSTS_PREFIX}/${slug}.md`
 	const raw = await storage.read(key)
 	if (!raw) return null
-	return processPost(slug, raw)
+	const published = await getPublished(slug)
+	return processPost(slug, raw, published)
 }
 
 export async function getRawPost(slug: string): Promise<string | null> {
@@ -112,14 +130,21 @@ export async function savePost(
 	options?: { summary?: string; parent?: number }
 ): Promise<VersionMeta | undefined> {
 	const key = `${POSTS_PREFIX}/${slug}.md`
-	await storage.write(key, raw)
+	const metaExists = await storage.read(metaKey(slug))
+	await Promise.all([
+		storage.write(key, raw),
+		metaExists ? Promise.resolve() : setPublished(slug, false),
+	])
 	return versionStore.commit(slug, raw, { summary: options?.summary, parent: options?.parent })
 }
 
 export async function deletePost(slug: string): Promise<void> {
 	const key = `${POSTS_PREFIX}/${slug}.md`
-	await storage.delete(key)
-	await versionStore.destroy(slug)
+	await Promise.all([
+		storage.delete(key),
+		storage.delete(metaKey(slug)),
+		versionStore.destroy(slug),
+	])
 }
 
 export async function getAllSlugs(): Promise<string[]> {
@@ -161,3 +186,11 @@ export async function switchToVersion(
 	await storage.write(key, versionContent)
 	return versionStore.switchTo(slug, version)
 }
+
+export async function togglePublished(slug: string): Promise<boolean> {
+	const current = await getPublished(slug)
+	await setPublished(slug, !current)
+	return !current
+}
+
+export { getPublished }

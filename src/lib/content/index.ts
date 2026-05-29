@@ -1,7 +1,6 @@
 export { processPost, processPostSummary } from "./pipeline"
 export { parseFrontmatter, parseToMdast } from "./parser"
 export { serializeFrontmatter } from "./frontmatter"
-export type { FrontmatterData } from "./frontmatter"
 export { renderHtml } from "./renderers/html"
 export { renderRss } from "./renderers/rss"
 export { renderPlainText } from "./renderers/text"

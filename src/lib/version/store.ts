@@ -3,7 +3,6 @@ import type {
 	VersionMeta,
 	VersionedDocMeta,
 	CommitOptions,
-	SwitchToOptions,
 	VersionedStoreOptions,
 } from "./types"
 import { DEFAULT_SNAPSHOT_INTERVAL } from "./types"
@@ -176,7 +175,6 @@ export class VersionedStore {
 	async switchTo(
 		docId: string,
 		version: number,
-		options?: SwitchToOptions,
 	): Promise<VersionMeta> {
 		const meta = await this.readMeta(docId)
 		if (!meta) {

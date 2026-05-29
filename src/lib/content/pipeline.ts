@@ -8,10 +8,13 @@ import { renderHtml } from "./renderers/html"
 export async function processPost(
   slug: string,
   raw: string,
-  preParsed?: { meta: import("./schema").PostMeta; content: string }
+  published?: boolean
 ): Promise<PostContent> {
-  const parsed = preParsed ?? parseFrontmatter(raw)
+  const parsed = parseFrontmatter(raw)
   parsed.meta.slug = slug
+  if (published !== undefined) {
+    parsed.meta.published = published
+  }
 
   const tree = await parseToMdast(parsed.content)
 
@@ -35,10 +38,13 @@ export async function processPost(
 export async function processPostSummary(
   slug: string,
   raw: string,
-  preParsed?: { meta: import("./schema").PostMeta; content: string }
+  published?: boolean
 ): Promise<PostSummary> {
-  const parsed = preParsed ?? parseFrontmatter(raw)
+  const parsed = parseFrontmatter(raw)
   parsed.meta.slug = slug
+  if (published !== undefined) {
+    parsed.meta.published = published
+  }
 
   const tree = await parseToMdast(parsed.content)
   const excerpt = extractExcerpt(tree)

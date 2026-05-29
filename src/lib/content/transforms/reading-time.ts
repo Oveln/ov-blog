@@ -1,5 +1,5 @@
 import type { Root } from "mdast"
-import { getNodeText, extractAllText } from "../ast"
+import { extractAllText } from "../ast"
 
 const WORDS_PER_MINUTE_ZH = 300
 const WORDS_PER_MINUTE_EN = 200

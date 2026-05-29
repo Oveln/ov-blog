@@ -29,12 +29,11 @@ export function parseFrontmatter(raw: string): ParsedPost {
     title: data.title ?? "",
     description: data.description ?? "",
     tags: data.tags ?? [],
-    published: data.published ?? false,
     createdAt: data.createdAt ?? "",
     updatedAt: data.updatedAt,
   } as PostFrontmatter
   return {
-    meta: { ...frontmatter, slug: "" },
+    meta: { ...frontmatter, slug: "", published: data.published ?? false },
     raw,
     content,
     frontmatter,

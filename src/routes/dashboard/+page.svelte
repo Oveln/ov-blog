@@ -2,11 +2,12 @@
 	import type { PostSummary } from "$lib/content"
 	import { Badge } from "$lib/components/ui/badge"
 	import { Button } from "$lib/components/ui/button"
-	import { Trash, History } from "lucide-svelte"
+	import { Trash, History, Eye, EyeOff } from "lucide-svelte"
 
 	let { data } = $props()
 	let posts: PostSummary[] = $derived(data.posts)
 	let deletingSlug = $state<string | null>(null)
+	let togglingSlug = $state<string | null>(null)
 
 	async function handleDelete(slug: string) {
 		try {
@@ -21,6 +22,27 @@
 			// ignore
 		} finally {
 			deletingSlug = null
+		}
+	}
+
+	async function handleTogglePublish(slug: string) {
+		togglingSlug = slug
+		try {
+			const resp = await fetch("/api/posts/publish", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ slug }),
+			})
+			const result = await resp.json()
+			if (result.ok) {
+				posts = posts.map((p) =>
+					p.slug === slug ? { ...p, published: result.published } : p,
+				)
+			}
+		} catch {
+			// ignore
+		} finally {
+			togglingSlug = null
 		}
 	}
 </script>
@@ -60,6 +82,18 @@
 				</div>
 			</div>
 			<div class="flex items-center gap-2 ml-4">
+				<button
+					class="text-muted-foreground hover:text-foreground transition-colors {togglingSlug === post.slug ? 'opacity-50' : ''}"
+					onclick={() => handleTogglePublish(post.slug)}
+					disabled={togglingSlug === post.slug}
+					title={post.published ? "取消发布" : "发布"}
+				>
+					{#if post.published}
+						<Eye size={14} />
+					{:else}
+						<EyeOff size={14} />
+					{/if}
+				</button>
 				{#if post.published}
 					<a
 						href="/blogs/{post.slug}"

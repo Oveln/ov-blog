@@ -17,10 +17,6 @@ export interface CommitOptions {
 	parent?: number
 }
 
-export interface SwitchToOptions {
-	summary?: string
-}
-
 export interface VersionedStoreOptions {
 	prefix?: string
 	snapshotInterval?: number

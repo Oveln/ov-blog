@@ -2,13 +2,13 @@ export interface PostFrontmatter {
   title: string
   description: string
   tags: string[]
-  published: boolean
   createdAt: string
   updatedAt?: string
 }
 
 export interface PostMeta extends PostFrontmatter {
   slug: string
+  published: boolean
 }
 
 export interface TocItem {

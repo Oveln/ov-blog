@@ -1,20 +1,12 @@
-export interface FrontmatterData {
-	title: string
-	description: string
-	tags: string[]
-	published: boolean
-	createdAt: string
-	updatedAt?: string
-}
+import type { PostFrontmatter } from "./schema"
 
-export function serializeFrontmatter(data: FrontmatterData): string {
+export function serializeFrontmatter(data: PostFrontmatter): string {
 	const lines = [
 		"---",
 		`title: "${data.title.replace(/"/g, '\\"')}"`,
 		`description: "${data.description.replace(/"/g, '\\"')}"`,
 		`tags:`,
 		...data.tags.map((t) => `  - "${t}"`),
-		`published: ${data.published}`,
 		`createdAt: "${data.createdAt}"`,
 	]
 	if (data.updatedAt) {

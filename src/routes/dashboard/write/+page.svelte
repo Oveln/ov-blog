@@ -8,7 +8,6 @@
 	let slug = $state("")
 	let description = $state("")
 	let tags = $state("")
-	let published = $state(false)
 	let markdown = $state("")
 	let saving = $state(false)
 	let message = $state("")
@@ -43,7 +42,6 @@
 			title,
 			description,
 			tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
-			published,
 			createdAt: now,
 		})
 
@@ -78,7 +76,6 @@
 		bind:title
 		bind:description
 		bind:tags
-		bind:published
 		bind:saving
 		bind:message
 		onSave={handleSave}

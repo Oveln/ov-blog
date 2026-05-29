@@ -5,23 +5,25 @@
 
 	let {
 		slug,
+		backHref = "/dashboard",
 		title = $bindable(""),
 		description = $bindable(""),
 		tags = $bindable(""),
-		published = $bindable(false),
 		createdAt = "",
 		saving = $bindable(false),
 		message = $bindable(""),
+		summary = $bindable(""),
 		onSave,
 	}: {
 		slug: string
+		backHref?: string
 		title: string
 		description: string
 		tags: string
-		published: boolean
 		createdAt?: string
 		saving: boolean
 		message: string
+		summary?: string
 		onSave: () => Promise<void>
 	} = $props()
 
@@ -35,7 +37,7 @@
 
 <div class="flex flex-col gap-3">
 	<div class="flex items-center gap-3">
-		<a href="/dashboard" class="shrink-0 text-muted-foreground hover:text-foreground transition-colors">
+		<a href={backHref} class="shrink-0 text-muted-foreground hover:text-foreground transition-colors">
 			<ArrowLeft size={20} />
 		</a>
 		<input
@@ -46,7 +48,7 @@
 		/>
 		<div class="flex items-center gap-2 shrink-0">
 			<a
-				href="/dashboard/versions/{slug}"
+				href="/dashboard/versions/{slug}?from=editor"
 				class="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-mono text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
 				title="版本历史"
 			>
@@ -78,15 +80,15 @@
 		{#each tagList as tag}
 			<Badge variant="secondary" class="text-[10px]">{tag}</Badge>
 		{/each}
-		<button
-			type="button"
-			onclick={() => (published = !published)}
-			class="flex items-center gap-1 px-2 py-1 text-xs font-mono rounded cursor-pointer select-none transition-colors {published ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground'}"
-		>
-			{published ? "已发布" : "草稿"}
-		</button>
 		{#if createdAt}
 			<span class="text-[10px] font-mono text-muted-foreground/60">{createdAt}</span>
 		{/if}
 	</div>
+
+	<input
+		type="text"
+		placeholder="版本摘要（可选）"
+		bind:value={summary}
+		class="w-full px-2 py-1 text-xs font-mono bg-muted/50 rounded outline-none placeholder:text-muted-foreground/50"
+	/>
 </div>
