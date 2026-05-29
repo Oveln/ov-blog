@@ -4,6 +4,8 @@ import { sortPostsByDate } from "$lib/content/schema"
 import type { PostContent, PostSummary } from "$lib/content/schema"
 import type { Storage } from "$lib/storage"
 import { createStorage } from "$lib/storage"
+import { VersionedStore } from "$lib/version"
+import type { VersionMeta } from "$lib/version"
 import { join } from "node:path"
 
 const POSTS_PREFIX = "posts"
@@ -21,6 +23,7 @@ function createPostStorage(): Storage {
 }
 
 const storage = createPostStorage()
+const versionStore = new VersionedStore(storage, { prefix: "versions" })
 
 async function listPostKeys(): Promise<string[]> {
 	const keys = await storage.list(POSTS_PREFIX)
@@ -103,14 +106,20 @@ export async function getRawPost(slug: string): Promise<string | null> {
 	return storage.read(key)
 }
 
-export async function savePost(slug: string, raw: string): Promise<void> {
+export async function savePost(
+	slug: string,
+	raw: string,
+	options?: { summary?: string; parent?: number }
+): Promise<VersionMeta | undefined> {
 	const key = `${POSTS_PREFIX}/${slug}.md`
 	await storage.write(key, raw)
+	return versionStore.commit(slug, raw, { summary: options?.summary, parent: options?.parent })
 }
 
 export async function deletePost(slug: string): Promise<void> {
 	const key = `${POSTS_PREFIX}/${slug}.md`
 	await storage.delete(key)
+	await versionStore.destroy(slug)
 }
 
 export async function getAllSlugs(): Promise<string[]> {
@@ -126,4 +135,29 @@ export async function getNextId(): Promise<number> {
 		if (!isNaN(n) && n > maxId) maxId = n
 	}
 	return maxId + 1
+}
+
+export async function listVersions(slug: string): Promise<VersionMeta[]> {
+	return versionStore.log(slug)
+}
+
+export async function getVersion(slug: string, version: number): Promise<string | null> {
+	return versionStore.get(slug, version)
+}
+
+export async function getCurrentVersion(slug: string): Promise<number | null> {
+	return versionStore.head(slug)
+}
+
+export async function switchToVersion(
+	slug: string,
+	version: number,
+): Promise<VersionMeta> {
+	const versionContent = await versionStore.get(slug, version)
+	if (!versionContent) {
+		throw new Error(`Version ${version} not found for post ${slug}`)
+	}
+	const key = `${POSTS_PREFIX}/${slug}.md`
+	await storage.write(key, versionContent)
+	return versionStore.switchTo(slug, version)
 }

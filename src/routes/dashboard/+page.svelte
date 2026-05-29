@@ -2,7 +2,7 @@
 	import type { PostSummary } from "$lib/content"
 	import { Badge } from "$lib/components/ui/badge"
 	import { Button } from "$lib/components/ui/button"
-	import { Trash } from "lucide-svelte"
+	import { Trash, History } from "lucide-svelte"
 
 	let { data } = $props()
 	let posts: PostSummary[] = $derived(data.posts)
@@ -73,6 +73,13 @@
 					class="text-sm text-primary hover:text-primary/80 transition-colors font-mono"
 				>
 					编辑
+				</a>
+				<a
+					href="/dashboard/versions/{post.slug}"
+					class="text-muted-foreground hover:text-foreground transition-colors"
+					title="版本历史"
+				>
+					<History size={14} />
 				</a>
 				{#if deletingSlug === post.slug}
 					<div class="flex items-center gap-1">

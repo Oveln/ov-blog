@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button } from "$lib/components/ui/button"
 	import { Badge } from "$lib/components/ui/badge"
-	import { ArrowLeft } from "lucide-svelte"
+	import { ArrowLeft, History } from "lucide-svelte"
 
 	let {
 		slug,
@@ -45,6 +45,13 @@
 			class="flex-1 text-2xl font-mono font-bold bg-transparent outline-none placeholder:text-muted-foreground/40"
 		/>
 		<div class="flex items-center gap-2 shrink-0">
+			<a
+				href="/dashboard/versions/{slug}"
+				class="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-mono text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
+				title="版本历史"
+			>
+				<History size={14} />
+			</a>
 			{#if message}
 				<span class="text-xs font-mono text-muted-foreground">{message}</span>
 			{/if}

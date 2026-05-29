@@ -18,14 +18,14 @@ export const GET: RequestHandler = async ({ url }) => {
 
 export const PUT: RequestHandler = async ({ request }) => {
 	const body = await request.json()
-	const { slug, raw } = body
+	const { slug, raw, summary, parent } = body
 
 	if (!slug || !raw) {
 		return json({ error: "slug and raw are required" }, { status: 400 })
 	}
 
-	await savePost(slug, raw)
-	return json({ ok: true, slug })
+	const versionMeta = await savePost(slug, raw, { summary, parent })
+	return json({ ok: true, slug, version: versionMeta ?? null })
 }
 
 export const DELETE: RequestHandler = async ({ url }) => {
