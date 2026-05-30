@@ -11,8 +11,16 @@
 	let { data } = $props()
 
 	let slug = $derived(data.slug)
+	// svelte-ignore state_referenced_locally
 	let versions = $state<VersionMeta[]>(data.versions)
-	let currentVersion = $state(data.currentVersion ?? (versions.length > 0 ? versions[versions.length - 1].version : 0))
+	// svelte-ignore state_referenced_locally
+	let currentVersion = $state(data.currentVersion ?? 0)
+
+	$effect(() => {
+		if (currentVersion === 0 && versions.length > 0) {
+			currentVersion = versions[versions.length - 1].version
+		}
+	})
 
 	let selectedVersion = $state(0)
 	let versionHtml = $state("")

@@ -10,14 +10,25 @@
 	let slug = $derived(data.slug)
 	let createdAt = $derived(data.createdAt)
 
+	// svelte-ignore state_referenced_locally
 	let title = $state(data.title)
+	// svelte-ignore state_referenced_locally
 	let description = $state(data.description)
+	// svelte-ignore state_referenced_locally
 	let tags = $state(data.tags)
+	// svelte-ignore state_referenced_locally
 	let markdown = $state(data.content)
 	let saving = $state(false)
-	let message = $state(data.fromVersion ? `已加载 v${data.fromVersion} 的内容` : "")
+	let message = $state("")
 	let summary = $state("")
-	let parentVersion = $state<number | null>(data.fromVersion)
+	let parentVersion = $state<number | null>(null)
+
+	$effect(() => {
+		if (data.fromVersion) {
+			message = `已加载 v${data.fromVersion} 的内容`
+			parentVersion = data.fromVersion
+		}
+	})
 
 	let backHref = $derived(
 		data.from === "versions"

@@ -45,7 +45,7 @@
 	let simLinks = $state<GraphLink[]>([])
 
 	type Mode = "idle" | "node-drag" | "pan"
-	let mode: Mode = "idle"
+	let mode = $state<Mode>("idle")
 	let dragNodeId: string | null = null
 	let dragStartScreen = { x: 0, y: 0 }
 	let dragNodeOrigin = { x: 0, y: 0 }
@@ -336,7 +336,10 @@
 />
 
 <div bind:this={containerEl} class="relative w-full h-full min-h-[200px]">
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<svg
+		role="application"
 		bind:this={svgEl}
 		viewBox="0 0 {width} {height}"
 		class="select-none w-full h-full {mode === 'pan' ? 'cursor-grabbing' : 'cursor-grab'}"
