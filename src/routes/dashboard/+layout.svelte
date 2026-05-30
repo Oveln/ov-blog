@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import { LogOut, Settings } from "lucide-svelte"
+	import { KeyRound, LogOut } from "lucide-svelte"
 
 	let { children } = $props()
 
@@ -36,9 +36,9 @@
 				<a
 					href="/dashboard/settings"
 					class="inline-flex items-center px-3 py-2 text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
-					title="设置"
+					title="TOTP 密钥"
 				>
-					<Settings size={16} />
+					<KeyRound size={16} />
 				</a>
 				<button
 					onclick={handleLogout}
