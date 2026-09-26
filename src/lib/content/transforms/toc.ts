@@ -10,7 +10,7 @@ export function extractToc(tree: Root): TocItem[] {
       const id = text
         .toLowerCase()
         .replace(/[^\w\u4e00-\u9fff]+/g, "-")
-        .replace(/^-|-$/g, "")
+        .replace(/^-|-$/g, "") || `heading-${toc.length}`
       toc.push({ depth: node.depth, text, id })
     }
     if ("children" in node) {

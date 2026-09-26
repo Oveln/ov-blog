@@ -6,7 +6,7 @@ export function serializeFrontmatter(data: PostFrontmatter): string {
 		`title: "${data.title.replace(/"/g, '\\"')}"`,
 		`description: "${data.description.replace(/"/g, '\\"')}"`,
 		`tags:`,
-		...data.tags.map((t) => `  - "${t}"`),
+		...data.tags.map((t) => `  - "${t.replace(/"/g, '\\"')}"`),
 		`createdAt: "${data.createdAt}"`,
 	]
 	if (data.updatedAt) {

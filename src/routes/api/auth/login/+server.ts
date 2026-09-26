@@ -8,6 +8,11 @@ const WINDOW_MS = 60_000
 
 function checkRateLimit(ip: string): boolean {
 	const now = Date.now()
+	if (rateMap.size > 1000) {
+		for (const [key, entry] of rateMap) {
+			if (now > entry.resetAt) rateMap.delete(key)
+		}
+	}
 	const entry = rateMap.get(ip)
 	if (!entry || now > entry.resetAt) {
 		rateMap.set(ip, { count: 1, resetAt: now + WINDOW_MS })
@@ -25,7 +30,17 @@ export const POST: RequestHandler = async (event) => {
 		return json({ ok: false, error: "尝试次数过多，请稍后再试" }, { status: 429 })
 	}
 
-	const { code } = await event.request.json()
+	let body: { code?: string }
+	try {
+		body = await event.request.json()
+	} catch {
+		return json({ ok: false, error: "invalid JSON" }, { status: 400 })
+	}
+	const { code } = body
+
+	if (!code) {
+		return json({ ok: false, error: "验证码不能为空" }, { status: 400 })
+	}
 
 	if (!verifyTOTP(code)) {
 		return json({ ok: false, error: "验证码错误" }, { status: 401 })

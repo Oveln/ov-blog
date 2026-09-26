@@ -161,7 +161,7 @@
 		activeNodes = newNodes
 
 		const simulation = forceSimulation<GraphNode>(newNodes)
-			.alphaDecay(0)
+			.alphaDecay(0.0228)
 			.velocityDecay(0.4)
 			.force(
 				"link",
@@ -198,8 +198,9 @@
 	let cleanup: (() => void) | void
 
 	$effect(() => {
+		cleanup?.()
+		cleanup = undefined
 		if (versions.length > 0) {
-			cleanup?.()
 			cleanup = buildGraph()
 		}
 	})

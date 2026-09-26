@@ -18,12 +18,10 @@ export async function processPost(
 
   const tree = await parseToMdast(parsed.content)
 
-  const [toc, html] = await Promise.all([
-    extractToc(tree),
-    renderHtml(tree),
-  ])
+  const toc = extractToc(tree)
   const excerpt = extractExcerpt(tree)
   const readingTime = calculateReadingTime(tree)
+  const html = await renderHtml(tree)
 
   return {
     ...parsed.meta,

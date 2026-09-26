@@ -28,7 +28,7 @@ export function parseFrontmatter(raw: string): ParsedPost {
   const frontmatter = {
     title: data.title ?? "",
     description: data.description ?? "",
-    tags: data.tags ?? [],
+    tags: Array.isArray(data.tags) ? data.tags : [],
     createdAt: data.createdAt ?? "",
     updatedAt: data.updatedAt,
   } as PostFrontmatter

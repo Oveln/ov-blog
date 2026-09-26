@@ -1,11 +1,15 @@
 import { json } from "@sveltejs/kit"
 import type { RequestHandler } from "./$types"
 import { listVersions, getVersion, getCurrentVersion } from "$lib/server/posts"
+import { validateSlug } from "$lib/server/slug"
 
 export const GET: RequestHandler = async ({ url }) => {
 	const slug = url.searchParams.get("slug")
 	if (!slug) {
 		return json({ error: "slug is required" }, { status: 400 })
+	}
+	if (!validateSlug(slug)) {
+		return json({ error: "invalid slug" }, { status: 400 })
 	}
 
 	const version = url.searchParams.get("version")
