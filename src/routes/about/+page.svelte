@@ -290,9 +290,9 @@
 	<meta property="og:type" content="profile" />
 </svelte:head>
 
-<main class="animate-fade-up min-h-[calc(100vh-56px)] px-6 py-8 md:px-8">
-	<div class="mx-auto max-w-5xl space-y-16">
-		<section class="relative overflow-hidden rounded-2xl border bg-card p-6 md:p-10">
+<main class="animate-fade-up min-h-[calc(100vh-56px)] px-4 py-6 sm:px-6 md:px-8 md:py-8">
+	<div class="mx-auto max-w-5xl space-y-10 sm:space-y-14 md:space-y-16">
+		<section class="relative overflow-hidden rounded-2xl border bg-card p-5 sm:p-6 md:p-10">
 			<div
 				class="pointer-events-none absolute -top-24 -right-16 h-64 w-64 rounded-full bg-primary/5 blur-3xl"
 			></div>
@@ -319,9 +319,9 @@
 
 					<div class="space-y-2">
 						<h1
-							class="bg-linear-to-r from-gray-900 to-gray-600 bg-clip-text pb-1 font-mono text-3xl leading-[1.3] font-bold text-transparent md:text-4xl dark:from-gray-100 dark:to-gray-400"
+							class="bg-linear-to-r from-gray-900 to-gray-600 bg-clip-text pb-1 font-mono text-2xl leading-[1.3] font-bold text-transparent sm:text-3xl md:text-4xl dark:from-gray-100 dark:to-gray-400"
 						>
-							郑昱可 <span class="text-2xl md:text-3xl">/ Oveln</span>
+							郑昱可 <span class="text-xl sm:text-2xl md:text-3xl">/ Oveln</span>
 						</h1>
 						<p class="font-mono text-sm text-muted-foreground">
 							个人开发者 · 系统软件工程师
@@ -335,7 +335,7 @@
 					<div class="flex flex-wrap gap-3 pt-1">
 						<a
 							href="mailto:oveln@outlook.com"
-							class="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+							class="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
 						>
 							<Mail class="h-4 w-4" />
 							邮件联系
@@ -345,7 +345,7 @@
 							href="https://github.com/Oveln"
 							target="_blank"
 							rel="noopener noreferrer"
-							class="inline-flex items-center gap-2 rounded-md border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent"
+							class="inline-flex items-center gap-2 rounded-md border bg-background px-4 py-2.5 text-sm font-medium transition-colors hover:bg-accent"
 						>
 							<CodeXml class="h-4 w-4" />
 							GitHub
@@ -353,7 +353,7 @@
 						</a>
 						<a
 							href={resolve("/blogs")}
-							class="inline-flex items-center gap-2 rounded-md border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent"
+							class="inline-flex items-center gap-2 rounded-md border bg-background px-4 py-2.5 text-sm font-medium transition-colors hover:bg-accent"
 						>
 							<ScrollText class="h-4 w-4" />
 							技术博客
@@ -362,10 +362,10 @@
 				</div>
 			</div>
 
-			<div class="relative mt-8 grid grid-cols-2 gap-4 border-t pt-6 md:grid-cols-4">
+			<div class="relative mt-8 grid grid-cols-2 gap-x-3 gap-y-5 border-t pt-6 md:grid-cols-4 md:gap-x-4">
 				{#each stats as stat (stat.label)}
 					<div>
-						<div class="font-mono text-xl font-bold md:text-2xl">{stat.value}</div>
+						<div class="font-mono text-lg font-bold sm:text-xl md:text-2xl">{stat.value}</div>
 						<div class="mt-1 text-xs text-muted-foreground">{stat.label}</div>
 					</div>
 				{/each}
@@ -375,14 +375,14 @@
 		<section class="space-y-6">
 			<div class="flex items-center gap-2">
 				<Briefcase class="h-5 w-5 text-muted-foreground" />
-				<h2 class="font-mono text-2xl font-semibold">能做什么</h2>
+				<h2 class="font-mono text-xl font-semibold sm:text-2xl">能做什么</h2>
 			</div>
 
 			<div class="grid gap-5 md:grid-cols-3">
 				{#each services as service (service.title)}
 					{@const Icon = service.icon}
 					<div
-						class="flex flex-col rounded-xl border bg-card p-6 shadow-sm transition-shadow duration-300 hover:shadow-md"
+						class="flex flex-col rounded-xl border bg-card p-5 shadow-sm transition-shadow duration-300 hover:shadow-md sm:p-6"
 					>
 						<div class="flex items-center gap-2">
 							<Icon class="h-5 w-5" />
@@ -405,12 +405,12 @@
 		<section class="space-y-6">
 			<div class="flex items-center gap-2">
 				<Handshake class="h-5 w-5 text-muted-foreground" />
-				<h2 class="font-mono text-2xl font-semibold">合作方式</h2>
+				<h2 class="font-mono text-xl font-semibold sm:text-2xl">合作方式</h2>
 			</div>
 
-			<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+			<div class="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
 				{#each steps as step, index (step.title)}
-					<div class="rounded-xl border bg-card p-6 shadow-sm">
+					<div class="rounded-xl border bg-card p-4 shadow-sm sm:p-6">
 						<div class="font-mono text-xs font-semibold text-muted-foreground">
 							0{index + 1}
 						</div>
@@ -420,7 +420,7 @@
 				{/each}
 			</div>
 
-			<div class="grid gap-5 rounded-xl bg-muted/50 p-6 sm:grid-cols-2">
+			<div class="grid gap-4 rounded-xl bg-muted/50 p-5 sm:grid-cols-2 sm:gap-5 sm:p-6">
 				{#each principles as principle (principle.title)}
 					<div class="flex gap-3">
 						<BadgeCheck class="mt-0.5 h-5 w-5 shrink-0 text-emerald-500" />
@@ -433,7 +433,7 @@
 			</div>
 		</section>
 
-		<section class="relative overflow-hidden rounded-2xl border bg-card p-6 md:p-10">
+		<section class="relative overflow-hidden rounded-2xl border bg-card p-5 sm:p-6 md:p-10">
 			<div
 				class="pointer-events-none absolute -top-24 left-1/3 h-64 w-64 rounded-full bg-primary/5 blur-3xl"
 			></div>
@@ -441,7 +441,7 @@
 				<div class="space-y-3">
 					<div class="flex items-center gap-2">
 						<Target class="h-5 w-5 text-muted-foreground" />
-						<h2 class="font-mono text-2xl font-semibold">联系我</h2>
+						<h2 class="font-mono text-xl font-semibold sm:text-2xl">联系我</h2>
 					</div>
 					<p class="max-w-2xl text-muted-foreground">
 						如有软件定制或内部流程智能化改造的需求，欢迎邮件联系。
@@ -507,14 +507,14 @@
 		<section class="space-y-6">
 			<div class="flex items-center gap-2">
 				<Cpu class="h-5 w-5 text-muted-foreground" />
-				<h2 class="font-mono text-2xl font-semibold">技术能力</h2>
+				<h2 class="font-mono text-xl font-semibold sm:text-2xl">技术能力</h2>
 			</div>
 
 			<div class="grid gap-5 sm:grid-cols-2">
 				{#each capabilities as capability (capability.title)}
 					{@const Icon = capability.icon}
 					<div
-						class="rounded-xl border bg-card p-6 shadow-sm transition-shadow duration-300 hover:shadow-md"
+						class="rounded-xl border bg-card p-5 shadow-sm transition-shadow duration-300 hover:shadow-md sm:p-6"
 					>
 						<div class="flex items-center gap-2">
 							<Icon class="h-5 w-5" />
@@ -538,12 +538,12 @@
 		<section class="space-y-6">
 			<div class="flex items-center gap-2">
 				<Rocket class="h-5 w-5 text-muted-foreground" />
-				<h2 class="font-mono text-2xl font-semibold">代表项目</h2>
+				<h2 class="font-mono text-xl font-semibold sm:text-2xl">代表项目</h2>
 			</div>
 			<div class="space-y-5">
 				{#each projects as project (project.name)}
 					<article
-						class="rounded-xl border bg-card p-6 shadow-sm transition-shadow duration-300 hover:shadow-md md:p-7"
+						class="rounded-xl border bg-card p-5 shadow-sm transition-shadow duration-300 hover:shadow-md sm:p-6 md:p-7"
 					>
 						<div class="flex flex-wrap items-start justify-between gap-3">
 							<div class="space-y-1">
@@ -580,11 +580,13 @@
 
 						<p class="mt-4 text-sm leading-relaxed text-muted-foreground">{project.summary}</p>
 
-						<div class="mt-5 grid grid-cols-1 gap-4 border-y py-4 sm:grid-cols-3">
+						<div class="mt-5 grid grid-cols-1 gap-2.5 border-y py-4 sm:grid-cols-3 sm:gap-4">
 							{#each project.metrics as metric (metric.label)}
-								<div>
-									<div class="font-mono text-base font-bold">{metric.value}</div>
-									<div class="mt-0.5 text-xs text-muted-foreground">{metric.label}</div>
+								<div class="flex items-baseline justify-between gap-3 sm:block">
+									<div class="shrink-0 font-mono text-base font-bold">{metric.value}</div>
+									<div class="text-right text-xs text-muted-foreground sm:mt-0.5 sm:text-left">
+										{metric.label}
+									</div>
 								</div>
 							{/each}
 						</div>
@@ -606,12 +608,12 @@
 		<section class="space-y-6">
 			<div class="flex items-center gap-2">
 				<Terminal class="h-5 w-5 text-muted-foreground" />
-				<h2 class="font-mono text-2xl font-semibold">技术栈</h2>
+				<h2 class="font-mono text-xl font-semibold sm:text-2xl">技术栈</h2>
 			</div>
 
 			<div class="grid gap-5 sm:grid-cols-2">
 				{#each stack as group (group.group)}
-					<div class="rounded-xl border bg-card p-6">
+					<div class="rounded-xl border bg-card p-5 sm:p-6">
 						<h3 class="font-mono text-sm font-semibold text-muted-foreground">{group.group}</h3>
 						<div class="mt-4 flex flex-wrap gap-2">
 							{#each group.items as item (item)}
