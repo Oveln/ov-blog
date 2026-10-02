@@ -444,7 +444,7 @@
 						<h2 class="font-mono text-xl font-semibold sm:text-2xl">联系我</h2>
 					</div>
 					<p class="max-w-2xl text-muted-foreground">
-						如有软件定制或内部流程智能化改造的需求，欢迎邮件联系。
+						如有软件定制或内部流程智能化改造的需求，欢迎联系。
 					</p>
 				</div>
 
